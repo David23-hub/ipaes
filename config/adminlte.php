@@ -331,13 +331,28 @@ return [
             // 'icon_color' => 'red',
         ],
         [
-            'text' => 'Items',
+            'text' => 'Master Data',
             'icon'    => 'fas fa-fw fa-share',
             'submenu' => [
                 [
-                    'text' => "list",
+                    'text' => "Product",
                     'icon_color' => 'cyan',
                     'url' => "listItem",
+                ],
+                [
+                    'text' => "Ekspedisi",
+                    'icon_color' => 'cyan',
+                    'url' => "listEkspedisi",
+                ],
+                [
+                    'text' => "Dokter",
+                    'icon_color' => 'cyan',
+                    'url' => "listDokter",
+                ],
+                [
+                    'text' => "Category Product",
+                    'icon_color' => 'cyan',
+                    'url' => "listCategoryProduct",
                 ],
                 // [
                 //     'text' => "add",

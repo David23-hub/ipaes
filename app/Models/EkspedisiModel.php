@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ItemModel extends Model
+class EkspedisiModel extends Model
 {
     use HasFactory;
-    protected $table = 'items';
+    protected $table = 'ekspedisi';
     public $timestamps = false;
 
     public function GetList(){
-        return ItemModel::all()->where('deleted_by',null);
+        return EkspedisiModel::all()->where('deleted_by',null);
     }
     
     public function GetItem($id){
@@ -22,10 +22,9 @@ class ItemModel extends Model
     }
 
     public function AddItem($data){
-        $d = new ItemModel;
+        $d = new EkspedisiModel;
         $d->name = $data['name'];
         $d->status = $data['status'];
-        $d->qty = $data['qty'];
         $d->created_by = $data['created_by'];
         $d->created_at = $data['created_at'];
         return $d->save();

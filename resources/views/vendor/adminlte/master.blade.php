@@ -121,7 +121,7 @@
     @endif
 
     <script>
-        function FormatTimeStamp(str, date) {
+    function FormatTimeStamp(str, date) {
       if(str==null || str=="" ){
         return "-"
       }

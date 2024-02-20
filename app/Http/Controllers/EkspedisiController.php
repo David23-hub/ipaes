@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ItemModel;
+use App\Models\EkspedisiModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class ItemController extends Controller
+class EkspedisiController extends Controller
 {
     private $model;
     public function __construct()
     {
         $this->middleware('auth');
-        $this->model = new ItemModel;
+        $this->model = new EkspedisiModel;
     }
 
     public function index()
@@ -21,7 +21,7 @@ class ItemController extends Controller
         // $data = $this->model->GetList();
 
         // $data['data'] = json_encode($data);
-        return view('master.item');
+        return view('master.ekspedisi');
         // return view('items.list',$data);
     }
 
@@ -44,7 +44,6 @@ class ItemController extends Controller
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
-            'qty' => $input['qty'],
             'created_by' => Auth::user()->email,
             'created_at' => date('Y-m-d H:i:s')
         ];
@@ -71,7 +70,6 @@ class ItemController extends Controller
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
-            'qty' => $input['qty'],
             'updated_by' => Auth::user()->email,
             'updated_at' => date('Y-m-d H:i:s')
         ];

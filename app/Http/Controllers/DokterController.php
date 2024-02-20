@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ItemModel;
+use App\Models\DokterModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class ItemController extends Controller
+class DokterController extends Controller
 {
     private $model;
     public function __construct()
     {
         $this->middleware('auth');
-        $this->model = new ItemModel;
+        $this->model = new DokterModel;
     }
 
     public function index()
@@ -21,7 +21,7 @@ class ItemController extends Controller
         // $data = $this->model->GetList();
 
         // $data['data'] = json_encode($data);
-        return view('master.item');
+        return view('master.dokter');
         // return view('items.list',$data);
     }
 
@@ -44,11 +44,15 @@ class ItemController extends Controller
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
-            'qty' => $input['qty'],
+            'address' => $input['address'],
+            'clinic' => $input['clinic'],
+            'no_hp' => $input['no_hp'],
+            'information' => $input['information'],
+            'dob' => $input['dob'],
+            'billing_no_hp' => $input['billing_no_hp'],
             'created_by' => Auth::user()->email,
             'created_at' => date('Y-m-d H:i:s')
         ];
-        // dd($data);
 
         $result = "";
         try {
@@ -71,7 +75,12 @@ class ItemController extends Controller
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
-            'qty' => $input['qty'],
+            'address' => $input['address'],
+            'clinic' => $input['clinic'],
+            'no_hp' => $input['no_hp'],
+            'information' => $input['information'],
+            'dob' => $input['dob'],
+            'billing_no_hp' => $input['billing_no_hp'],
             'updated_by' => Auth::user()->email,
             'updated_at' => date('Y-m-d H:i:s')
         ];
