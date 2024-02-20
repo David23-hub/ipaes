@@ -16,6 +16,89 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`laravel` /*!40100 DEFAULT CHARACTER SET
 
 USE `laravel`;
 
+/*Table structure for table `category_product` */
+
+DROP TABLE IF EXISTS `category_product`;
+
+CREATE TABLE `category_product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_by` varchar(50) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` varchar(50) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `category_product` */
+
+insert  into `category_product`(`id`,`name`,`status`,`created_by`,`created_at`,`updated_by`,`updated_at`,`deleted_by`,`deleted_at`) values 
+(1,'paket',1,'david@gmail.com','2024-02-20 14:30:52','david@gmail.com','2024-02-20 14:35:36',NULL,NULL),
+(2,'product',1,'david@gmail.com','2024-02-20 14:30:57',NULL,NULL,NULL,NULL);
+
+/*Table structure for table `dokter` */
+
+DROP TABLE IF EXISTS `dokter`;
+
+CREATE TABLE `dokter` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `clinic` varchar(255) DEFAULT NULL,
+  `information` varchar(255) DEFAULT NULL,
+  `dob` varchar(255) DEFAULT NULL,
+  `no_hp` varchar(255) DEFAULT NULL,
+  `billing_no_hp` varchar(255) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_by` varchar(50) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` varchar(50) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `dokter` */
+
+insert  into `dokter`(`id`,`name`,`address`,`clinic`,`information`,`dob`,`no_hp`,`billing_no_hp`,`status`,`created_by`,`created_at`,`updated_by`,`updated_at`,`deleted_by`,`deleted_at`) values 
+(1,'david1','add1','cl1','ini info1','dob1','12341','3211',1,'david@gmail.com','2024-02-20 08:29:00','david@gmail.com','2024-02-20 08:34:16','david@gmail.com','2024-02-20 14:17:05'),
+(2,'asd','sad','123','sdsa','da','123','321',0,'davidb','2024-02-20 14:16:58',NULL,NULL,'david@gmail.com','2024-02-20 14:17:07'),
+(3,'dr dabun','tandur','klinik sehat pelita','DOKTER TAMPAN DAN PEMBERANI','23 aug 2000','081270861076','0812389123',1,'davidb','2024-02-20 14:18:08',NULL,NULL,NULL,NULL);
+
+/*Table structure for table `ekspedisi` */
+
+DROP TABLE IF EXISTS `ekspedisi`;
+
+CREATE TABLE `ekspedisi` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_by` varchar(50) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` varchar(50) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `ekspedisi` */
+
+insert  into `ekspedisi`(`id`,`name`,`status`,`created_by`,`created_at`,`updated_by`,`updated_at`,`deleted_by`,`deleted_at`) values 
+(1,'da',0,NULL,NULL,NULL,NULL,'david@gmail.com','2024-02-20 04:12:44'),
+(2,'sad',1,NULL,NULL,NULL,NULL,'david@gmail.com','2024-02-20 07:54:38'),
+(3,NULL,0,'david@gmail.com','2024-02-20 04:10:29',NULL,NULL,'david@gmail.com','2024-02-20 04:11:18'),
+(4,'wwwqe',0,'david@gmail.com','2024-02-20 04:11:15',NULL,NULL,'david@gmail.com','2024-02-20 07:54:39'),
+(5,'123',1,'david@gmail.com','2024-02-20 04:11:25',NULL,NULL,'david@gmail.com','2024-02-20 07:54:41'),
+(6,NULL,0,'david@gmail.com','2024-02-20 04:13:16',NULL,NULL,'david@gmail.com','2024-02-20 07:54:42'),
+(7,'JNE',1,'david@gmail.com','2024-02-20 07:54:50','david@gmail.com','2024-02-20 07:55:17',NULL,NULL),
+(8,'Product',0,'david@gmail.com','2024-02-20 10:19:19',NULL,NULL,NULL,NULL),
+(9,'david',0,'david@gmail.com','2024-02-20 10:20:04',NULL,NULL,NULL,NULL);
+
 /*Table structure for table `failed_jobs` */
 
 DROP TABLE IF EXISTS `failed_jobs`;
@@ -54,7 +137,16 @@ DROP TABLE IF EXISTS `items`;
 CREATE TABLE `items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT NULL,
+  `qty` int(11) DEFAULT 0,
+  `unit` varchar(10) DEFAULT NULL,
+  `category_product` int(11) DEFAULT NULL,
+  `price` int(11) DEFAULT NULL,
+  `presentation` float DEFAULT NULL,
+  `mini_desc` varchar(255) DEFAULT NULL,
+  `desc` varchar(255) DEFAULT NULL,
+  `commision_rate` float DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0,
+  `img` blob DEFAULT NULL,
   `created_by` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_by` varchar(50) DEFAULT NULL,
@@ -62,17 +154,12 @@ CREATE TABLE `items` (
   `deleted_by` varchar(50) DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `items` */
 
-insert  into `items`(`id`,`name`,`status`,`created_by`,`created_at`,`updated_by`,`updated_at`,`deleted_by`,`deleted_at`) values 
-(1,'Yanti1',1,'david@gmail.com','2023-05-24 03:31:57','david@gmail.com','2023-07-11 04:12:32','david@gmail.com','2023-07-11 09:17:02'),
-(144,'sad',0,'david@gmail.com','2023-07-11 09:14:45',NULL,NULL,'david@gmail.com','2023-07-11 09:20:51'),
-(145,'bun12',0,'david@gmail.com','2023-07-11 09:20:44','david@gmail.com','2023-07-23 08:34:30',NULL,NULL),
-(146,'asd',0,'david@gmail.com','2023-07-11 09:23:57',NULL,NULL,NULL,NULL),
-(147,'sadassaddsa',0,'david@gmail.com','2023-07-11 09:41:25',NULL,NULL,NULL,NULL),
-(148,'123',0,'david@gmail.com','2023-07-11 09:42:16',NULL,NULL,'david@gmail.com','2023-07-17 04:32:27');
+insert  into `items`(`id`,`name`,`qty`,`unit`,`category_product`,`price`,`presentation`,`mini_desc`,`desc`,`commision_rate`,`status`,`img`,`created_by`,`created_at`,`updated_by`,`updated_at`,`deleted_by`,`deleted_at`) values 
+(1,'dabun product1',1001,'Box',1,100001,2.51,'min desc1','WOW DESC1',31,1,NULL,'david@gmail.com','2024-02-20 14:50:26','david@gmail.com','2024-02-20 16:03:07',NULL,NULL);
 
 /*Table structure for table `migrations` */
 
@@ -149,7 +236,7 @@ CREATE TABLE `users` (
 /*Data for the table `users` */
 
 insert  into `users`(`id`,`name`,`email`,`email_verified_at`,`password`,`role`,`remember_token`,`created_at`,`updated_at`) values 
-(2,'davidb','david@gmail.com',NULL,'$2y$10$6BHRI7wl9BgKMBy8c4NAxOCG6yrEE6.jdN5bkcfYiuMeVdqCucQU2','admin','Fec57RTJUXizYYNIZ1WwEIfhPiMvguzzWUbsQlQULVnUs6FgZNIW55jD7bCo','2023-05-16 07:24:55','2023-05-16 07:24:55'),
+(2,'davidb','david@gmail.com',NULL,'$2y$10$6BHRI7wl9BgKMBy8c4NAxOCG6yrEE6.jdN5bkcfYiuMeVdqCucQU2','admin','9XuDYHAxhO8OoORCSoiUJ5ES2HGRPpvf9I5xBAaYKppWaOrjmjEpR4YQeLfe','2023-05-16 07:24:55','2023-05-16 07:24:55'),
 (3,'davidb','davidb@gmail.com',NULL,'$2y$10$8lJaT2cD8CiM6w4qvo8TceRh.pzv19TLHfgBWgz1seqXZpIT3IpN2',NULL,NULL,'2024-02-09 15:57:12','2024-02-09 15:57:12');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
