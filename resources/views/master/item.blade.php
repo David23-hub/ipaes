@@ -3,24 +3,24 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">List Item</h1>
+    <h1 class="m-0 text-dark">List Product</h1>
 @stop
 
 @section('content')
     <div class="card">
       <div class="card-header">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modaladd">
-          ADD ITEM
+          ADD Product
         </button>
       </div>
       <div class="card-body">
-        <table id="tableList" class="table table-striped table-bordered table-hover" width="100%">
+        <table id="tableList" class="table table-striped table-bordered table-hover" >
           <thead>
             <tr>
                 <th>No</th>
                 <th>Nama</th>
+                <th>Qty</th>
                 <th>Status</th>
-                <th>STATUS</th>
                 <th>Action</th>
             </tr>
           </thead>
@@ -43,6 +43,10 @@
           <div class="form-group">
             <label for="nama_add">Nama</label>
             <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama">
+          </div>
+          <div class="form-group">
+            <label for="qty_add">Qty</label>
+            <input type="qty_add" class="form-control" id="qty_add"  placeholder="Masukkan Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
           </div>
           <div class="form-group">
             <label for="status_add">Status</label>
@@ -81,6 +85,10 @@
             <input type="nama_update" class="form-control" id="nama_update"  placeholder="Masukkan Nama">
           </div>
           <div class="form-group">
+            <label for="qty_update">Qty</label>
+            <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+          </div>
+          <div class="form-group">
             <label for="status_update">Status</label>
             <div id="dropupdate" name="dropupdate" class="form-group">
               <select class="form-select form-control" id="status_update">
@@ -88,37 +96,6 @@
                 <option value="1">Sudah Di Packing</option>
               </select> 
             </div>
-          </div>
-        </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" id="update_btn" class="btn btn-primary">Save changes</button>
-      </div>
-    </form>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Update2-->
-<div class="modal fade" id="modalUpdate2" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Update Form2</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form id="formUpdate" role="form">
-        <div class="modal-body">
-            <input type="hidden" class="form-control" id="id_update">
-          <div class="form-group">
-            <label for="nama_update">Nama</label>
-            <input type="nama_update" class="form-control" id="nama_update"  placeholder="Masukkan Nama">
-          </div>
-          <div class="form-group">
-            <label for="status_update">Status</label>
-            <input id="toggle-demo" type="checkbox" checked data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger">
           </div>
         </div>
       <div class="modal-footer">
@@ -146,6 +123,10 @@
             <input type="nama_detail" class="form-control" id="nama_detail"  placeholder="Masukkan Nama" disabled>
           </div>
           <div class="form-group">
+            <label for="qty_detail">Qty</label>
+            <input type="qty_detail" class="form-control" id="qty_detail"  placeholder="Masukkan Qty" disabled>
+          </div>
+          <div class="form-group">
             <label for="status_detail">Status</label>
             <input type="status_detail" class="form-control" id="status_detail"  placeholder="Masukkan Status" disabled>
           </div>
@@ -169,6 +150,7 @@
   window.onload = function() {
     getAllData()
   };
+  
 
     var dataTable = $("#tableList").DataTable({
             "ordering": true,
@@ -181,15 +163,32 @@
             // pagingType: 'full_numbers',
         });
 
+
+    // Event listener for modal shown event
+    $('#modaladd').on('shown.bs.modal', function () {
+      resetModalInput();
+    });
+
+    $('#modaladd').on('hidden.bs.modal', function () {
+      resetModalInput();
+    });
+
+    function resetModalInput() {
+      document.getElementById('nama_add').value = '';
+      document.getElementById('qty_add').value = '';
+      document.getElementById('status_add').value = '0';
+    }
+
     function getAllData(){
       $.ajax({
       type: "POST",
       url: "{{url('/')}}"+"/getItems",
-    //   crossDomain: true,
       beforeSend: $.LoadingOverlay("show"),
+      afterSend:$.LoadingOverlay("hide"),
       data: { "_token": "{{ csrf_token() }}"},
       success: function (data) {
         dataTable.clear();
+        dataTable.draw();
         no = 0
         $.each(data,function(i, item){
           no++
@@ -197,29 +196,26 @@
           if(item['status']==0){
             stat = "Belum Di Packing"
           }
-          btn = '<input id="toggle-demo" type="checkbox" checked data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger">'
           
           dataTable.row.add([
               no,
               item['name'],
+              item['qty'],
               stat,
-              btn
-              ,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
               <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
-              <button class="btn btn-primary" onclick="getItemUpdate2(`+item['id']+`)">Update2</button>
               <button class="btn btn-danger" onclick="deleteItem(`+item['id']+`)">Delete</button>`,
           ])
             dataTable.draw();
         }
         )
+
         
         $('#toggle-demo').bootstrapToggle();
         
-
-        $.LoadingOverlay("hide")
       },
       error: function (result, status, err) {
+        console.log(err)
       }
     });
     }
@@ -227,17 +223,17 @@
     $('#add_btn').on('click', function(e) {
       name = $("#nama_add").val()
       status = $("#status_add").val()
+      qty = $("#qty_add").val()
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/addItem",
-        data: { "_token": "{{ csrf_token() }}","name":name, "status":status},
+        data: { "_token": "{{ csrf_token() }}","name":name, "qty":qty, "status":status},
         beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          console.log(data)
           if(data=="sukses"){
             getAllData()
             $('#modaladd').modal("hide")
-            $.LoadingOverlay("hide")
             AlertSuccess()
           }else{
             AlertError()
@@ -256,9 +252,11 @@
         url: "{{url('/')}}"+"/getItem",
         data: { "_token": "{{ csrf_token() }}","id":id},
         beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           $('#id_detail').val(data.id)
           $('#nama_detail').val(data.name)
+          $('#qty_detail').val(data.qty)
           if (data.status==0){
             $('#status_detail').val("Belum Di Packing")
           }else if (data.status==1){
@@ -267,7 +265,6 @@
           $('#created_by_detail').val(FormatTimeStamp(data.created_by,data.created_at))
           $('#updated_by_detail').val(FormatTimeStamp(data.updated_by,data.updated_at))
           $('#modalDetail').modal("show")
-          $.LoadingOverlay("hide")
         },
         error: function (result, status, err) {
           alert(err)
@@ -280,31 +277,14 @@
         type: "POST",
         url: "{{url('/')}}"+"/getItem",
         beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
         data: { "_token": "{{ csrf_token() }}","id":id},
         success: function (data) {
           $('#id_update').val(data.id)
           $('#nama_update').val(data.name)
+          $('#qty_update').val(data.qty)
           $('#status_update').val(data.status)
           $('#modalUpdate').modal("show")
-          $.LoadingOverlay("hide")
-        },
-        error: function (result, status, err) {
-        }
-      });
-    };
-
-    function getItemUpdate2(id){
-      $.ajax({
-        type: "POST",
-        url: "{{url('/')}}"+"/getItem",
-        beforeSend: $.LoadingOverlay("show"),
-        data: { "_token": "{{ csrf_token() }}","id":id},
-        success: function (data) {
-          $('#id_update').val(data.id)
-          $('#nama_update').val(data.name)
-          $('#status_update').val(data.status)
-          $('#modalUpdate2').modal("show")
-          $.LoadingOverlay("hide")
         },
         error: function (result, status, err) {
         }
@@ -314,17 +294,18 @@
     $('#update_btn').on('click', function(e) {
       name = $("#nama_update").val()
       status = $("#status_update").val()
+      qty = $("#qty_update").val()
       id = $("#id_update").val()
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/updateItem",
-        data: { "_token": "{{ csrf_token() }}","name":name, "status":status, "id":id},
+        data: { "_token": "{{ csrf_token() }}","name":name,"qty":qty, "status":status, "id":id},
         beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           if(data=="sukses"){
             getAllData()
             $('#modalUpdate').modal("hide")
-            $.LoadingOverlay("hide")
             AlertSuccess()
           }else{
             AlertError()
@@ -344,15 +325,19 @@
         url: "{{url('/')}}"+"/deleteItem",
         data: { "_token": "{{ csrf_token() }}", "id":id},
         beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
+          console.log(data)
           if(data=="sukses"){
             getAllData()
-            $.LoadingOverlay("hide")
+            AlertSuccess()
+          }else{
+            AlertError()
           }
         },
         error: function (result, status, err) {
           alert(err)
-          $.LoadingOverlay("hide")
+          AlertError()
         },
       });
     };

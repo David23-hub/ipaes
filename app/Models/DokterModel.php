@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ItemModel extends Model
+class DokterModel extends Model
 {
     use HasFactory;
-    protected $table = 'items';
+    protected $table = 'dokter';
     public $timestamps = false;
 
     public function GetList(){
-        return ItemModel::all()->where('deleted_by',null);
+        return DokterModel::all()->where('deleted_by',null);
     }
     
     public function GetItem($id){
@@ -22,10 +22,15 @@ class ItemModel extends Model
     }
 
     public function AddItem($data){
-        $d = new ItemModel;
+        $d = new DokterModel;
         $d->name = $data['name'];
         $d->status = $data['status'];
-        $d->qty = $data['qty'];
+        $d->address = $data['address'];
+        $d->clinic = $data['clinic'];
+        $d->no_hp = $data['no_hp'];
+        $d->information = $data['information'];
+        $d->dob = $data['dob'];
+        $d->billing_no_hp = $data['billing_no_hp'];
         $d->created_by = $data['created_by'];
         $d->created_at = $data['created_at'];
         return $d->save();
