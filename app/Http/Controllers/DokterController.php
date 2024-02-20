@@ -50,7 +50,7 @@ class DokterController extends Controller
             'information' => $input['information'],
             'dob' => $input['dob'],
             'billing_no_hp' => $input['billing_no_hp'],
-            'created_by' => Auth::user()->email,
+            'created_by' => Auth::user()->name,
             'created_at' => date('Y-m-d H:i:s')
         ];
 

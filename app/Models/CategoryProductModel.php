@@ -14,6 +14,9 @@ class CategoryProductModel extends Model
     public function GetList(){
         return CategoryProductModel::all()->where('deleted_by',null);
     }
+    public function GetListActive(){
+        return CategoryProductModel::all()->where('deleted_by',null)->where("status",1);
+    }
     
     public function GetItem($id){
         return $this

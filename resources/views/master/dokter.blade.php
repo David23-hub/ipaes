@@ -21,6 +21,7 @@
                 <th>Nama</th>
                 <th>Clinic</th>
                 <th>Phone Number</th>
+                <th>Input By</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -213,7 +214,6 @@
     getAllData();
   };
 
-
     var dataTable = $("#tableList").DataTable({
             "ordering": true,
             "destroy": true,
@@ -263,6 +263,7 @@
               item['name'],
               item['clinic'],
               item['no_hp'],
+              item['created_by'],
               stat,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
               <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
