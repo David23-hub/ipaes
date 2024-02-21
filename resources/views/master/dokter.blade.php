@@ -60,7 +60,7 @@
           </div>
           <div class="form-group">
             <label for="dob_add">Date of Birth</label>
-            <input type="dob_add" class="form-control" id="dob_add"  placeholder="Masukkan Tanggal Lahir">
+            <input type="date" class="form-control" id="dob_add"  placeholder="Masukkan Tanggal Lahir">
           </div>
           <div class="form-group">
             <label for="billing_no_hp_add">Billing Phone Number</label>
@@ -120,7 +120,7 @@
           </div>
           <div class="form-group">
             <label for="dob_update">Date of Birth</label>
-            <input type="dob_update" class="form-control" id="dob_update"  placeholder="Masukkan Tanggal Lahir">
+            <input type="date" class="form-control" id="dob_update"  placeholder="Masukkan Tanggal Lahir">
           </div>
           <div class="form-group">
             <label for="billing_no_hp_update">Billing Phone Number</label>
@@ -178,7 +178,7 @@
           </div>
           <div class="form-group">
             <label for="dob_detail">Date of Birth</label>
-            <input type="dob_detail" class="form-control" id="dob_detail"  placeholder="Masukkan Tanggal Lahir" disabled>
+            <input type="date" class="form-control" id="dob_detail"  placeholder="Masukkan Tanggal Lahir" disabled>
           </div>
           <div class="form-group">
             <label for="billing_no_hp_detail">Billing Phone Number</label>
