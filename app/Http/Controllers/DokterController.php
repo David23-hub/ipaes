@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DokterModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DokterController extends Controller
 {
@@ -40,7 +41,10 @@ class DokterController extends Controller
 
     public function addItem(Request $request){
         $input = $request->all();
-
+        // echo("masukkk ke function");
+        // echo($input['dob']);
+        // echo(gettype($input['dob']));
+        // print_r($input['dob']);
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
@@ -63,6 +67,8 @@ class DokterController extends Controller
                 $result="gagal";
             }
         } catch (\Throwable $th) {
+            Log::info($th);
+            echo("errorr catch");
             $result="gagal";
         }        
 

@@ -291,6 +291,8 @@
       information = $("#information_add").val()
       dob = $("#dob_add").val()
       billing_no_hp = $("#billing_no_hp_add").val()
+
+      console.log(dob, "dobbb")
       
       $.ajax({
         type: "POST",
@@ -299,6 +301,7 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
+          console.log(data, "on success")
           if(data=="sukses"){
             getAllData()
             $('#modaladd').modal("hide")
