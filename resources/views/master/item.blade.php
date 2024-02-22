@@ -17,7 +17,8 @@
         <table id="tableList" class="table table-striped table-bordered table-hover" >
           <thead>
             <tr>
-                <th>No</th>
+              <th>No</th>
+                <th>Image</th>
                 <th>Nama</th>
                 <th>Category</th>
                 <th>Stock</th>
@@ -40,13 +41,19 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form id="formadd" role="form">
+      <form id="formadd" role="form" enctype="multipart/form-data">
         <div class="modal-body">
+          <div class="form-group" >
+            <img id="preview" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0; ">
+          </div>
+          <div class="form-group" >
+            <label for="image_add">Image</label>
+            <input type="file" name="image_add" accept="image/*" id="image_add"  placeholder="Masukkan Image" onchange="previewImage(event)">
+          </div>
           <div class="form-group">
             <label for="nama_add">Nama</label>
-            <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama">
+            <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama" >
           </div>
-
           <div class="form-group">
             <label for="category_product_add">Category Product</label>
             <div id="dropadd" name="dropadd" class="form-group">
@@ -137,11 +144,17 @@
       <form id="formUpdate" role="form">
         <div class="modal-body">
             <input type="hidden" class="form-control" id="id_update">
+            <div class="form-group" >
+              <img id="preview_update" id ="image_update" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0; ">
+            </div>
+            <div class="form-group" >
+              <label for="image_update">Image</label>
+              <input type="file" name="image_update" accept="image/*" id="image_update"  placeholder="Masukkan Image" onchange="previewImageUpdate(event)">
+            </div>
             <div class="form-group">
               <label for="name_update">Nama</label>
               <input type="name_update" class="form-control" id="name_update"  placeholder="Masukkan Nama">
             </div>
-  
             <div class="form-group">
               <label for="category_product_update">Category Product</label>
               <div id="dropcategoryupdate" name="dropcategoryupdate" class="form-group">
@@ -309,6 +322,26 @@
   window.onload = function() {
     getAllData()
   };
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('preview');
+            output.src = reader.result;
+            output.style.display = 'block'; // Show the image preview
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function previewImageUpdate(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('preview_update');
+            output.src = reader.result;
+            output.style.display = 'block'; // Show the image preview
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
   
 
     var dataTable = $("#tableList").DataTable({
@@ -355,9 +388,12 @@
           if(item['status']==0){
             stat = "InActive"
           }
-          
+          path = "images/"+item['img']
+          img = `<img style="display:block; margin:auto;" src="{{asset("`+path+`")}}" height="50px" width="50px"/>`
+
           dataTable.row.add([
               no,
+              img,
               item['name'],
               item['category'],
               item['qty'] +" "+ item['unit'],
@@ -386,6 +422,9 @@
       status = $("#status_add").val()
       qty = $("#qty_add").val()
       
+      // var fileInput = document.getElementById('image_add');
+      // img = fileInput.files[0]
+
       category_product = $("#category_product_add").val()
       unit = $("#unit_add").val()
       price = $("#price_add").val()
@@ -394,11 +433,32 @@
       mini_desc = $("#mini_desc_add").val()
       desc = $("#desc_add").val()
 
+
+      var fileInput = document.getElementById('image_add');
+
+      // Construct FormData object
+      var formData = new FormData();
+      formData.append('img', fileInput.files[0]); 
+      formData.append('_token', '{{ csrf_token() }}');
+      formData.append('name', name);
+      formData.append('qty', qty);
+      formData.append('status', status);
+      formData.append('category_product', category_product);
+      formData.append('unit', unit);
+      formData.append('price', price);
+      formData.append('presentation', presentation);
+      formData.append('commision_rate', commision_rate);
+      formData.append('mini_desc', mini_desc);
+      formData.append('desc', desc);
+
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/addItem",
-        data: { "_token": "{{ csrf_token() }}","name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
-        "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc},
+        // data: { "_token": "{{ csrf_token() }}","name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
+        // "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc,"img":fileInput.files[0]},
+        data:formData,
+        processData: false,
+        contentType: false,
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
@@ -460,6 +520,10 @@
         afterSend:$.LoadingOverlay("hide"),
         data: { "_token": "{{ csrf_token() }}","id":id},
         success: function (data) {
+
+          path = "images/"+data.img
+          $('#preview_update').attr('src', path);
+
           $('#id_update').val(data.id)
           $('#name_update').val(data.name)
           $('#qty_update').val(data.qty)
@@ -493,13 +557,32 @@
       commision_rate = $("#commision_rate_update").val()
       mini_desc = $("#mini_desc_update").val()
       desc = $("#desc_update").val()
+      var fileInput = document.getElementById('image_update');
+
+      var formData = new FormData();
+      formData.append('img', fileInput.files[0]); 
+      formData.append('_token', '{{ csrf_token() }}');
+      formData.append('name', name);
+      formData.append('qty', qty);
+      formData.append('status', status);
+      formData.append('category_product', category_product);
+      formData.append('unit', unit);
+      formData.append('price', price);
+      formData.append('presentation', presentation);
+      formData.append('commision_rate', commision_rate);
+      formData.append('mini_desc', mini_desc);
+      formData.append('desc', desc);
+      formData.append('id', id);
       
       
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/updateItem",
-        data: { "_token": "{{ csrf_token() }}","id":id,"name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
-        "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc},
+        // data: { "_token": "{{ csrf_token() }}","id":id,"name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
+        // "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc},
+        data:formData,
+        processData: false,
+        contentType: false,
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
