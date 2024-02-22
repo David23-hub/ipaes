@@ -14,16 +14,16 @@
         </button>
       </div>
       <div class="card-body">
-        <table id="tableList" class="table table-striped table-bordered table-hover" >
+        {{-- <table id="tableList" class="table table-striped table-bordered table-hover" >
+           --}}
+        <table id="tableList" class="table table-bordered" >
           <thead>
             <tr>
-              <th>No</th>
-                <th>Image</th>
-                <th>Nama</th>
-                <th>Category</th>
-                <th>Stock</th>
+                <th>Photo</th>
+                <th>Name</th>
                 <th>Price</th>
-                <th>Status</th>
+                <th>Commission Rate</th>
+                <th>Product</th>
                 <th>Action</th>
             </tr>
           </thead>
@@ -308,11 +308,12 @@
     function getAllData(){
       $.ajax({
       type: "POST",
-      url: "{{url('/')}}"+"/getItems",
+      url: "{{url('/')}}"+"/getProductBundles",
       beforeSend: $.LoadingOverlay("show"),
       afterSend:$.LoadingOverlay("hide"),
       data: { "_token": "{{ csrf_token() }}"},
       success: function (data) {
+        console.log(data, "dataaa")
         dataTable.clear();
         dataTable.draw();
         no = 0
@@ -325,14 +326,23 @@
           path = "images/"+item['img']
           img = `<img style="display:block; margin:auto;" src="{{asset("`+path+`")}}" height="50px" width="50px"/>`
 
+          str = item['product']
+          strName = `<ul class="list-group list-group-flush">`
+          str.forEach((element, idx) => {
+            strName += `<li class="list-group-item" style="border-top: 0 none;">${element}</li>`
+            if (idx == str.length - 1) {
+              strName += `</ul>`
+            }
+          });
+
+          console.log(strName)
+
           dataTable.row.add([
-              no,
               img,
               item['name'],
-              item['category'],
-              item['qty'] +" "+ item['unit'],
               "Rp "+item['price'],
-              stat,
+              item['commision_rate'],
+              strName,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
               <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
               <button class="btn btn-danger" onclick="deleteItem(`+item['id']+`)">Delete</button>`,
@@ -449,96 +459,6 @@
         }
       });
     };
-
-    function getItemUpdate(id){
-      $.ajax({
-        type: "POST",
-        url: "{{url('/')}}"+"/getItem",
-        beforeSend: $.LoadingOverlay("show"),
-        afterSend:$.LoadingOverlay("hide"),
-        data: { "_token": "{{ csrf_token() }}","id":id},
-        success: function (data) {
-
-          path = "images/"+data.img
-          $('#preview_update').attr('src', path);
-
-          $('#id_update').val(data.id)
-          $('#name_update').val(data.name)
-          $('#qty_update').val(data.qty)
-          $('#status_update').val(data.status)
-
-          $("#category_product_update").val(data.category_product)
-          $("#unit_update").val(data.unit)
-          $("#price_update").val(data.price)
-          $("#presentation_update").val(data.presentation)
-          $("#commision_rate_update").val(data.commision_rate)
-          $("#mini_desc_update").val(data.mini_desc)
-          $("#desc_update").val(data.desc)
-
-          $('#modalUpdate').modal("show")
-        },
-        error: function (result, status, err) {
-        }
-      });
-    };
-
-    $('#update_btn').on('click', function(e) {
-      name = $("#name_update").val()
-      status = $("#status_update").val()
-      qty = $("#qty_update").val()
-      id = $("#id_update").val()
-      
-      category_product = $("#category_product_update").val()
-      unit = $("#unit_update").val()
-      price = $("#price_update").val()
-      presentation = $("#presentation_update").val()
-      commision_rate = $("#commision_rate_update").val()
-      mini_desc = $("#mini_desc_update").val()
-      desc = $("#desc_update").val()
-      var fileInput = document.getElementById('image_update');
-
-      var formData = new FormData();
-      formData.append('img', fileInput.files[0]); 
-      formData.append('_token', '{{ csrf_token() }}');
-      formData.append('name', name);
-      formData.append('qty', qty);
-      formData.append('status', status);
-      formData.append('category_product', category_product);
-      formData.append('unit', unit);
-      formData.append('price', price);
-      formData.append('presentation', presentation);
-      formData.append('commision_rate', commision_rate);
-      formData.append('mini_desc', mini_desc);
-      formData.append('desc', desc);
-      formData.append('id', id);
-      
-      
-      $.ajax({
-        type: "POST",
-        url: "{{url('/')}}"+"/updateItem",
-        // data: { "_token": "{{ csrf_token() }}","id":id,"name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
-        // "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc},
-        data:formData,
-        processData: false,
-        contentType: false,
-        beforeSend: $.LoadingOverlay("show"),
-        afterSend:$.LoadingOverlay("hide"),
-        success: function (data) {
-          if(data=="sukses"){
-            getAllData()
-            $('#modalUpdate').modal("hide")
-            AlertSuccess()
-          }else{
-            AlertError()
-          }
-          
-        },
-        error: function (result, status, err) {
-          alert(err)
-          $.LoadingOverlay("hide")
-        },
-      });
-    });
 
     function deleteItem(id){
       $.ajax({

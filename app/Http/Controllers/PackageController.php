@@ -40,23 +40,45 @@ class PackageController extends Controller
     // 
 
     public function getAll(Request $request){
-        $category = $this->modelCategoryProduct->GetList();
-        $data = $this->model->GetList();
-        $result = [];
-
-        foreach ($data as $key => $index) {
-            foreach ($category as $key => $cat) {
-                if ($index->category_product == $cat->id){
-                    $index->category = $cat->name;
-                    break;
+        try {
+            $products = $this->modelProduct->GetList();
+            $data = $this->model->GetList();
+            $result = [];
+            foreach ($data as $key => $index) {
+                // foreach ($product as $key => $cat) {
+                //     // if ($index->category_product == $cat->id){
+                //     //     $index->product_name = $cat->name;
+                //     //     break;
+                //     // }
+    
+                // }
+                $arrProduct = explode(";", $index->product);
+                $arrResultProduct = [];
+                foreach ($arrProduct as $keyProduct => $singleProduct) {
+                    // 1,1
+                    $single = explode(",", $singleProduct);
+                    foreach ($products as $keyP => $product) {
+                        // if ($single[0] == $product->id) {
+                            // $name = $product->name + " ( " + $single[1] + " Box" + " ) ";
+                        //     array_push($arrResultProduct, $name);
+                        //     break;
+                        // }
+                        if ($single[0] == $product->id) {
+                            $name = "$product->name ( $single[1] Box )";
+                            array_push($arrResultProduct, $name);
+                            break;
+                        }
+                    }
                 }
+                $index->product = $arrResultProduct;
+                array_push($result, $index);
             }
-            array_push($result,$index);
-        }
-
-
-        
-        return $result;
+            
+            return $result;
+        } catch (\Throwable $th) {
+            Log::error("error di throwable");
+            Log::error($th);
+        }  
     }
 
     public function getItem(Request $request){
