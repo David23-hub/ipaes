@@ -354,6 +354,11 @@ return [
                     'icon_color' => 'cyan',
                     'url' => "listCategoryProduct",
                 ],
+                [
+                    'text' => "Product Bundle",
+                    'icon_color' => 'cyan',
+                    'url' => 'listProductBundle'
+                ]
                 // [
                 //     'text' => "add",
                 //     'icon_color' => 'yellow',

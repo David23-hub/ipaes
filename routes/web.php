@@ -47,3 +47,11 @@ Route::post('/addCategoryProduct', [App\Http\Controllers\CategoryProductControll
 Route::post('/getCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'getItem']);
 Route::post('/updateCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'updateItem']);
 Route::post('/deleteCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'deleteItem']);
+
+// productBundle
+Route::get('/listProductBundle', [App\Http\Controllers\DokterController::class, 'index']);
+Route::post('/getProductBundles', [App\Http\Controllers\DokterController::class, 'getAll']);
+Route::post('/addProductBundle', [App\Http\Controllers\DokterController::class, 'addItem']);
+Route::post('/getProductBundle', [App\Http\Controllers\DokterController::class, 'getItem']);
+Route::post('/updateProductBundle', [App\Http\Controllers\DokterController::class, 'updateItem']);
+Route::post('/deleteProductBundle', [App\Http\Controllers\DokterController::class, 'deleteItem']);
