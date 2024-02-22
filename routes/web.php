@@ -49,9 +49,9 @@ Route::post('/updateCategoryProduct', [App\Http\Controllers\CategoryProductContr
 Route::post('/deleteCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'deleteItem']);
 
 // productBundle
-Route::get('/listProductBundle', [App\Http\Controllers\DokterController::class, 'index']);
-Route::post('/getProductBundles', [App\Http\Controllers\DokterController::class, 'getAll']);
-Route::post('/addProductBundle', [App\Http\Controllers\DokterController::class, 'addItem']);
-Route::post('/getProductBundle', [App\Http\Controllers\DokterController::class, 'getItem']);
-Route::post('/updateProductBundle', [App\Http\Controllers\DokterController::class, 'updateItem']);
-Route::post('/deleteProductBundle', [App\Http\Controllers\DokterController::class, 'deleteItem']);
+Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index']);
+Route::post('/getProductBundles', [App\Http\Controllers\PackageController::class, 'getAll']);
+Route::post('/addProductBundle', [App\Http\Controllers\PackageController::class, 'addItem']);
+Route::post('/getProductBundle', [App\Http\Controllers\PackageController::class, 'getItem']);
+Route::post('/updateProductBundle', [App\Http\Controllers\PackageController::class, 'updateItem']);
+Route::post('/deleteProductBundle', [App\Http\Controllers\PackageController::class, 'deleteItem']);
