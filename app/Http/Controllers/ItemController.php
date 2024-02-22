@@ -6,6 +6,7 @@ use App\Models\CategoryProductModel;
 use App\Models\ItemModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
@@ -69,11 +70,15 @@ class ItemController extends Controller
 
     public function addItem(Request $request){
         $input = $request->all();
+        $image = $request->file('img');
+        $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
+        $image->move(public_path('images'), $imageName);
 
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
             'qty' => $input['qty'],
+
             'category_product' => $input['category_product'],
             'unit' => $input['unit'],
             'price' => $input['price'],
@@ -81,6 +86,7 @@ class ItemController extends Controller
             'commision_rate' => $input['commision_rate'],
             'mini_desc' => $input['mini_desc'],
             'desc' => $input['desc'],
+            'img' => $imageName,
 
             'created_by' => Auth::user()->email,
             'created_at' => date('Y-m-d H:i:s')
@@ -92,10 +98,10 @@ class ItemController extends Controller
             if($temp){
                 $result="sukses";
             }else{
-                $result="gagal";
+                $result="gagal1";
             }
         } catch (\Throwable $th) {
-            $result="gagal";
+            $result="gagal2";
         }        
 
         return $result;
@@ -103,6 +109,11 @@ class ItemController extends Controller
 
     public function updateItem(Request $request){
         $input = $request->all();
+
+        $input = $request->all();
+        $image = $request->file('img');
+        $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
+        $image->move(public_path('images'), $imageName);
 
         $data = [
             'name' => $input['name'],
@@ -115,11 +126,13 @@ class ItemController extends Controller
             'commision_rate' => $input['commision_rate'],
             'mini_desc' => $input['mini_desc'],
             'desc' => $input['desc'],
+            'img' => $imageName,
 
             'updated_by' => Auth::user()->email,
             'updated_at' => date('Y-m-d H:i:s')
         ];
         // var_dump($input["id"]);
+        // var_dump($data);
 
         $result = "";
         try {
