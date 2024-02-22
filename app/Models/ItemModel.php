@@ -26,6 +26,16 @@ class ItemModel extends Model
         $d->name = $data['name'];
         $d->status = $data['status'];
         $d->qty = $data['qty'];
+
+        $d->category_product = $data['category_product'];
+        $d->unit = $data['unit'];
+        $d->price = $data['price'];
+        $d->presentation = $data['presentation'];
+        $d->commision_rate = $data['commision_rate'];
+        $d->mini_desc = $data['mini_desc'];
+        $d->desc = $data['desc'];
+        $d->img = $data['img'];
+
         $d->created_by = $data['created_by'];
         $d->created_at = $data['created_at'];
         return $d->save();

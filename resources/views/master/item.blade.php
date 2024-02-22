@@ -17,9 +17,12 @@
         <table id="tableList" class="table table-striped table-bordered table-hover" >
           <thead>
             <tr>
-                <th>No</th>
+              <th>No</th>
+                <th>Image</th>
                 <th>Nama</th>
-                <th>Qty</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Price</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -30,7 +33,7 @@
 
 <!-- Modal Add-->
 <div class="modal fade" id="modaladd" tabindex="-1" role="dialog" aria-labelledby="modaladdTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Add Form</h5>
@@ -38,22 +41,83 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form id="formadd" role="form">
+      <form id="formadd" role="form" enctype="multipart/form-data">
         <div class="modal-body">
-          <div class="form-group">
-            <label for="nama_add">Nama</label>
-            <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama">
+          <div class="form-group" >
+            <img id="preview" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0; ">
+          </div>
+          <div class="form-group" >
+            <label for="image_add">Image</label>
+            <input type="file" name="image_add" accept="image/*" id="image_add"  placeholder="Masukkan Image" onchange="previewImage(event)">
           </div>
           <div class="form-group">
-            <label for="qty_add">Qty</label>
-            <input type="qty_add" class="form-control" id="qty_add"  placeholder="Masukkan Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            <label for="nama_add">Nama</label>
+            <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama" >
+          </div>
+          <div class="form-group">
+            <label for="category_product_add">Category Product</label>
+            <div id="dropadd" name="dropadd" class="form-group">
+              <select class="form-select form-control" id="category_product_add">
+                @foreach($data as $item)
+                  <option value={{$item->id}}>{{$item->name}}</option>
+                @endforeach
+              </select> 
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="unit_add">Unit Product</label>
+            <div id="dropadd" name="dropadd" class="form-group">
+              <select class="form-select form-control" id="unit_add">
+                  <option value="Box">Box</option>
+                  <option value="Vial">Vial</option>
+              </select> 
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="price_add">Price (ex: 100000)</label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Rp</div>
+              </div>
+              <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="presentation_add">Presentation (ex: 2.5)</label>
+            <div class="input-group mb-2">
+              <input type="presentation_add" class="form-control" id="presentation_add"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+              <div class="input-group-prepend">
+                <div class="input-group-text">%</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="commision_rate_add">Commission Rate (ex: 2.5)</label>
+            <div class="input-group mb-2">
+              <input type="commision_rate_add" class="form-control" id="commision_rate_add"  placeholder="Masukkan Rate Komisi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+              <div class="input-group-prepend">
+                <div class="input-group-text">%</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="qty_add">Stock (Numeric Only)</label>
+            <input type="qty_add" class="form-control" id="qty_add"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+          </div>
+          <div class="form-group">
+            <label for="mini_desc_add">Mini Description</label>
+            <textarea type="mini_desc_add" class="form-control" id="mini_desc_add" rows="1"  placeholder="Masukkan Informasi Mini"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="desc_add">Description</label>
+            <textarea type="desc_add" class="form-control" id="desc_add" rows="4"  placeholder="Masukkan Informasi"></textarea>
           </div>
           <div class="form-group">
             <label for="status_add">Status</label>
             <div id="dropadd" name="dropadd" class="form-group">
               <select class="form-select form-control" id="status_add">
-                <option value="0">Belum Di Packing</option>
-                <option value="1">Sudah Di Packing</option>
+                <option value="0">InActive</option>
+                <option value="1">Active</option>
               </select> 
             </div>
           </div>
@@ -80,23 +144,86 @@
       <form id="formUpdate" role="form">
         <div class="modal-body">
             <input type="hidden" class="form-control" id="id_update">
-          <div class="form-group">
-            <label for="nama_update">Nama</label>
-            <input type="nama_update" class="form-control" id="nama_update"  placeholder="Masukkan Nama">
-          </div>
-          <div class="form-group">
-            <label for="qty_update">Qty</label>
-            <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
-          </div>
-          <div class="form-group">
-            <label for="status_update">Status</label>
-            <div id="dropupdate" name="dropupdate" class="form-group">
-              <select class="form-select form-control" id="status_update">
-                <option value="0">Belum Di Packing</option>
-                <option value="1">Sudah Di Packing</option>
-              </select> 
+            <div class="form-group" >
+              <img id="preview_update" id ="image_update" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0; ">
             </div>
-          </div>
+            <div class="form-group" >
+              <label for="image_update">Image</label>
+              <input type="file" name="image_update" accept="image/*" id="image_update"  placeholder="Masukkan Image" onchange="previewImageUpdate(event)">
+            </div>
+            <div class="form-group">
+              <label for="name_update">Nama</label>
+              <input type="name_update" class="form-control" id="name_update"  placeholder="Masukkan Nama">
+            </div>
+            <div class="form-group">
+              <label for="category_product_update">Category Product</label>
+              <div id="dropcategoryupdate" name="dropcategoryupdate" class="form-group">
+                <select class="form-select form-control" id="category_product_update">
+                  @foreach($data as $item)
+                    <option value={{$item->id}}>{{$item->name}}</option>
+                  @endforeach
+                </select> 
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="unit_update">Unit Product</label>
+              <div id="dropunitupdate" name="dropunitupdate" class="form-group">
+                <select class="form-select form-control" id="unit_update">
+                    <option value="Box">Box</option>
+                    <option value="Vial">Vial</option>
+                </select> 
+              </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="price_update">Price (ex: 100000)</label>
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Rp</div>
+                </div>
+                <input type="price_update" class="form-control" id="price_update"  placeholder="Masukkan Harga Product" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="presentation_update">Presentation (ex: 2.5)</label>
+              <div class="input-group mb-2">
+                <input type="presentation_update" class="form-control" id="presentation_update"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">%</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="commision_rate_update">Commission Rate (ex: 2.5)</label>
+              <div class="input-group mb-2">
+                <input type="commision_rate_update" class="form-control" id="commision_rate_update"  placeholder="Masukkan Rate Komisi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">%</div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="form-group">
+              <label for="qty_update">Stock (Numeric Only)</label>
+              <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            </div>
+            <div class="form-group">
+              <label for="mini_desc_update">Mini Description</label>
+              <textarea type="mini_desc_update" class="form-control" id="mini_desc_update" rows="1"  placeholder="Masukkan Informasi Mini"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="desc_update">Description</label>
+              <textarea type="desc_update" class="form-control" id="desc_update" rows="4"  placeholder="Masukkan Informasi"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="status_update">Status</label>
+              <div id="dropupdate" name="dropupdate" class="form-group">
+                <select class="form-select form-control" id="status_update">
+                  <option value="0">InActive</option>
+                  <option value="1">Active</option>
+                </select> 
+              </div>
+            </div>
         </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -118,13 +245,58 @@
         </button>
       </div>
         <div class="modal-body">
+          
           <div class="form-group">
             <label for="nama_detail">Nama</label>
             <input type="nama_detail" class="form-control" id="nama_detail"  placeholder="Masukkan Nama" disabled>
           </div>
           <div class="form-group">
-            <label for="qty_detail">Qty</label>
-            <input type="qty_detail" class="form-control" id="qty_detail"  placeholder="Masukkan Qty" disabled>
+            <label for="category_product_detail">Category Product</label>
+            <input type="category_product_detail" class="form-control" id="category_product_detail"  placeholder="Masukkan Status" disabled>
+          </div>
+          <div class="form-group">
+            <label for="qty_detail">Stock</label>
+            <input type="qty_detail" class="form-control" id="qty_detail"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
+          </div>
+          <div class="form-group">
+            <label for="unit_detail">Unit Product</label>
+            <input type="unit_detail" class="form-control" id="unit_detail"  placeholder="Masukkan Status" disabled>
+          </div>
+          <div class="form-group">
+            <label for="price_detail">Price (ex: 100000)</label>
+            
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Rp</div>
+              </div>
+              <input type="price_detail" class="form-control" id="price_detail"  placeholder="Masukkan Harga Product" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="presentation_detail">Presentation (ex: 2.5)</label>
+            <div class="input-group mb-2">
+              <input type="presentation_detail" class="form-control" id="presentation_detail"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');" disabled>
+              <div class="input-group-prepend">
+                <div class="input-group-text">%</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="commision_rate_detail">Commission Rate (ex: 2.5)</label>
+            <div class="input-group mb-2">
+              <input type="commision_rate_detail" class="form-control" id="commision_rate_detail"  placeholder="Masukkan Rate Komisi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');" disabled>
+              <div class="input-group-prepend">
+                <div class="input-group-text">%</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="mini_desc_detail">Mini Description</label>
+            <textarea type="mini_desc_detail" class="form-control" id="mini_desc_detail" rows="1"  placeholder="Masukkan Informasi Mini" disabled></textarea>
+          </div>
+          <div class="form-group">
+            <label for="desc_detail">Description</label>
+            <textarea type="desc_detail" class="form-control" id="desc_detail" rows="4"  placeholder="Masukkan Informasi" disabled></textarea>
           </div>
           <div class="form-group">
             <label for="status_detail">Status</label>
@@ -150,6 +322,26 @@
   window.onload = function() {
     getAllData()
   };
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('preview');
+            output.src = reader.result;
+            output.style.display = 'block'; // Show the image preview
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function previewImageUpdate(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('preview_update');
+            output.src = reader.result;
+            output.style.display = 'block'; // Show the image preview
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
   
 
     var dataTable = $("#tableList").DataTable({
@@ -192,15 +384,20 @@
         no = 0
         $.each(data,function(i, item){
           no++
-          stat = "Sudah Di Packing"
+          stat = "Active"
           if(item['status']==0){
-            stat = "Belum Di Packing"
+            stat = "InActive"
           }
-          
+          path = "images/"+item['img']
+          img = `<img style="display:block; margin:auto;" src="{{asset("`+path+`")}}" height="50px" width="50px"/>`
+
           dataTable.row.add([
               no,
+              img,
               item['name'],
-              item['qty'],
+              item['category'],
+              item['qty'] +" "+ item['unit'],
+              "Rp "+item['price'],
               stat,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
               <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
@@ -224,10 +421,44 @@
       name = $("#nama_add").val()
       status = $("#status_add").val()
       qty = $("#qty_add").val()
+      
+      // var fileInput = document.getElementById('image_add');
+      // img = fileInput.files[0]
+
+      category_product = $("#category_product_add").val()
+      unit = $("#unit_add").val()
+      price = $("#price_add").val()
+      presentation = $("#presentation_add").val()
+      commision_rate = $("#commision_rate_add").val()
+      mini_desc = $("#mini_desc_add").val()
+      desc = $("#desc_add").val()
+
+
+      var fileInput = document.getElementById('image_add');
+
+      // Construct FormData object
+      var formData = new FormData();
+      formData.append('img', fileInput.files[0]); 
+      formData.append('_token', '{{ csrf_token() }}');
+      formData.append('name', name);
+      formData.append('qty', qty);
+      formData.append('status', status);
+      formData.append('category_product', category_product);
+      formData.append('unit', unit);
+      formData.append('price', price);
+      formData.append('presentation', presentation);
+      formData.append('commision_rate', commision_rate);
+      formData.append('mini_desc', mini_desc);
+      formData.append('desc', desc);
+
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/addItem",
-        data: { "_token": "{{ csrf_token() }}","name":name, "qty":qty, "status":status},
+        // data: { "_token": "{{ csrf_token() }}","name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
+        // "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc,"img":fileInput.files[0]},
+        data:formData,
+        processData: false,
+        contentType: false,
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
@@ -258,10 +489,19 @@
           $('#nama_detail').val(data.name)
           $('#qty_detail').val(data.qty)
           if (data.status==0){
-            $('#status_detail').val("Belum Di Packing")
+            $('#status_detail').val("InActive")
           }else if (data.status==1){
-            $('#status_detail').val("Sudah Di Packing")
+            $('#status_detail').val("Active")
           }
+
+          $("#category_product_detail").val(data.category)
+          $("#unit_detail").val(data.unit)
+          $("#price_detail").val(data.price)
+          $("#presentation_detail").val(data.presentation)
+          $("#commision_rate_detail").val(data.commision_rate)
+          $("#mini_desc_detail").val(data.mini_desc)
+          $("#desc_detail").val(data.desc)
+
           $('#created_by_detail').val(FormatTimeStamp(data.created_by,data.created_at))
           $('#updated_by_detail').val(FormatTimeStamp(data.updated_by,data.updated_at))
           $('#modalDetail').modal("show")
@@ -280,10 +520,23 @@
         afterSend:$.LoadingOverlay("hide"),
         data: { "_token": "{{ csrf_token() }}","id":id},
         success: function (data) {
+
+          path = "images/"+data.img
+          $('#preview_update').attr('src', path);
+
           $('#id_update').val(data.id)
-          $('#nama_update').val(data.name)
+          $('#name_update').val(data.name)
           $('#qty_update').val(data.qty)
           $('#status_update').val(data.status)
+
+          $("#category_product_update").val(data.category_product)
+          $("#unit_update").val(data.unit)
+          $("#price_update").val(data.price)
+          $("#presentation_update").val(data.presentation)
+          $("#commision_rate_update").val(data.commision_rate)
+          $("#mini_desc_update").val(data.mini_desc)
+          $("#desc_update").val(data.desc)
+
           $('#modalUpdate').modal("show")
         },
         error: function (result, status, err) {
@@ -292,14 +545,44 @@
     };
 
     $('#update_btn').on('click', function(e) {
-      name = $("#nama_update").val()
+      name = $("#name_update").val()
       status = $("#status_update").val()
       qty = $("#qty_update").val()
       id = $("#id_update").val()
+      
+      category_product = $("#category_product_update").val()
+      unit = $("#unit_update").val()
+      price = $("#price_update").val()
+      presentation = $("#presentation_update").val()
+      commision_rate = $("#commision_rate_update").val()
+      mini_desc = $("#mini_desc_update").val()
+      desc = $("#desc_update").val()
+      var fileInput = document.getElementById('image_update');
+
+      var formData = new FormData();
+      formData.append('img', fileInput.files[0]); 
+      formData.append('_token', '{{ csrf_token() }}');
+      formData.append('name', name);
+      formData.append('qty', qty);
+      formData.append('status', status);
+      formData.append('category_product', category_product);
+      formData.append('unit', unit);
+      formData.append('price', price);
+      formData.append('presentation', presentation);
+      formData.append('commision_rate', commision_rate);
+      formData.append('mini_desc', mini_desc);
+      formData.append('desc', desc);
+      formData.append('id', id);
+      
+      
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/updateItem",
-        data: { "_token": "{{ csrf_token() }}","name":name,"qty":qty, "status":status, "id":id},
+        // data: { "_token": "{{ csrf_token() }}","id":id,"name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
+        // "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc},
+        data:formData,
+        processData: false,
+        contentType: false,
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
