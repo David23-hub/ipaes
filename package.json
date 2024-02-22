@@ -20,6 +20,7 @@
         "sass-loader": "^11.0.1"
     },
     "dependencies": {
-        "bootstrap-datepicker": "^1.10.0"
+        "bootstrap-datepicker": "^1.10.0",
+        "flatpickr": "^4.6.13"
     }
 }

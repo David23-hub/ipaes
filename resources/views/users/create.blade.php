@@ -34,7 +34,7 @@
                         <label for="exampleInputPassword">Konfirmasi Password</label>
                         <input type="password" class="form-control" id="exampleInputPassword" placeholder="Konfirmasi Password" name="password_confirmation">
                     </div>
-
+                    
                 </div>
 
                 <div class="card-footer">
