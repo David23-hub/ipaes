@@ -14,20 +14,24 @@
         </button>
       </div>
       <div class="card-body">
-        <table id="tableList" class="table table-striped table-bordered table-hover" >
-          <thead>
-            <tr>
-              <th>No</th>
-                <th>Image</th>
-                <th>Nama</th>
-                <th>Category</th>
-                <th>Stock</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-          </thead>
-        </table>
+        <div class="table-responsive">
+          <table id="tableList" class="table table-striped table-bordered table-hover" >
+            <thead>
+              <tr>
+                <th>No</th>
+                  <th>Image</th>
+                  <th>Nama</th>
+                  <th>Category</th>
+                  <th>Stock</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Action</th>
+              </tr>
+            </thead>
+          </table>
+
+        </div>
+        
       </div>
     </div>
 
@@ -44,7 +48,7 @@
       <form id="formadd" role="form" enctype="multipart/form-data">
         <div class="modal-body">
           <div class="form-group" >
-            <img id="preview" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0; ">
+            <img id="preview" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0;">
           </div>
           <div class="form-group" >
             <label for="image_add">Image</label>
@@ -83,12 +87,9 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="presentation_add">Presentation (ex: 2.5)</label>
+            <label for="presentation_add">Presentation</label>
             <div class="input-group mb-2">
               <input type="presentation_add" class="form-control" id="presentation_add"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
-              <div class="input-group-prepend">
-                <div class="input-group-text">%</div>
-              </div>
             </div>
           </div>
           <div class="form-group">
@@ -185,12 +186,9 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="presentation_update">Presentation (ex: 2.5)</label>
+              <label for="presentation_update">Presentation</label>
               <div class="input-group mb-2">
                 <input type="presentation_update" class="form-control" id="presentation_update"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
-                <div class="input-group-prepend">
-                  <div class="input-group-text">%</div>
-                </div>
               </div>
             </div>
             <div class="form-group">
@@ -273,12 +271,9 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="presentation_detail">Presentation (ex: 2.5)</label>
+            <label for="presentation_detail">Presentation</label>
             <div class="input-group mb-2">
               <input type="presentation_detail" class="form-control" id="presentation_detail"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');" disabled>
-              <div class="input-group-prepend">
-                <div class="input-group-text">%</div>
-              </div>
             </div>
           </div>
           <div class="form-group">
@@ -388,8 +383,13 @@
           if(item['status']==0){
             stat = "InActive"
           }
+
           path = "images/"+item['img']
-          img = `<img style="display:block; margin:auto;" src="{{asset("`+path+`")}}" height="50px" width="50px"/>`
+          if(item['img']!=""){
+            img = `<img style="display:block; margin:auto;" src="{{asset("`+path+`")}}" height="50px" width="50px"/>`
+          }else{
+            img = `<img id="preview" style="width: 50px; height: 50px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;">`
+          }
 
           dataTable.row.add([
               no,
@@ -522,7 +522,9 @@
         success: function (data) {
 
           path = "images/"+data.img
-          $('#preview_update').attr('src', path);
+          if(data.img!=""){
+            $('#preview_update').attr('src', path);
+          }
 
           $('#id_update').val(data.id)
           $('#name_update').val(data.name)

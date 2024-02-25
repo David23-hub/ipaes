@@ -14,16 +14,18 @@
         </button>
       </div>
       <div class="card-body">
-        <table id="tableList" class="table table-striped table-bordered table-hover" >
-          <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-          </thead>
-        </table>
+        <div class="table-responsive">
+          <table id="tableList" class="table table-striped table-bordered table-hover" >
+            <thead>
+              <tr>
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Status</th>
+                  <th>Action</th>
+              </tr>
+            </thead>
+          </table>  
+        </div>
       </div>
     </div>
 

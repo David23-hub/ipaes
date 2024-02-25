@@ -14,8 +14,6 @@ Route::get('/', function(){
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-// Route::resource('items', \App\Http\Controllers\ItemController::class)->middleware('auth');
-
 // items
 Route::get('/listItem', [App\Http\Controllers\ItemController::class, 'index'])->name('homelist');
 Route::post('/getItems', [App\Http\Controllers\ItemController::class, 'getAll'])->name('getAll');
@@ -47,3 +45,11 @@ Route::post('/addCategoryProduct', [App\Http\Controllers\CategoryProductControll
 Route::post('/getCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'getItem']);
 Route::post('/updateCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'updateItem']);
 Route::post('/deleteCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'deleteItem']);
+
+// List Product
+Route::get('/listProduct', [App\Http\Controllers\ListProductController::class, 'index']);
+Route::post('/getProducts', [App\Http\Controllers\ListProductController::class, 'getAll']);
+Route::post('/addProduct', [App\Http\Controllers\ListProductController::class, 'addItem']);
+Route::post('/getProduct', [App\Http\Controllers\ListProductController::class, 'getItem']);
+Route::post('/updateProduct', [App\Http\Controllers\ListProductController::class, 'updateItem']);
+Route::post('/deleteProduct', [App\Http\Controllers\ListProductController::class, 'deleteItem']);
