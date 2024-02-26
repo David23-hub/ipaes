@@ -9,7 +9,7 @@ use App\Models\ItemModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class CartController extends Controller
+class ListPOController extends Controller
 {
     private $model;
     private $cart;

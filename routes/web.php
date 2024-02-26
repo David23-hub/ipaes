@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 
 Auth::routes();
@@ -56,6 +57,7 @@ Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO']);
 
 Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index']);
 Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'GetListCart']);
+
 // productBundle
 Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index']);
 Route::post('/getProductBundles', [App\Http\Controllers\PackageController::class, 'getAll']);
