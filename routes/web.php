@@ -14,8 +14,6 @@ Route::get('/', function(){
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-// Route::resource('items', \App\Http\Controllers\ItemController::class)->middleware('auth');
-
 // items
 Route::get('/listItem', [App\Http\Controllers\ItemController::class, 'index'])->name('homelist');
 Route::post('/getItems', [App\Http\Controllers\ItemController::class, 'getAll'])->name('getAll');
@@ -47,3 +45,14 @@ Route::post('/addCategoryProduct', [App\Http\Controllers\CategoryProductControll
 Route::post('/getCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'getItem']);
 Route::post('/updateCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'updateItem']);
 Route::post('/deleteCategoryProduct', [App\Http\Controllers\CategoryProductController::class, 'deleteItem']);
+
+// List Product
+Route::get('/listProduct', [App\Http\Controllers\ListProductController::class, 'index']);
+Route::post('/addCart', [App\Http\Controllers\ListProductController::class, 'addCartDetail']);
+
+// List Product
+Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index']);
+Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO']);
+
+Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index']);
+Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'GetListCart']);

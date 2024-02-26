@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'use_ico_only' => false,
+    'use_ico_only' => true,
     'use_full_favicon' => false,
 
     /*
@@ -332,6 +332,30 @@ return [
             // 'icon_color' => 'red',
         ],
         [
+            'text' => 'Sales',
+            'icon'=> 'fas fa-user-tie',
+            'submenu'=>[
+                [
+                    'text'=>'Cart',
+                    'icon'=>'fas fa-shopping-cart',
+                    'icon_color'=>'cyan',
+                    'url'=>'viewCart',
+                ],
+                [
+                    'text'=>'List Product',
+                    'icon'=>'fas fa-boxes',
+                    'icon_color'=>'cyan',
+                    'url'=>'listProduct',
+                ],
+                [
+                    'text'=>'List PO',
+                    'icon'=>'fas fa-boxes',
+                    'icon_color'=>'cyan',
+                    'url'=>'listPO',
+                ],
+            ],
+        ],
+        [
             'text' => 'Master Data',
             'icon'    => 'fas fa-fw fa-share',
             'submenu' => [
@@ -442,7 +466,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',

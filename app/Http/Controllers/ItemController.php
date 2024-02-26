@@ -6,7 +6,6 @@ use App\Models\CategoryProductModel;
 use App\Models\ItemModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
@@ -70,9 +69,18 @@ class ItemController extends Controller
 
     public function addItem(Request $request){
         $input = $request->all();
-        $image = $request->file('img');
-        $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
-        $image->move(public_path('images'), $imageName);
+
+
+        if ($request->hasFile('img')) {
+            // Image is uploaded
+            $image = $request->file('img');
+            $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
+            $image->move(public_path('images'), $imageName);
+        } else {
+            // Image is not uploaded
+            $imageName="";
+        }
+        
 
         $data = [
             'name' => $input['name'],
@@ -110,27 +118,64 @@ class ItemController extends Controller
     public function updateItem(Request $request){
         $input = $request->all();
 
-        $input = $request->all();
-        $image = $request->file('img');
-        $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
-        $image->move(public_path('images'), $imageName);
+        if ($request->hasFile('img')) {
+            // Image is uploaded
+            $image = $request->file('img');
+            $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
+            $image->move(public_path('images'), $imageName);
 
-        $data = [
-            'name' => $input['name'],
-            'status' => $input['status'],
-            'qty' => $input['qty'],
-            'category_product' => $input['category_product'],
-            'unit' => $input['unit'],
-            'price' => $input['price'],
-            'presentation' => $input['presentation'],
-            'commision_rate' => $input['commision_rate'],
-            'mini_desc' => $input['mini_desc'],
-            'desc' => $input['desc'],
-            'img' => $imageName,
+            $data = [
+                'name' => $input['name'],
+                'status' => $input['status'],
+                'qty' => $input['qty'],
+                'category_product' => $input['category_product'],
+                'unit' => $input['unit'],
+                'price' => $input['price'],
+                'presentation' => $input['presentation'],
+                'commision_rate' => $input['commision_rate'],
+                'mini_desc' => $input['mini_desc'],
+                'desc' => $input['desc'],
+                'img' => $imageName,
+    
+                'updated_by' => Auth::user()->email,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+        } else {
+            // Image is not uploaded
+            $data = [
+                'name' => $input['name'],
+                'status' => $input['status'],
+                'qty' => $input['qty'],
+                'category_product' => $input['category_product'],
+                'unit' => $input['unit'],
+                'price' => $input['price'],
+                'presentation' => $input['presentation'],
+                'commision_rate' => $input['commision_rate'],
+                'mini_desc' => $input['mini_desc'],
+                'desc' => $input['desc'],
+    
+                'updated_by' => Auth::user()->email,
+                'updated_at' => date('Y-m-d H:i:s')
+            ];
+        }
 
-            'updated_by' => Auth::user()->email,
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
+
+        // $data = [
+        //     'name' => $input['name'],
+        //     'status' => $input['status'],
+        //     'qty' => $input['qty'],
+        //     'category_product' => $input['category_product'],
+        //     'unit' => $input['unit'],
+        //     'price' => $input['price'],
+        //     'presentation' => $input['presentation'],
+        //     'commision_rate' => $input['commision_rate'],
+        //     'mini_desc' => $input['mini_desc'],
+        //     'desc' => $input['desc'],
+        //     'img' => $imageName,
+
+        //     'updated_by' => Auth::user()->email,
+        //     'updated_at' => date('Y-m-d H:i:s')
+        // ];
         // var_dump($input["id"]);
         // var_dump($data);
 

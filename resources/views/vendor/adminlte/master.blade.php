@@ -52,7 +52,7 @@
 
     {{-- Favicon --}}
     @if(config('adminlte.use_ico_only'))
-        <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
+        <link rel="shortcut icon" href="{{ asset('assets/img/icon-title.png') }}" />
     @elseif(config('adminlte.use_full_favicon'))
         <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
         <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('favicons/apple-icon-57x57.png') }}">
@@ -164,6 +164,14 @@
             icon: 'error',
             title: 'Error',
             text: 'Something went wrong!',
+        })
+    }
+
+    function AlertWarningWithMsg(msg){
+        Swal.fire({
+            icon: 'warning',
+            title: 'Error',
+            text: msg,
         })
     }
     </script>
