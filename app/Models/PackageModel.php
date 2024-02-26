@@ -5,18 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ItemModel extends Model
+class PackageModel extends Model
 {
     use HasFactory;
-    protected $table = 'items';
+    protected $table = 'package';
     public $timestamps = false;
 
     public function GetList(){
-        return ItemModel::all()->where('deleted_by',null);
-    }
-
-    public function GetListActive() {
-        return ItemModel::all()->where('deleted_by',null)->where("status",1);
+        return PackageModel::all()->where('deleted_by',null);
     }
     
     public function GetItem($id){
@@ -26,17 +22,12 @@ class ItemModel extends Model
     }
 
     public function AddItem($data){
-        $d = new ItemModel;
+        $d = new PackageModel;
         $d->name = $data['name'];
-        $d->status = $data['status'];
-        $d->qty = $data['qty'];
-
+        $d->product = $data['product'];
         $d->category_product = $data['category_product'];
-        $d->unit = $data['unit'];
         $d->price = $data['price'];
-        $d->presentation = $data['presentation'];
         $d->commision_rate = $data['commision_rate'];
-        $d->mini_desc = $data['mini_desc'];
         $d->desc = $data['desc'];
         $d->img = $data['img'];
 
