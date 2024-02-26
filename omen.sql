@@ -239,6 +239,26 @@ insert  into `users`(`id`,`name`,`email`,`email_verified_at`,`password`,`role`,`
 (2,'davidb','david@gmail.com',NULL,'$2y$10$6BHRI7wl9BgKMBy8c4NAxOCG6yrEE6.jdN5bkcfYiuMeVdqCucQU2','admin','9XuDYHAxhO8OoORCSoiUJ5ES2HGRPpvf9I5xBAaYKppWaOrjmjEpR4YQeLfe','2023-05-16 07:24:55','2023-05-16 07:24:55'),
 (3,'davidb','davidb@gmail.com',NULL,'$2y$10$8lJaT2cD8CiM6w4qvo8TceRh.pzv19TLHfgBWgz1seqXZpIT3IpN2',NULL,NULL,'2024-02-09 15:57:12','2024-02-09 15:57:12');
 
+-- laravel.package definition
+
+CREATE TABLE `package` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `category_product` int DEFAULT NULL,
+  `price` int DEFAULT NULL,
+  `desc` varchar(255) DEFAULT NULL,
+  `product` varchar(255) DEFAULT NULL,
+  `commision_rate` float DEFAULT NULL,
+  `status` tinyint(1) DEFAULT '0',
+  `img` blob,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_by` varchar(50) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_by` varchar(50) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

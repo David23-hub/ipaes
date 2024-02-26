@@ -341,7 +341,7 @@
               img,
               item['name'],
               "Rp "+item['price'],
-              item['commision_rate'],
+              item['commision_rate'] + "%",
               strName,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
               <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
