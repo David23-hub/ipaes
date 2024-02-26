@@ -3,7 +3,7 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">List Ekspedisi</h1>
+    <h1 class="m-0 text-dark">List Category Product</h1>
 @stop
 
 @section('content')
@@ -46,12 +46,11 @@
             <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama">
           </div>
           <div class="form-group">
-            <label for="status_add">Status</label>
             <div id="dropadd" name="dropadd" class="form-group">
-              <select class="form-select form-control" id="status_add">
-                <option value="0">InActive</option>
-                <option value="1">Active</option>
-              </select> 
+              <div style="text-align: right">
+                <input type="checkbox" id="status_add" name="status_add">
+                <label for="status_add"> Active</label><br>
+              </div>
             </div>
           </div>
         </div>
@@ -82,12 +81,11 @@
             <input type="nama_update" class="form-control" id="nama_update"  placeholder="Masukkan Nama">
           </div>
           <div class="form-group">
-            <label for="status_update">Status</label>
-            <div id="dropupdate" name="dropupdate" class="form-group">
-              <select class="form-select form-control" id="status_update">
-                <option value="0">InActive</option>
-                <option value="1">Active</option>
-              </select> 
+            <div id="dropadd" name="dropadd" class="form-group">
+              <div style="text-align: right">
+                <input type="checkbox" id="status_update" name="status_update">
+                <label for="status_update"> Active</label><br>
+              </div>
             </div>
           </div>
         </div>
@@ -139,6 +137,22 @@
   window.onload = function() {
     getAllData()
   };
+  $('#status_add').change(function() {
+        // If checkbox is checked, set its value to "1"; otherwise, set it to "0"
+        if ($(this).is(':checked')) {
+            $(this).val('1');
+        } else {
+            $(this).val('0');
+        }
+    });
+    $('#status_update').change(function() {
+        // If checkbox is checked, set its value to "1"; otherwise, set it to "0"
+        if ($(this).is(':checked')) {
+            $(this).val('1');
+        } else {
+            $(this).val('0');
+        }
+    });
 
     var dataTable = $("#tableList").DataTable({
             "ordering": true,
@@ -268,7 +282,9 @@
         success: function (data) {
           $('#id_update').val(data.id)
           $('#nama_update').val(data.name)
-          $('#status_update').val(data.status)
+          if (data.status==1){
+            $('#status_update').prop('checked', true);
+          }
           $('#modalUpdate').modal("show")
         },
         error: function (result, status, err) {

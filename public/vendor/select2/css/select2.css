@@ -10,7 +10,21 @@
     display: block;
     height: 28px;
     user-select: none;
-    -webkit-user-select: none; }
+    -webkit-user-select: none; 
+  }
+.select2-container .select2-selection--single {
+    height: calc(1.5em + 0.75rem + 2px); /* Match Bootstrap input height */
+    padding: 0.375rem 0.75rem; /* Match Bootstrap input padding */
+    font-size: 1rem; /* Match Bootstrap input font size */
+    line-height: 1.5; /* Match Bootstrap input line height */
+    color: #495057; /* Match Bootstrap input text color */
+    background-color: #fff; /* Match Bootstrap input background color */
+    background-clip: padding-box;
+    border: 1px solid #ced4da; /* Match Bootstrap input border */
+    border-radius: 0.25rem; /* Match Bootstrap input border radius */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
     .select2-container .select2-selection--single .select2-selection__rendered {
       display: block;
       padding-left: 8px;

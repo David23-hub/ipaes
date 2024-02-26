@@ -148,20 +148,23 @@ document.getElementById('search_product').addEventListener('input', function(eve
         clearTimeout(timeoutId); // Clear previous timeout if exists
     }
     timeoutId = setTimeout(function() {
-        alert("You entered: " + $('#search_product').val());
+      msg = $('#search_product').val();
+      getAllDataByName(msg)
+
         timeoutId = null; // Reset timeoutId after alert
-    }, 500); // Delay of 1 second (1000 milliseconds)
+    }, 50); // Delay of 1 second (1000 milliseconds)
 });
 
   data = @json($product)
+  
 
   window.onload = function() {
     getAllData()
   };
 
   function getAllData(){ 
-
     var container = document.getElementById('content_field');
+    container.innerHTML= "";
     
     // template = `<div class="row">`
     isi = `<div class="container"><div class="row">`
@@ -174,7 +177,89 @@ document.getElementById('search_product').addEventListener('input', function(eve
         img = `<img id="image" id ="image_update" src="{{asset("`+path+`")}}" class="card-img-top img-fluid" alt="Product Image">`
       }else{
         img = `<img id="preview" style="width:100px;height:150px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;" class="card-img-top img-fluid">`
-        console.log("WOII")
+      }
+
+      isi += `<div class="col col-md-4"><div class="card" style="max-width: 350px;border-radius:20px"><div class="card-body">`
+        +
+        img
+        +
+        `<h5 class="card-title" style ="margin-top:10px">`+item.name+`</h5>
+        <p class="card-text" style="color: #A5A5A5;">`+item.mini_desc+`</p>
+
+        <h5 class="card-title" style="font-weight: bold;">Presentation</h5>
+        <p class="card-text" style="color: #A5A5A5;">`+item.presentation+`</p>
+        
+        <h5 class="card-title" style="font-weight: bold;">Price</h5>
+        <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
+        
+        <p style="color: #A5A5A5;">stock: `+item.qty+` `+item.unit+` left</p>
+
+        <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
+
+
+        <div class="card-body" style="margin-top:10px">
+            
+          <div >
+            <div class="row">
+              <div class="col">
+
+                <div class="form-group">
+                  <div class="input-group">
+                    <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">`+item.unit+`</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="col">
+
+                <div class="form-group">
+                  <div class="input-group">
+                    <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">%</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              </div>
+            </div>
+
+          <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+        </div></div></div></div>
+        `
+
+    });
+
+    isi+=`</div></div>`
+    container.innerHTML+=isi;
+    
+  }
+
+  function getAllDataByName(name){ 
+
+    var container = document.getElementById('content_field');
+    container.innerHTML= "";
+
+    // template = `<div class="row">`
+    isi = `<div class="container"><div class="row">`
+
+    Object.keys(data).forEach(function(key) {
+      let item = data[key];
+      if(!item.name.includes(name)){
+        return;
+      }
+
+
+      path = "images/"+item.img
+      if (item.img!=""){
+        img = `<img id="image" id ="image_update" src="{{asset("`+path+`")}}" class="card-img-top img-fluid" alt="Product Image">`
+      }else{
+        img = `<img id="preview" style="width:100px;height:150px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;" class="card-img-top img-fluid">`
       }
 
       isi += `<div class="col col-md-4"><div class="card" style="max-width: 350px;border-radius:20px"><div class="card-body">`
@@ -207,7 +292,8 @@ document.getElementById('search_product').addEventListener('input', function(eve
             </div>
           </div>
 
-          <div class="col"><a href="#" class="btn btn-success">Add To Cart</a></div>
+          <div class="col"><a class="btn btn-success" onclick="myFunction()">Add To Cart</a></div>
+
         </div></div></div></div></div>
         `
 
@@ -215,8 +301,35 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
     isi+=`</div></div>`
     container.innerHTML+=isi;
-    
-  }
+
+}
+
+function myFunction(id, name, category){
+  var qty = document.getElementById("qty_"+name).value;
+  var disc = document.getElementById("disc_"+name).value;
+  $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/addCart",
+        data: { "_token": "{{ csrf_token() }}","id":id,"qty":qty, "category":category, "disc":disc},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data=="sukses" || data=="sukses_update"){
+            AlertSuccess()
+          }else if(data=="sukses_delete"){
+            document.getElementById("qty_"+name).value= '';
+            document.getElementById("disc_"+name).value='';
+            AlertSuccess()
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          alert(err)
+          AlertError()
+        }
+      });
+}
 
   function getItem(id){
       $.ajax({

@@ -48,8 +48,11 @@ Route::post('/deleteCategoryProduct', [App\Http\Controllers\CategoryProductContr
 
 // List Product
 Route::get('/listProduct', [App\Http\Controllers\ListProductController::class, 'index']);
-Route::post('/getProducts', [App\Http\Controllers\ListProductController::class, 'getAll']);
-Route::post('/addProduct', [App\Http\Controllers\ListProductController::class, 'addItem']);
-Route::post('/getProduct', [App\Http\Controllers\ListProductController::class, 'getItem']);
-Route::post('/updateProduct', [App\Http\Controllers\ListProductController::class, 'updateItem']);
-Route::post('/deleteProduct', [App\Http\Controllers\ListProductController::class, 'deleteItem']);
+Route::post('/addCart', [App\Http\Controllers\ListProductController::class, 'addCartDetail']);
+
+// List Product
+Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index']);
+Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO']);
+
+Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index']);
+Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'GetListCart']);

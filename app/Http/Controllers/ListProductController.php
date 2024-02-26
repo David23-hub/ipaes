@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CartModel;
 use App\Models\CategoryProductModel;
 use App\Models\ItemModel;
 use Illuminate\Support\Facades\Auth;
@@ -10,92 +11,154 @@ use Illuminate\Http\Request;
 class ListProductController extends Controller
 {
     private $model;
+    private $cartDetail;
     private $modelCategoryProduct;
     public function __construct()
     {
         $this->middleware('auth');
         $this->model = new ItemModel;
+
+        $this->cartDetail = new CartModel;
+        
         $this->modelCategoryProduct = new CategoryProductModel;
         
     }
 
     public function index()
     {
-
         // $data = $this->model->GetList();
 
         $category = $this->modelCategoryProduct->GetListActive();
         $product = $this->model->GetListActive();
-        return view('master.listProduct')->with('category', $category)->with('product', $product);
-        // return view('items.list',$data);
-    }
-
-    public function getAll(Request $request){
-        $category = $this->modelCategoryProduct->GetList();
-        $data = $this->model->GetList();
-        $result = [];
-
-        foreach ($data as $key => $index) {
-            foreach ($category as $key => $cat) {
-                if ($index->category_product == $cat->id){
-                    $index->category = $cat->name;
-                    break;
-                }
-            }
-            array_push($result,$index);
-        }
         
-        return $result;
-    }
+        $email = Auth::user()->email;
+        $cartsUser = $this->cartDetail->GetCart($email);
+        
 
-    public function getItem(Request $request){
-        $input = $request->all();
-
-        $category = $this->modelCategoryProduct->GetList();
-        $data = $this->model->GetItem($input['id']);
-        $result = [];
-
-        foreach ($data as $key => $index) {
-            foreach ($category as $key => $cat) {
-                if ($index->category_product == $cat->id){
-                    $index->category = $cat->name;
-                    break;
-                }
+        $productVal=[];
+        $resProduct = [];
+        $bool = false;
+        if (count($cartsUser)==0){
+            foreach ($product as  $productVal) {
+                $productVal['qty_cart'] = '';
+                $productVal['disc_cart'] = '';
+                array_push($resProduct,$productVal);
             }
-            array_push($result,$index);
+            return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('resProduct', $resProduct);
+        }
+        $cartUser = $cartsUser[0];
+
+        foreach ($product as  $productVal) {
+            if (strlen($cartUser->cart)!=0){
+                $bool = false;
+
+                $carts = explode(",", $cartUser->cart);
+                foreach ($carts as $cartItem) {
+                    $temp = explode("|", $cartItem);
+                    if ($productVal["id"] == $temp[0] && $temp[1] == "product"){
+                        $bool = true;
+                        $productVal['qty_cart'] = $temp[2];
+                        $productVal['disc_cart'] = $temp[3];
+                        break;
+                    }   
+                }
+                if(!$bool){
+                    $productVal['qty_cart'] = '';
+                    $productVal['disc_cart'] = '';
+                }
+                array_push($resProduct,$productVal);
+            }
         }
 
-
-        return $result[0];
+        return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('resProduct', $resProduct);
     }
 
-    public function addItem(Request $request){
+    public function addCartDetail(Request $request){
         $input = $request->all();
-        $image = $request->file('img');
-        $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
-        $image->move(public_path('images'), $imageName);
 
+        if ($input['disc']>100){
+            $res="gagal";
+            return $res;
+        }else if ($input['disc']=="" || $input['disc']<0){
+            $input['disc']=0;
+        }
+
+        $email=Auth::user()->email;
+
+        $cartRes = $this->cartDetail->GetCart($email);
+        $flag = false;
+        $res = "";
+        if(count($cartRes)!=0){
+            $cartTemp = $cartRes[0];
+            if($input['qty']!=0){
+                if ($cartTemp->cart!=""){
+                    $items = explode(",", $cartTemp->cart);
+                    foreach ($items as $item) {
+                        $temp = explode("|", $item);
+                        if($temp[0]==$input["id"]){
+                            if($temp[2]!=$input['qty']){
+                                $temp[2] = $temp[2]+$input['qty'];
+                            }
+                            $temp[3] = $input['disc'];
+                            $flag=true;
+                        }
+                        $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3] . ",";
+                    }
+                    $len = strlen($res) - 1; 
+                    $res = substr($res, 0, $len);
+                }
+
+                if(!$flag && $res!=""){
+                    $res = $res."," . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"];
+                }else if(!$flag){
+                    $res = $res . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"];
+                }
+                return $this->updateCart($cartTemp["id"],$res);
+
+
+            }else if($input['qty']==0){
+                //delete item on cart
+                if ($cartTemp->cart!=""){
+                    $items = explode(",", $cartTemp->cart);
+                    foreach ($items as $item) {
+                        $temp = explode("|", $item);
+
+                        if($temp[0]==$input["id"] && $input['qty']<=0){
+                            continue;
+                        }
+                        if($temp[0]==$input["id"]){
+                            $temp[2] = $temp[2]+$input['qty'];
+                            $temp[3] = $input['disc'];
+                            $flag=true;
+                        }
+                        $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3] . ",";
+                    }
+                    $len = strlen($res) - 1; 
+                    $res = substr($res, 0, $len);
+                }
+                
+                if(strlen($res)==0){
+                    $res = "";
+                }
+
+                return $this->updateCart($cartTemp["id"],$res);
+            }
+
+        }
+
+        
+        $res = $res . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"];
         $data = [
-            'name' => $input['name'],
-            'status' => $input['status'],
-            'qty' => $input['qty'],
-
-            'category_product' => $input['category_product'],
-            'unit' => $input['unit'],
-            'price' => $input['price'],
-            'presentation' => $input['presentation'],
-            'commision_rate' => $input['commision_rate'],
-            'mini_desc' => $input['mini_desc'],
-            'desc' => $input['desc'],
-            'img' => $imageName,
-
-            'created_by' => Auth::user()->email,
+            'cart'=>$res,
+            
+            'created_by' => $email,
             'created_at' => date('Y-m-d H:i:s')
         ];
 
+
         $result = "";
         try {
-            $temp = $this->model->AddItem($data);
+            $temp = $this->cartDetail->AddItem($data);
             if($temp){
                 $result="sukses";
             }else{
@@ -108,38 +171,21 @@ class ListProductController extends Controller
         return $result;
     }
 
-    public function updateItem(Request $request){
-        $input = $request->all();
-
-        $input = $request->all();
-        $image = $request->file('img');
-        $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
-        $image->move(public_path('images'), $imageName);
-
+    public function updateCart($id, $cart){
         $data = [
-            'name' => $input['name'],
-            'status' => $input['status'],
-            'qty' => $input['qty'],
-            'category_product' => $input['category_product'],
-            'unit' => $input['unit'],
-            'price' => $input['price'],
-            'presentation' => $input['presentation'],
-            'commision_rate' => $input['commision_rate'],
-            'mini_desc' => $input['mini_desc'],
-            'desc' => $input['desc'],
-            'img' => $imageName,
+            'cart'=>$cart,
 
             'updated_by' => Auth::user()->email,
             'updated_at' => date('Y-m-d H:i:s')
         ];
-        // var_dump($input["id"]);
-        // var_dump($data);
+
+        // var_dump($id, $disc, $qty);
 
         $result = "";
         try {
-            $temp = $this->model->UpdateItem($input["id"],$data);
+            $temp = $this->cartDetail->UpdateItem($id,$data);
             if($temp){
-                $result="sukses";
+                $result="sukses_update";
             }else{
                 $result="gagal";
             }
@@ -150,18 +196,23 @@ class ListProductController extends Controller
         return $result;
     }
 
-    public function deleteItem(Request $request){
-        $input = $request->all();
+    public function updateItem($id, $disc, $qty){
+
         $data = [
-            'deleted_by' => Auth::user()->email,
-            'deleted_at' => date('Y-m-d H:i:s')
+            'disc'=>$disc,
+            'qty' => $qty,
+
+            'updated_by' => Auth::user()->email,
+            'updated_at' => date('Y-m-d H:i:s')
         ];
 
+        // var_dump($id, $disc, $qty);
+
         $result = "";
         try {
-            $temp = $this->model->DeleteItem($input["id"],$data);
+            $temp = $this->cartDetail->UpdateItem($id,$data);
             if($temp){
-                $result="sukses";
+                $result="sukses_update";
             }else{
                 $result="gagal";
             }
@@ -171,4 +222,5 @@ class ListProductController extends Controller
 
         return $result;
     }
+
 }

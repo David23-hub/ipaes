@@ -166,6 +166,14 @@
             text: 'Something went wrong!',
         })
     }
+
+    function AlertWarningWithMsg(msg){
+        Swal.fire({
+            icon: 'warning',
+            title: 'Error',
+            text: msg,
+        })
+    }
     </script>
 
     {{-- Extra Configured Plugins Scripts --}}

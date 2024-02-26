@@ -339,13 +339,19 @@ return [
                     'text'=>'Cart',
                     'icon'=>'fas fa-shopping-cart',
                     'icon_color'=>'cyan',
-                    'url'=>'',
+                    'url'=>'viewCart',
                 ],
                 [
                     'text'=>'List Product',
                     'icon'=>'fas fa-boxes',
                     'icon_color'=>'cyan',
                     'url'=>'listProduct',
+                ],
+                [
+                    'text'=>'List PO',
+                    'icon'=>'fas fa-boxes',
+                    'icon_color'=>'cyan',
+                    'url'=>'listPO',
                 ],
             ],
         ],
@@ -460,7 +466,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
