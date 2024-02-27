@@ -378,10 +378,10 @@
 
       var arr = $("input[name=input-data]").map(function (index) { 
         if($(this).val() !== "") {
-          return $(this).val() + "," + $(this).attr('data-id').trim() 
+          return $(this).val() + "|" + $(this).attr('data-id').trim() 
         }
       }).get()
-      arr = arr.join(";")
+      arr = arr.join(",")
 
       var fileInput = document.getElementById('image_add');
 
