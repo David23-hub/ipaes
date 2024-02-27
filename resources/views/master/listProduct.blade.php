@@ -230,7 +230,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
               </div>
             </div>
 
-          <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+          <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
         </div></div></div></div>
         `
     });
@@ -291,7 +291,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
               </div>
             </div>
 
-          <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+          <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
         </div></div></div></div>
         `
     });
@@ -371,7 +371,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
                 </div>
               </div>
 
-            <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
           </div></div></div></div>
           `
       });
@@ -438,7 +438,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
                 </div>
               </div>
 
-            <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
           </div></div></div></div>
           `
       });
@@ -508,7 +508,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
                 </div>
               </div>
 
-            <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
           </div></div></div></div>
           `
       });
@@ -571,7 +571,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
                 </div>
               </div>
 
-            <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
           </div></div></div></div>
           `
       });
@@ -581,7 +581,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
     container.innerHTML+=isi;
   }
 
-function myFunction(id, name, category){
+function addtoCart(id, name, category){
   var qty = document.getElementById("qty_"+name).value;
   var disc = document.getElementById("disc_"+name).value;
   $.ajax({

@@ -29,19 +29,7 @@ class ItemController extends Controller
     }
 
     public function getAll(Request $request){
-        $category = $this->modelCategoryProduct->GetList();
-        $data = $this->model->GetList();
-        $result = [];
-
-        foreach ($data as $key => $index) {
-            foreach ($category as $key => $cat) {
-                if ($index->category_product == $cat->id){
-                    $index->category = $cat->name;
-                    break;
-                }
-            }
-            array_push($result,$index);
-        }
+        $result = $this->model->GetList();
         
         return $result;
     }
@@ -49,22 +37,9 @@ class ItemController extends Controller
     public function getItem(Request $request){
         $input = $request->all();
 
-        $category = $this->modelCategoryProduct->GetList();
-        $data = $this->model->GetItem($input['id']);
-        $result = [];
+        $index = $this->model->GetItem($input['id']);
 
-        foreach ($data as $key => $index) {
-            foreach ($category as $key => $cat) {
-                if ($index->category_product == $cat->id){
-                    $index->category = $cat->name;
-                    break;
-                }
-            }
-            array_push($result,$index);
-        }
-
-
-        return $result[0];
+        return $index[0];
     }
 
     public function addItem(Request $request){
@@ -87,7 +62,6 @@ class ItemController extends Controller
             'status' => $input['status'],
             'qty' => $input['qty'],
 
-            'category_product' => $input['category_product'],
             'unit' => $input['unit'],
             'price' => $input['price'],
             'presentation' => $input['presentation'],
@@ -128,7 +102,6 @@ class ItemController extends Controller
                 'name' => $input['name'],
                 'status' => $input['status'],
                 'qty' => $input['qty'],
-                'category_product' => $input['category_product'],
                 'unit' => $input['unit'],
                 'price' => $input['price'],
                 'presentation' => $input['presentation'],
@@ -146,7 +119,6 @@ class ItemController extends Controller
                 'name' => $input['name'],
                 'status' => $input['status'],
                 'qty' => $input['qty'],
-                'category_product' => $input['category_product'],
                 'unit' => $input['unit'],
                 'price' => $input['price'],
                 'presentation' => $input['presentation'],
@@ -158,26 +130,6 @@ class ItemController extends Controller
                 'updated_at' => date('Y-m-d H:i:s')
             ];
         }
-
-
-        // $data = [
-        //     'name' => $input['name'],
-        //     'status' => $input['status'],
-        //     'qty' => $input['qty'],
-        //     'category_product' => $input['category_product'],
-        //     'unit' => $input['unit'],
-        //     'price' => $input['price'],
-        //     'presentation' => $input['presentation'],
-        //     'commision_rate' => $input['commision_rate'],
-        //     'mini_desc' => $input['mini_desc'],
-        //     'desc' => $input['desc'],
-        //     'img' => $imageName,
-
-        //     'updated_by' => Auth::user()->email,
-        //     'updated_at' => date('Y-m-d H:i:s')
-        // ];
-        // var_dump($input["id"]);
-        // var_dump($data);
 
         $result = "";
         try {

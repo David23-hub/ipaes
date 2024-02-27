@@ -21,7 +21,6 @@
                 <th>No</th>
                   <th>Image</th>
                   <th>Nama</th>
-                  <th>Category</th>
                   <th>Stock</th>
                   <th>Price</th>
                   <th>Status</th>
@@ -57,16 +56,6 @@
           <div class="form-group">
             <label for="nama_add">Nama</label>
             <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama" >
-          </div>
-          <div class="form-group">
-            <label for="category_product_add">Category Product</label>
-            <div id="dropadd" name="dropadd" class="form-group">
-              <select class="form-select form-control" id="category_product_add">
-                @foreach($data as $item)
-                  <option value={{$item->id}}>{{$item->name}}</option>
-                @endforeach
-              </select> 
-            </div>
           </div>
           <div class="form-group">
             <label for="unit_add">Unit Product</label>
@@ -156,16 +145,6 @@
               <input type="name_update" class="form-control" id="name_update"  placeholder="Masukkan Nama">
             </div>
             <div class="form-group">
-              <label for="category_product_update">Category Product</label>
-              <div id="dropcategoryupdate" name="dropcategoryupdate" class="form-group">
-                <select class="form-select form-control" id="category_product_update">
-                  @foreach($data as $item)
-                    <option value={{$item->id}}>{{$item->name}}</option>
-                  @endforeach
-                </select> 
-              </div>
-            </div>
-            <div class="form-group">
               <label for="unit_update">Unit Product</label>
               <div id="dropunitupdate" name="dropunitupdate" class="form-group">
                 <select class="form-select form-control" id="unit_update">
@@ -245,10 +224,6 @@
           <div class="form-group">
             <label for="nama_detail">Nama</label>
             <input type="nama_detail" class="form-control" id="nama_detail"  placeholder="Masukkan Nama" disabled>
-          </div>
-          <div class="form-group">
-            <label for="category_product_detail">Category Product</label>
-            <input type="category_product_detail" class="form-control" id="category_product_detail"  placeholder="Masukkan Status" disabled>
           </div>
           <div class="form-group">
             <label for="qty_detail">Stock</label>
@@ -409,7 +384,6 @@
               no,
               img,
               item['name'],
-              item['category'],
               item['qty'] +" "+ item['unit'],
               "Rp "+item['price'],
               stat,
@@ -439,7 +413,6 @@
       // var fileInput = document.getElementById('image_add');
       // img = fileInput.files[0]
 
-      category_product = $("#category_product_add").val()
       unit = $("#unit_add").val()
       price = $("#price_add").val()
       presentation = $("#presentation_add").val()
@@ -457,7 +430,6 @@
       formData.append('name', name);
       formData.append('qty', qty);
       formData.append('status', status);
-      formData.append('category_product', category_product);
       formData.append('unit', unit);
       formData.append('price', price);
       formData.append('presentation', presentation);
@@ -468,8 +440,6 @@
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/addItem",
-        // data: { "_token": "{{ csrf_token() }}","name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
-        // "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc,"img":fileInput.files[0]},
         data:formData,
         processData: false,
         contentType: false,
@@ -508,7 +478,6 @@
             $('#status_detail').val("Active")
           }
 
-          $("#category_product_detail").val(data.category)
           $("#unit_detail").val(data.unit)
           $("#price_detail").val(data.price)
           $("#presentation_detail").val(data.presentation)
@@ -548,7 +517,6 @@
             $('#status_update').prop('checked', true);
           }
 
-          $("#category_product_update").val(data.category_product)
           $("#unit_update").val(data.unit)
           $("#price_update").val(data.price)
           $("#presentation_update").val(data.presentation)
@@ -569,7 +537,6 @@
       qty = $("#qty_update").val()
       id = $("#id_update").val()
       
-      category_product = $("#category_product_update").val()
       unit = $("#unit_update").val()
       price = $("#price_update").val()
       presentation = $("#presentation_update").val()
@@ -584,7 +551,6 @@
       formData.append('name', name);
       formData.append('qty', qty);
       formData.append('status', status);
-      formData.append('category_product', category_product);
       formData.append('unit', unit);
       formData.append('price', price);
       formData.append('presentation', presentation);
@@ -597,8 +563,6 @@
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/updateItem",
-        // data: { "_token": "{{ csrf_token() }}","id":id,"name":name, "qty":qty, "status":status,"category_product":category_product,"unit":unit,
-        // "price":price,"presentation":presentation,"commision_rate":commision_rate,"mini_desc":mini_desc, "desc":desc},
         data:formData,
         processData: false,
         contentType: false,
