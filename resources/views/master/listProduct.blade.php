@@ -12,10 +12,10 @@
         <div class="row">
           <div class="col">
             <p style="color: #95948E;">Category</p>
-            <select class="custom-select" id="inputGroupSelect01">
-              <option selected>All</option>
+            <select class="custom-select" id="category_select" onchange="getAllDataByCategory(this.value)">
+              <option value="all" selected>All</option>
               @foreach($category as $item)
-                <option value={{$item->id}}>{{$item->name}}</option>
+                <option value={{$item->name}}>{{$item->name}}</option>
               @endforeach
             </select>
           </div>
@@ -148,14 +148,15 @@ document.getElementById('search_product').addEventListener('input', function(eve
         clearTimeout(timeoutId); // Clear previous timeout if exists
     }
     timeoutId = setTimeout(function() {
-      msg = $('#search_product').val();
-      getAllDataByName(msg)
+      cat = $('#category_select').val();
+      getAllDataByCategory(cat)
 
         timeoutId = null; // Reset timeoutId after alert
     }, 50); // Delay of 1 second (1000 milliseconds)
 });
 
-  data = @json($product)
+  data = @json($product);
+  dataBundle = @json($bundle);
   
 
   window.onload = function() {
@@ -232,28 +233,11 @@ document.getElementById('search_product').addEventListener('input', function(eve
           <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
         </div></div></div></div>
         `
-
     });
 
-    isi+=`</div></div>`
-    container.innerHTML+=isi;
-    
-  }
 
-  function getAllDataByName(name){ 
-
-    var container = document.getElementById('content_field');
-    container.innerHTML= "";
-
-    // template = `<div class="row">`
-    isi = `<div class="container"><div class="row">`
-
-    Object.keys(data).forEach(function(key) {
-      let item = data[key];
-      if(!item.name.includes(name)){
-        return;
-      }
-
+    Object.keys(dataBundle).forEach(function(key) {
+      let item = dataBundle[key];
 
       path = "images/"+item.img
       if (item.img!=""){
@@ -267,42 +251,335 @@ document.getElementById('search_product').addEventListener('input', function(eve
         img
         +
         `<h5 class="card-title" style ="margin-top:10px">`+item.name+`</h5>
-        <p class="card-text" style="color: #A5A5A5;">`+item.mini_desc+`</p>
-
-        <h5 class="card-title" style="font-weight: bold;">Presentation</h5>
-        <p class="card-text" style="color: #A5A5A5;">`+item.presentation+`</p>
+        <p class="card-text" style="color: #A5A5A5;">`+item.desc+`</p>
         
         <h5 class="card-title" style="font-weight: bold;">Price</h5>
         <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
         
-        <p style="color: #A5A5A5;">stock: `+item.qty+` `+item.unit+` left</p>
-
         <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
 
 
         <div class="card-body" style="margin-top:10px">
-          <div class="row">
             
-          <div class="form-group">
-            <div class="input-group">
-              <input type="price_detail" style="max-width:75px;min-width:50px" class="form-control" id="price_detail"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
-              <div class="input-group-prepend">
-                <div class="input-group-text">`+item.unit+`</div>
+          <div >
+            <div class="row">
+              <div class="col">
+
+                <div class="form-group">
+                  <div class="input-group">
+                    <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">Package</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="col">
+
+                <div class="form-group">
+                  <div class="input-group">
+                    <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">%</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
               </div>
             </div>
-          </div>
 
-          <div class="col"><a class="btn btn-success" onclick="myFunction()">Add To Cart</a></div>
-
-        </div></div></div></div></div>
+          <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+        </div></div></div></div>
         `
-
     });
 
     isi+=`</div></div>`
     container.innerHTML+=isi;
+    
+  }
 
-}
+
+  function getAllDataByCategory(cat){ 
+    name = $('#search_product').val();
+
+    var container = document.getElementById('content_field');
+    container.innerHTML= "";
+    console.log(cat,name)
+    
+    // template = `<div class="row">`
+    isi = `<div class="container"><div class="row">`
+
+    if(cat=="paket"){
+      Object.keys(dataBundle).forEach(function(key) {
+        let item = dataBundle[key];
+        console.log(item)
+        if(item.name!= "" && !item.name.toLowerCase().includes(name.toLowerCase())){
+          return;
+        }
+        path = "images/"+item.img
+        if (item.img!=""){
+          img = `<img id="image" id ="image_update" src="{{asset("`+path+`")}}" class="card-img-top img-fluid" alt="Product Image">`
+        }else{
+          img = `<img id="preview" style="width:100px;height:150px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;" class="card-img-top img-fluid">`
+        }
+
+        isi += `<div class="col col-md-4"><div class="card" style="max-width: 350px;border-radius:20px"><div class="card-body">`
+          +
+          img
+          +
+          `<h5 class="card-title" style ="margin-top:10px">`+item.name+`</h5>
+          <p class="card-text" style="color: #A5A5A5;">`+item.desc+`</p>
+          
+          <h5 class="card-title" style="font-weight: bold;">Price</h5>
+          <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
+          
+          <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
+
+
+          <div class="card-body" style="margin-top:10px">
+              
+            <div >
+              <div class="row">
+                <div class="col">
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Package</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col">
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">%</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                </div>
+              </div>
+
+            <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+          </div></div></div></div>
+          `
+      });
+    }else if(cat=="product"){
+      Object.keys(data).forEach(function(key) {
+        let item = data[key];
+        if(item.name!= "" && !item.name.toLowerCase().includes(name.toLowerCase())){
+          return;
+        }
+        path = "images/"+item.img
+        if (item.img!=""){
+          img = `<img id="image" id ="image_update" src="{{asset("`+path+`")}}" class="card-img-top img-fluid" alt="Product Image">`
+        }else{
+          img = `<img id="preview" style="width:100px;height:150px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;" class="card-img-top img-fluid">`
+        }
+
+        isi += `<div class="col col-md-4"><div class="card" style="max-width: 350px;border-radius:20px"><div class="card-body">`
+          +
+          img
+          +
+          `<h5 class="card-title" style ="margin-top:10px">`+item.name+`</h5>
+          <p class="card-text" style="color: #A5A5A5;">`+item.mini_desc+`</p>
+
+          <h5 class="card-title" style="font-weight: bold;">Presentation</h5>
+          <p class="card-text" style="color: #A5A5A5;">`+item.presentation+`</p>
+          
+          <h5 class="card-title" style="font-weight: bold;">Price</h5>
+          <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
+          
+          <p style="color: #A5A5A5;">stock: `+item.qty+` `+item.unit+` left</p>
+
+          <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
+
+
+          <div class="card-body" style="margin-top:10px">
+              
+            <div >
+              <div class="row">
+                <div class="col">
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">`+item.unit+`</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col">
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">%</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                </div>
+              </div>
+
+            <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+          </div></div></div></div>
+          `
+      });
+    }else if(cat=="all"){
+      
+      Object.keys(data).forEach(function(key) {
+        let item = data[key];
+
+        if(item.name!= "" && !item.name.toLowerCase().includes(name.toLowerCase())){
+          return;
+        }
+
+        path = "images/"+item.img
+        if (item.img!=""){
+          img = `<img id="image" id ="image_update" src="{{asset("`+path+`")}}" class="card-img-top img-fluid" alt="Product Image">`
+        }else{
+          img = `<img id="preview" style="width:100px;height:150px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;" class="card-img-top img-fluid">`
+        }
+
+        isi += `<div class="col col-md-4"><div class="card" style="max-width: 350px;border-radius:20px"><div class="card-body">`
+          +
+          img
+          +
+          `<h5 class="card-title" style ="margin-top:10px">`+item.name+`</h5>
+          <p class="card-text" style="color: #A5A5A5;">`+item.mini_desc+`</p>
+
+          <h5 class="card-title" style="font-weight: bold;">Presentation</h5>
+          <p class="card-text" style="color: #A5A5A5;">`+item.presentation+`</p>
+          
+          <h5 class="card-title" style="font-weight: bold;">Price</h5>
+          <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
+          
+          <p style="color: #A5A5A5;">stock: `+item.qty+` `+item.unit+` left</p>
+
+          <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
+
+
+          <div class="card-body" style="margin-top:10px">
+              
+            <div >
+              <div class="row">
+                <div class="col">
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">`+item.unit+`</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col">
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">%</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                </div>
+              </div>
+
+            <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+          </div></div></div></div>
+          `
+      });
+
+
+      Object.keys(dataBundle).forEach(function(key) {
+        let item = dataBundle[key];
+        if(item.name!= "" && !item.name.toLowerCase().includes(name.toLowerCase())){
+          return;
+        }
+        path = "images/"+item.img
+        if (item.img!=""){
+          img = `<img id="image" id ="image_update" src="{{asset("`+path+`")}}" class="card-img-top img-fluid" alt="Product Image">`
+        }else{
+          img = `<img id="preview" style="width:100px;height:150px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;" class="card-img-top img-fluid">`
+        }
+
+        isi += `<div class="col col-md-4"><div class="card" style="max-width: 350px;border-radius:20px"><div class="card-body">`
+          +
+          img
+          +
+          `<h5 class="card-title" style ="margin-top:10px">`+item.name+`</h5>
+          <p class="card-text" style="color: #A5A5A5;">`+item.desc+`</p>
+          
+          <h5 class="card-title" style="font-weight: bold;">Price</h5>
+          <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
+          
+          <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
+
+
+          <div class="card-body" style="margin-top:10px">
+              
+            <div >
+              <div class="row">
+                <div class="col">
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Package</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col">
+
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">%</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                </div>
+              </div>
+
+            <div ><a class="btn btn-success" onclick="myFunction(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+          </div></div></div></div>
+          `
+      });
+    }
+
+    isi+=`</div></div>`
+    container.innerHTML+=isi;
+  }
 
 function myFunction(id, name, category){
   var qty = document.getElementById("qty_"+name).value;
