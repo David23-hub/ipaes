@@ -16,7 +16,7 @@
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
                 <div id="dropadd" name="dropadd" class="form-group">
-                  <select  class="form-select form-control" name="list_doctor" id="list_doctor" onchange="loadDoctorData()">
+                  <select  class="form-select form-control" name="list_doctor" id="list_doctor" onchange="loadDoctorData()" style="width: 100%;max-width:100%">
                       <option value="kosong" selected disabled>-- Select --</option>
                       @foreach($dokter as $dok)
                         <option value={{$dok->id}}>{{$dok->name}}</option>
