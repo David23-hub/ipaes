@@ -14,10 +14,29 @@ class CartModel extends Model
     public function GetList($email){
         return CartModel::all()->where('deleted_by',null)->where('created_by',$email);
     }
+
+    public function GetListAll(){
+        return CartModel::all()->where('deleted_by',null);
+    }
+
+    public function GetListJoinDoctor() {
+        return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic')->get();
+    }
+
+    public function GetListJoinDoctorWithId($id) {
+        return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('cart.id', '=', $id)->select('cart.*', 'dokter.name as name', 'dokter.clinic as clinic', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'dokter.address as address', 'dokter.information as information' )->get();
+    }
     
     public function GetItem($id,$email){
         return $this
-        ->where('item_id', '=', $id)
+        ->where('id', '=', $id)
+        ->where('created_by', '=', $email)
+        ->where('deleted_by',null)
+        ->get();
+    }
+
+    public function GetItemWithEmail($email){
+        return $this
         ->where('created_by', '=', $email)
         ->where('deleted_by',null)
         ->get();

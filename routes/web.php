@@ -56,7 +56,11 @@ Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index']);
 Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO']);
 
 Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index']);
-Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'GetListCart']);
+Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'getListAllCart']);
+Route::get('/detailPO/{id}', [App\Http\Controllers\ListPOController::class, 'detailPOIndex']);
+Route::post('/canceledPO', [App\Http\Controllers\ListPOController::class, 'canceledOrder']);
+Route::post('/packingPO', [App\Http\Controllers\ListPOController::class, 'packingOrder']);
+Route::post('/sentPO', [App\Http\Controllers\ListPOController::class, 'sentOrder']);
 
 // productBundle
 Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index']);
