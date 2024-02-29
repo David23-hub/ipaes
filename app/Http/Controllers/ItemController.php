@@ -45,15 +45,15 @@ class ItemController extends Controller
     public function addItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
             return "Nama Category Harus Diisi!";
         }else if (!preg_match('/^[0-9]+$/', $input["qty"])) {
             return "Jumlah Barang Harus Diisi!";
         }else if (!preg_match('/^[0-9]+$/', $input["price"])) {
             return "Harga Barang Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z]+$/', $input["unit"])) {
+        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["unit"])) {
             return "Unit Barang Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z]+$/', $input["presentation"])) {
+        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["presentation"])) {
             return "Presentasi Harus Diisi!";
         }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
             return "Rate Komisi Harus Diisi!";
@@ -111,15 +111,15 @@ class ItemController extends Controller
     public function updateItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
             return "Nama Category Harus Diisi!";
         }else if (!preg_match('/^[0-9]+$/', $input["qty"])) {
             return "Jumlah Barang Harus Diisi!";
         }else if (!preg_match('/^[0-9]+$/', $input["price"])) {
             return "Harga Barang Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z]+$/', $input["unit"])) {
+        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["unit"])) {
             return "Unit Barang Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z]+$/', $input["presentation"])) {
+        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["presentation"])) {
             return "Presentasi Harus Diisi!";
         }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
             return "Rate Komisi Harus Diisi!";
