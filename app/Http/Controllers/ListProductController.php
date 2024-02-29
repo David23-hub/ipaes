@@ -108,6 +108,12 @@ class ListProductController extends Controller
     public function addCartDetail(Request $request){
         $input = $request->all();
 
+        if (!preg_match('/^[0-9]+$/', $input["qty"])) {
+            return "Kuantity Barang Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["disc"]) && $input["disc"]!="") {
+            return "Diskon Harus Diisi!";
+        }
+
         if ($input['disc']>100){
             $res="gagal";
             return $res;

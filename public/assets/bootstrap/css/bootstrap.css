@@ -4240,8 +4240,11 @@ input[type="button"].btn-block {
   padding: 0.5rem 1rem;
 }
 
+
 .nav-link:hover, .nav-link:focus {
-  text-decoration: none;
+  background-color: #1faa9c;
+
+  /* text-decoration: none; */
 }
 
 .nav-link.disabled {

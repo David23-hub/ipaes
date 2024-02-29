@@ -45,6 +45,25 @@ class ItemController extends Controller
     public function addItem(Request $request){
         $input = $request->all();
 
+        if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+            return "Nama Category Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["qty"])) {
+            return "Jumlah Barang Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["price"])) {
+            return "Harga Barang Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["unit"])) {
+            return "Unit Barang Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["presentation"])) {
+            return "Presentasi Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
+            return "Rate Komisi Harus Diisi!";
+        }else if ($input["mini_desc"]=="") {
+            return "Mini Deskripsi Harus Diisi!";
+        }else if ($input["desc"]=="") {
+            return "Deskripsi Harus Diisi!";
+        }
+        
+
 
         if ($request->hasFile('img')) {
             // Image is uploaded
@@ -83,7 +102,7 @@ class ItemController extends Controller
                 $result="gagal1";
             }
         } catch (\Throwable $th) {
-            $result="gagal2";
+            $result="gagal";
         }        
 
         return $result;
@@ -91,6 +110,24 @@ class ItemController extends Controller
 
     public function updateItem(Request $request){
         $input = $request->all();
+
+        if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+            return "Nama Category Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["qty"])) {
+            return "Jumlah Barang Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["price"])) {
+            return "Harga Barang Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["unit"])) {
+            return "Unit Barang Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["presentation"])) {
+            return "Presentasi Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
+            return "Rate Komisi Harus Diisi!";
+        }else if ($input["mini_desc"]=="") {
+            return "Mini Deskripsi Harus Diisi!";
+        }else if ($input["desc"]=="") {
+            return "Deskripsi Harus Diisi!";
+        }
 
         if ($request->hasFile('img')) {
             // Image is uploaded

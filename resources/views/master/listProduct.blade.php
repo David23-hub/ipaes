@@ -581,7 +581,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
     container.innerHTML+=isi;
   }
 
-function addtoCart(id, name, category){
+  function addtoCart(id, name, category){
   var qty = document.getElementById("qty_"+name).value;
   var disc = document.getElementById("disc_"+name).value;
   $.ajax({

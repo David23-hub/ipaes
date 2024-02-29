@@ -41,10 +41,22 @@ class DokterController extends Controller
 
     public function addItem(Request $request){
         $input = $request->all();
-        // echo("masukkk ke function");
-        // echo($input['dob']);
-        // echo(gettype($input['dob']));
-        // print_r($input['dob']);
+        
+        if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+            return "Nama Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["address"])) {
+            return "Alamat Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["clinic"])) {
+            return "Klinik Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["no_hp"])) {
+            return "Nomor Hp Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["dob"])) {
+            return "Tanggal Lahir Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["billing_no_hp"])) {
+            return "Billing Nomor Hp Harus Diisi!";
+        }
+
+
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
@@ -77,6 +89,22 @@ class DokterController extends Controller
 
     public function updateItem(Request $request){
         $input = $request->all();
+
+        if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+            return "Nama Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["address"])) {
+            return "Alamat Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["clinic"])) {
+            return "Klinik Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["no_hp"])) {
+            return "Nomor Hp Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["information"])) {
+            return "Informasi Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["dob"])) {
+            return "Tanggal Lahir Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["billing_no_hp"])) {
+            return "Billing Nomor Hp Harus Diisi!";
+        }
 
         $data = [
             'name' => $input['name'],

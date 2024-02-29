@@ -104,12 +104,24 @@ class PackageController extends Controller
 
     public function addItem(Request $request){
         $input = $request->all();
+
+        if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+            return "Nama Paket Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["price"])) {
+            return "Harga Paket Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
+            return "Rate Komisi Harus Diisi!";
+        }else if (!preg_match('/^[a-zA-Z]+$/', $input["product"])) {
+            return "Produk Harus Diisi!";
+        }
+
         $imageName = "";
         if(!empty($request->file('img'))) {
             $image = $request->file('img');
             $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
             $image->move(public_path('images'), $imageName);
         }
+
 
         $data = [
             'name' => $input['name'],

@@ -361,27 +361,27 @@ return [
             'submenu' => [
                 [
                     'text' => "Product",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => "listItem",
                 ],
                 [
                     'text' => "Ekspedisi",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => "listEkspedisi",
                 ],
                 [
                     'text' => "Dokter",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => "listDokter",
                 ],
                 [
                     'text' => "Category Product",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => "listCategoryProduct",
                 ],
                 [
                     'text' => "Product Bundle",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => 'listProductBundle'
                 ]
                 // [

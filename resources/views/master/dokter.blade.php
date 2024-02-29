@@ -46,28 +46,28 @@
         <div class="modal-body">
 
           <div class="form-group">
-            <label for="nama_add">Nama</label>
+            <label for="nama_add">Nama *</label>
             <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama">
           </div>
           <div class="form-group">
-            <label for="alamat_add">Address</label>
+            <label for="alamat_add">Address *</label>
             <input type="alamat_add" class="form-control" id="alamat_add"  placeholder="Masukkan Alamat">
           </div>
           <div class="form-group">
-            <label for="clinic_add">Clinic</label>
+            <label for="clinic_add">Clinic *</label>
             <input type="clinic_add" class="form-control" id="clinic_add"  placeholder="Masukkan Klinik">
           </div>
           <div class="form-group">
-            <label for="no_hp_add">Phone Number</label>
-            <input type="no_hp_add" class="form-control" id="no_hp_add"  placeholder="Masukkan No Handphone" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            <label for="no_hp_add">Phone Number *</label>
+            <input type="no_hp_add" class="form-control" id="no_hp_add"  placeholder="Masukkan No Handphone (ex: 081245643672)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
           </div>
           <div class="form-group">
-            <label for="dob_add">Date of Birth</label>
+            <label for="dob_add">Date of Birth *</label>
             <input type="date" class="form-control" id="dob_add"  placeholder="Masukkan Tanggal Lahir">
           </div>
           <div class="form-group">
-            <label for="billing_no_hp_add">Billing Phone Number</label>
-            <input type="billing_no_hp_add" class="form-control" id="billing_no_hp_add"  placeholder="Masukkan No Handphone Billing" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            <label for="billing_no_hp_add">Billing Phone Number *</label>
+            <input type="billing_no_hp_add" class="form-control" id="billing_no_hp_add"  placeholder="Masukkan No Handphone Billing (ex: 081245643672)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
           </div>
           <div class="form-group">
             <label for="information_add">Information</label>
@@ -105,31 +105,31 @@
         <div class="modal-body">
             <input type="hidden" class="form-control" id="id_update">
           <div class="form-group">
-            <label for="nama_update">Nama</label>
+            <label for="nama_update">Nama *</label>
             <input type="nama_update" class="form-control" id="nama_update"  placeholder="Masukkan Nama">
           </div>
           <div class="form-group">
-            <label for="alamat_update">Address</label>
+            <label for="alamat_update">Address *</label>
             <input type="alamat_update" class="form-control" id="alamat_update"  placeholder="Masukkan Alamat">
           </div>
           <div class="form-group">
-            <label for="clinic_update">Clinic</label>
+            <label for="clinic_update">Clinic *</label>
             <input type="clinic_update" class="form-control" id="clinic_update"  placeholder="Masukkan Klinik">
           </div>
           <div class="form-group">
-            <label for="no_hp_update">Phone Number</label>
-            <input type="no_hp_update" class="form-control" id="no_hp_update"  placeholder="Masukkan No Handphone" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            <label for="no_hp_update">Phone Number *</label>
+            <input type="no_hp_update" class="form-control" id="no_hp_update"  placeholder="Masukkan No Handphone (ex: 081245643672)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
           </div>
           <div class="form-group">
-            <label for="dob_update">Date of Birth</label>
+            <label for="dob_update">Date of Birth *</label>
             <input type="date" class="form-control" id="dob_update"  placeholder="Masukkan Tanggal Lahir">
           </div>
           <div class="form-group">
-            <label for="billing_no_hp_update">Billing Phone Number</label>
-            <input type="billing_no_hp_update" class="form-control" id="billing_no_hp_update"  placeholder="Masukkan No Handphone Billing" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            <label for="billing_no_hp_update">Billing Phone Number *</label>
+            <input type="billing_no_hp_update" class="form-control" id="billing_no_hp_update"  placeholder="Masukkan No Handphone Billing (ex: 081245643672)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
           </div>
           <div class="form-group">
-            <label for="information_update">Information</label>
+            <label for="information_update">Information *</label>
             <textarea type="information_update" class="form-control" id="information_update"  placeholder="Masukkan Informasi" rows="3"></textarea>
           </div>
           <div class="form-group">
@@ -324,6 +324,8 @@
             getAllData()
             $('#modaladd').modal("hide")
             AlertSuccess()
+          }else if(data!="gagal"){
+            AlertWarningWithMsg(data)
           }else{
             AlertError()
           }
@@ -419,6 +421,8 @@
             getAllData()
             $('#modalUpdate').modal("hide")
             AlertSuccess()
+          }else if(data!="gagal"){
+            AlertWarningWithMsg(data)
           }else{
             AlertError()
           }
