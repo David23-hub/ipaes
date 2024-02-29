@@ -43,7 +43,7 @@ class CategoryProductController extends Controller
     public function addItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
             return "Nama Category Harus Diisi!";
         }
 
@@ -73,7 +73,7 @@ class CategoryProductController extends Controller
     public function updateItem(Request $request){
         $input = $request->all();
 
-    if (!preg_match('/^[a-zA-Z]+$/', $input["name"])) {
+    if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
         return "Nama Category Harus Diisi!";
     }
 
