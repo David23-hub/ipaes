@@ -61,6 +61,8 @@ Route::get('/detailPO/{id}', [App\Http\Controllers\ListPOController::class, 'det
 Route::post('/canceledPO', [App\Http\Controllers\ListPOController::class, 'canceledOrder']);
 Route::post('/packingPO', [App\Http\Controllers\ListPOController::class, 'packingOrder']);
 Route::post('/sentPO', [App\Http\Controllers\ListPOController::class, 'sentOrder']);
+Route::post('/updateStatus', [App\Http\Controllers\ListPOController::class, 'updateStatus']);
+Route::post('/paymentOrder', [App\Http\Controllers\ListPOController::class, 'paymentOrder']);
 
 // productBundle
 Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index']);

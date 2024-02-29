@@ -9,60 +9,52 @@
 @section('content')
     <div class="card">
       <div class="card-header">
-        <div class="container">
-          <div class="row">
-            <div class="col align-self-start">
+        <div class="row">
+          <div class="col-6">
+            <div>
+              <p class="text-start">Name</p>
+              <p class="text-start">{{ $dokter->name }}</p>
             </div>
-            <div class="col-8 align-self-center">
-
-            </div>
-            <div class="col align-self-end">
-              <button class="btn btn-primary">
-                Print
-              </button>
+          </div>
+          <div class="col-6">
+            <div>
+              <p class="text-start">Clinic</p>
+              <p class="text-start">{{ $dokter->clinic }}</p>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-6">
             <div>
-              <p class="text-start">PO Number</p>
-              <p class="text-start">{{ $dataCart[0]->po_id }}</p>
+              <p class="text-start">Billing Phone</p>
+              <p class="text-start">{{ $dokter->billing_no_hp }}</p>
             </div>
           </div>
           <div class="col-6">
             <div>
-              <p class="text-start">Created Purchase Order at</p>
-              <p class="text-start">{{ $dataCart[0]->created_at }}</p>
+              <p class="text-start">Doctor Phone</p>
+              <p class="text-start">{{ $dokter->no_hp }}</p>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-6">
             <div>
-              <p class="text-start">Invoice Number</p>
-              <p class="text-start">{{ $dataCart[0]->po_id }}</p>
+              <p class="text-start">Address</p>
+              <p class="text-start">{{ $dokter->address }}</p>
             </div>
           </div>
           <div class="col-6">
             <div>
-              <p class="text-start">Due Date</p>
-              <p class="text-start">{{ $dataCart[0]->due_date }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="row d-flex justify-content-end">
-          <div class="col-6">
-            <div>
-              <p class="text-start">Created By</p>
-              <p class="text-start">{{ $dataCart[0]->created_by }}</p>
+              <p class="text-start">Doctor Information</p>
+              <p class="text-start">{{ $dokter->information }}</p>
             </div>
           </div>
         </div>
       </div>
       <div class="card-body">
         <div class="container">
-          <div class="row">
+          {{-- <div class="row">
               <div class="col d-flex align-items-center">
                 <strong class="text-black fs-2">
                   Status  | 
@@ -86,100 +78,152 @@
                 @endif
               </div>
             </div>
-          </div>
+          </div> --}}
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <h5 style="font-weight: 600">Doctor</h5>
-
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">
-                <p id="name_doc">{{ $dataCart[0]->name }}</p>
-              </li>
-              <li class="list-group-item">Clinic
-                <p id="clinic_doc">{{ $dataCart[0]->clinic }}</p>
-              </li>
-              <li class="list-group-item">Billing Phone
-                <p id="billing_phone_doc">{{ $dataCart[0]->billing_no_hp }}</p>
-              </li>
-              <li class="list-group-item">Doctor Phone
-                <p id="no_hp_doc">{{ $dataCart[0]->no_hp }}</p>
-              </li>
-              <li class="list-group-item">Address
-                <p id="address_doc">{{ $dataCart[0]->address }}</p>
-              </li>
-              <li class="list-group-item">Doctor Information
-                <p id="information_doc">{{ $dataCart[0]->information }}</p>
-              </li>
-            </ul>
+    @foreach ($dataCartDokter as $itemDokter)
+      <div>
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-body">
+                <h5 style="font-weight: 600">Card Detail</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <p class="text-start">PO Number</p>
+                    <p class="text-start">{{ $itemDokter->po_id }}</p>
+                  </li>
+                  <li class="list-group-item">
+                    <p class="text-start">Created Purchase Order at</p>
+                    <p class="text-start">{{ $itemDokter->created_at }}</p>
+                  </li>
+                  <li class="list-group-item">
+                    <p class="text-start">Invoice Number</p>
+                    <p class="text-start">{{ $itemDokter->po_id }}</p>
+                  </li>
+                  <li class="list-group-item">
+                    <p class="text-start">Due Date</p>
+                    <p class="text-start">{{ $itemDokter->due_date }}</p>
+                  </li>
+                  <li class="list-group-item">
+                    <p class="text-start">Created By</p>
+                    <p class="text-start">{{ $itemDokter->created_by }}</p>
+                  </li>
+                </ul>
+                {{-- <div class="row">
+                  <div class="col d-flex">
+                    <strong class="text-black fs-2">
+                      Status  | 
+                    </strong>
+                    <div id="span_status"></div>
+                    <div class="p-2">
+                      <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus">Edit Status</button>
+                    </div>
+                  </div>
+                  <div class="col d-flex justify-content-end">
+                    <button class="btn btn-primary">
+                      Print
+                    </button>
+                  </div>
+                </div> --}}
+    
+                <div class="row">
+                  <div class="col" style="text-align: left">
+                    <strong class="text-black fs-2">
+                      Status  | 
+                    </strong>
+                    <span id="span_status"></span>
+                    <span class="p-2">
+                      <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus">Edit Status</button>
+                    </span>
+                  </div>
+                  <div class="col" style="text-align: right">
+                    <button class="btn btn-primary">
+                      Print
+                    </button>
+                  </div>
+                </div>
+    
+    
+                <br>
+                <div class="d-flex justify-content-end">
+                  @if ($itemDokter->status != 4 && $itemDokter->status != 3)
+                  <div class="p-2" id="button-status-canceled">
+                    <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel">
+                      Cancel Purchase Order
+                    </button>
+                  </div>
+                  <div class="p-2" id="button-status-update">
+                  </div>
+                  @endif
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-          <div class="form-group">
-            <div class="table-responsive">
-              <table id="tableList" class="table table-bordered" >
-                <thead>
-                  <tr style="background-color: #E3EFFF;">
-                      <th>Product</th>
-                      <th>Qty</th>
-                      <th>Price</th>
-                      <th>Discount</th>
-                      <th>TotalPrice</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($cart as $item)
-                      <tr>
-                        <td>{{ $item['name_product'] }}</td>
-                        <td>{{ $item['qty'] }}</td>
-                        <td>IDR {{ $item['price_product'] }}</td>
-                        <td><div class="badge bg-secondary">{{ $item['disc'] }}%</div></td>
-                        <td>IDR {{ $item['price'] }} <br>- IDR {{ $item['disc_price'] }}
-                        <div style="border-top: 1px solid #ccc;"></div>
-                        IDR {{ $item['total_price'] }}
-                        </td>
+          <div class="col">
+            <div class="card">
+              <div class="card-body">
+              <div class="form-group">
+                <div class="table-responsive">
+                  <table id="tableList" class="table table-bordered" >
+                    <thead>
+                      <tr style="background-color: #E3EFFF;">
+                          <th>Product</th>
+                          <th>Qty</th>
+                          <th>Price</th>
+                          <th>Discount</th>
+                          <th>TotalPrice</th>
                       </tr>
-                  @endforeach
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <tr>
-                      <td colspan="4">
-                        <div class="d-flex justify-content-end">
-                          <p class="fw-bold">
-                            Grand Total: 
-                          </p>
-                        </div>
-                      </td>
-                      <td>
-                       IDR {{ $total }}
-                      </td>
-                    </tr>
-                  </tr>
-                </tfoot>
-              </table>  
-            </div>
-            {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
-            <div class="d-flex justify-content-end">
-              <button class="btn btn-outline-success">
-                Add Extra Charges
-              </button>
-            </div>
-            <div class="form-group">
-              <label for="notes_form">Note For Admin</label>
-              <p class="text-start">{{ $dataCart[0]->notes }}</p>
+                    </thead>
+                    <tbody>
+                      @foreach ($cart as $item)
+                          <tr>
+                            <td>{{ $item['name_product'] }}</td>
+                            <td>{{ $item['qty'] }}</td>
+                            <td>IDR {{ $item['price_product'] }}</td>
+                            <td><div class="badge bg-secondary">{{ $item['disc'] }}%</div></td>
+                            <td>IDR {{ $item['price'] }} <br>- IDR {{ $item['disc_price'] }}
+                            <div style="border-top: 1px solid #ccc;"></div>
+                            IDR {{ $item['total_price'] }}
+                            </td>
+                          </tr>
+                      @endforeach
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <tr>
+                          <td colspan="4">
+                            <div class="d-flex justify-content-end">
+                              <p class="fw-bold">
+                                Grand Total: 
+                              </p>
+                            </div>
+                          </td>
+                          <td>
+                          IDR {{ $total }}
+                          </td>
+                        </tr>
+                      </tr>
+                    </tfoot>
+                  </table>  
+                </div>
+                {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
+                <div class="d-flex justify-content-end">
+                  <button class="btn btn-outline-success">
+                    Add Extra Charges
+                  </button>
+                </div>
+                <div class="form-group">
+                  <label for="notes_form">Note For Admin</label>
+                  <p class="text-start">{{ $itemDokter->notes }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    @endforeach
 
     <!-- Modal Cancel-->
     <div class="modal fade" id="modalCancel" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
@@ -239,7 +283,7 @@
                 <label for="shipping-cost">Shipping Cost</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="text" class="form-control" placeholder="Masukan Cost" aria-label="Username" aria-describedby="basic-addon1" value="0" id="shipping_cost_input">
+                  <input type="text" class="form-control" placeholder="Masukan Cost" aria-label="Username" aria-describedby="basic-addon1" value="" id="shipping_cost_input">
                 </div>
               </div>
             </div>
@@ -252,7 +296,7 @@
       </div>
     </div>
 
-    <!-- Modal Sent-->
+    <!-- Modal Edit Status-->
     <div class="modal fade" id="modalEditStatus" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -268,11 +312,11 @@
               <div class="form-group">
                 <label for="category_product_add">Status</label>
                 <div id="dropadd" name="dropadd" class="form-group">
-                  <select class="form-select form-control" id="ekspedisi_select">
+                  <select class="form-select form-control" id="status_select" onchange="">
                     @if ($dataCart[0]->status == 0)
                       <option value="0" selected>SUBMITED</option>
                     @elseif($dataCart[0]->status == 1)
-                      <option value="0">SUBMITED</option>
+                      <option value="0" id="">SUBMITED</option>
                       <option value="1" selected>PACKING</option>
                     @elseif($dataCart[0]->status == 2)
                       <option value="0">SUBMITED</option>
@@ -296,6 +340,50 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal Sent-->
+    <div class="modal fade" id="modalPayment" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Cancel Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <button type="button" class="btn btn-secondary" id="one_payment">One Payment</button>
+              <button type="button" id="step_payment" class="btn btn-primary">Step Payment</button>
+              <div class="form-group">
+                <label for="paid_at">Paid at *</label>
+                <input class="form-control" id="paid_at"  placeholder="Masukkan Tanggal Pembayaran">
+              </div>
+              <div class="form-group">
+                <label for="bank_name">Bank Name *</label>
+                <input class="form-control" id="bank_name"  placeholder="Masukkan Bank Name">
+              </div>
+              <div class="form-group">
+                <label for="bank_account_name">Bank Account Name *</label>
+                <input class="form-control" id="bank_account_name"  placeholder="Masukkan Account Bank Name">
+              </div>
+              <div class="form-group" style="display: none" id="container_nominal_input">
+                <label for="shipping-cost">Nominal *</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">IDR</span>
+                  <input type="text" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" value="" id="nominal_payment_input">
+                </div>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="payment_btn" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+    
 
     <style>
       .select2-container .select2-selection--single {
@@ -321,10 +409,11 @@
   idCart = @json($idCart);
   dataCart = @json($dataCart);
   user = @json($user);
+  dataCartDokter = @json($dataCartDokter);
   // var user = $user
-
+  console.log(typeof dokter)
+  console.log({dokter:dokter, cart, idCart, dataCart, user, dataCartDokter})
   window.onload = function() {
-    // getAllData()
     checkForButtonStatus()
     // console.log({user})
     $('#list_doctor').select2({data:dokter,});
@@ -339,28 +428,21 @@
       resetModalInput();
     });
 
+    $('#one_payment').on('click', function () { 
+      var x = document.getElementById("container_nominal_input");
+      x.style.display = "none"
+    })
 
+    $('#step_payment').on('click', function () { 
+      var x = document.getElementById("container_nominal_input");
+      x.style.display = "block"
+    })
 
     function resetModalInput() {
       document.getElementById('cancel_reason').value = '';
     }
 
   
-    // var dataTable = $("#tableList").DataTable({
-    //         "ordering": true,
-    //         "destroy": true,
-    //         "ordering": false,
-    //         "searching": false,
-    //         "paging": false,
-    //         "info":false,
-    //         //to turn off pagination
-    //         // paging: false,
-    //         // "bFilter": true,
-    //         //turn off info current page data index
-    //         // "bInfo": false,
-    //         // pagingType: 'full_numbers',
-    // });
-
     function checkForButtonStatus() {
       /*
       submited = biru primary => 0
@@ -388,7 +470,7 @@
         </span>
         `
         document.querySelector('#button-status-update').innerHTML = `
-        <button class="btn btn-outline-info" id="sent_btn" data-toggle="modal" data-target="#modalSent">
+        <button class="btn btn-outline-info" id="sent_btn_modal" data-toggle="modal" data-target="#modalSent">
           Sent Order
         </button> 
         `
@@ -399,7 +481,7 @@
         </span>
         `
         document.querySelector('#button-status-update').innerHTML = `
-        <button class="btn btn-outline-success" id="payment_btn">
+        <button class="btn btn-outline-success" id="payment_btn_modal" data-toggle="modal" data-target="#modalPayment">
           Submit Payment
         </button> 
         `
@@ -410,43 +492,15 @@
         </span>
         `
         document.querySelector('#button-status-update').innerHTML = ""
+        document.querySelector('#button-status-canceled').innerHTML = ""
       } else if (dataCart[0].status == 4) {
         document.querySelector('#span_status').innerHTML = `
         <span class="badge bg-danger text-wrap fs-2">
           Canceled
         </span>
         `
+        document.querySelector('#button-status-canceled').innerHTML = ""
       }
-    }
-
-    function getAllData(){
-        // console.log({cart})
-        // if($dataCart[0].status_id == 1) {
-        //   $("#status_id").text()
-        // }
-
-        // $.each(cart,function(i, item){
-        //   price = `Rp `+item['price']+`<br>- Rp `+item['disc_price']+`<br><div style="border-top: 1px solid #ccc;"></div>Rp `+item["total_price"];
-
-        //   // price=
-
-        //   dataTable.row.add([
-        //       item['name_product'],
-        //       item['qty'],
-        //       item['price_product'],
-        //       `<div class="badge bg-secondary">`+item['disc']+` %</div>`,
-        //       price,
-        //   ])
-        //   dataTable.draw();
-
-        // }
-        // )
-
-
-        // var data = dataTable.column(0).data();
-        // console.log({data})
-        // data.push("finiii")
-
     }
 
     $('#management_order').change(function() {
@@ -477,6 +531,8 @@
         success: function (data) {
           if(data=="sukses"){
             $('#modalSent').modal("hide")
+            dataCart[0].status = 2
+            checkForButtonStatus()
             AlertSuccess()
           }else if(data!='gagal'|| data!="gagal2"){
             AlertWarningWithMsg(data)
@@ -509,6 +565,8 @@
         success: function (data) {
           if(data=="sukses"){
             $('#modalCancel').modal("hide")
+            dataCart[0].status = 4
+            checkForButtonStatus()
             AlertSuccess()
           }else if(data!='gagal'|| data!="gagal2"){
             AlertWarningWithMsg(data)
@@ -550,7 +608,8 @@
           afterSend:$.LoadingOverlay("hide"),
           success: function (data) {
             if(data=="sukses"){
-              // $('#modalCancel').modal("hide")
+              dataCart[0].status = 1
+              checkForButtonStatus()
               AlertSuccess()
             }else if(data!='gagal'|| data!="gagal2"){
               AlertWarningWithMsg(data)
@@ -576,6 +635,76 @@
       })
     }
 
+    $('#status_btn').on('click', function (e) { 
+      var x = document.getElementById("status_select").value;
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/updateStatus",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          status: x,
+          id:dataCart[0].id,
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data=="sukses"){
+            $('#modalEditStatus').modal("hide")
+            dataCart[0].status = x
+            checkForButtonStatus()
+            AlertSuccess()
+          }else if(data!='gagal'|| data!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      });
+    })
+
+    $('#payment_btn').on('click', function (e) { 
+      console.log("masuk ke payment button")
+      var paid_at = $("#paid_at").val();
+      var bank_name = $("#bank_name").val();
+      var bank_account_name = $("#bank_account_name").val();
+      var nominal_payment_input = $('#nominal_payment_input').val();
+      var nominal_input = document.getElementById("container_nominal_input");
+      if(nominal_input.style.display == "none") {
+        nominal_payment_input = 0
+      }
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/paymentOrder",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          status: 3,
+          paid_at,
+          paid_bank_name: bank_name,
+          paid_account_bank_name: bank_account_name,
+          id:dataCart[0].id,
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data=="sukses"){
+            $('#modalPaymenr').modal("hide")
+            dataCart[0].status = 3
+            checkForButtonStatus()
+            AlertSuccess()
+          }else if(data!='gagal'|| data!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      })
+    })
    
 
 </script>

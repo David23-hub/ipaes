@@ -26,6 +26,10 @@ class CartModel extends Model
     public function GetListJoinDoctorWithId($id) {
         return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('cart.id', '=', $id)->select('cart.*', 'dokter.name as name', 'dokter.clinic as clinic', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'dokter.address as address', 'dokter.information as information' )->get();
     }
+
+    public function GetListJoinDoctorWithDoctorId($id) {
+        return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->select('cart.*' )->get();
+    }
     
     public function GetItem($id,$email){
         return $this

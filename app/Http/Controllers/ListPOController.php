@@ -42,7 +42,8 @@ class ListPOController extends Controller
     public function detailPOIndex(string $id) {
         try {
             $dataCart = $this->cart->GetListJoinDoctorWithId($id);
-            $dokter = $this->doctorModel->GetListActive();
+            $dataCartDokter = $this->cart->GetListJoinDoctorWithDoctorId(3);
+            $dokter = $this->doctorModel->SingleItem(3);
             $category = $this->modelCategoryProduct->GetListActive();
             $items = $this->model->GetListActive();
             $cartsUser = $this->cart->GetItem($id, Auth::user()->email);
@@ -84,7 +85,7 @@ class ListPOController extends Controller
                 }
             } 
             $total = number_format($total,0,',','.');
-            return view('master.detailPO')->with('idCart', $cartUser["id"])->with('category', $category)->with('dokter', $dokter)->with('cart', $resCart)->with('total', $total)->with('user', $user)->with('dataCart', $dataCart)->with('dataEkspedisi', $dataEkspedisi);
+            return view('master.detailPO')->with('idCart', $cartUser["id"])->with('category', $category)->with('dokter', $dokter)->with('cart', $resCart)->with('total', $total)->with('user', $user)->with('dataCart', $dataCart)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter);
             // return $dataCart;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
@@ -209,4 +210,117 @@ class ListPOController extends Controller
             return "gagal";
         }
     }
+
+    public function updateStatus(Request $request) {
+        try {
+            $input = $request->all();
+            $this->cart->UpdateItem($input['data']['id'], $input['data']);
+            return "sukses";
+        }catch(\Throwable $th) {
+            Log::error("error di throwable");
+            Log::error($th);
+            return "gagal";
+        }
+    }
+
+    public function paymentOrder(Request $request) {
+        try {
+            $input = $request->all();
+            $input['data']['paid_at'] = strtotime($input['data']['paid_at']);
+            $input['data']['paid_at'] = date('Y-m-d H:i:s', $input['data']['paid_at']);
+            $input['data']['paid_by'] = Auth::user()->name;
+            $this->cart->UpdateItem($input['data']['id'], $input['data']);
+            return "sukses";
+        }catch(\Throwable $th) {
+            Log::error("error di throwable");
+            Log::error($th);
+            return "gagal";
+        }
+    }
 }
+
+/***
+ *       <div class="card-header">
+        <div class="container">
+          <div class="row">
+            <div class="col align-self-start">
+            </div>
+            <div class="col-8 align-self-center">
+
+            </div>
+            <div class="col align-self-end">
+              <button class="btn btn-primary">
+                Print
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <div>
+              <p class="text-start">PO Number</p>
+              <p class="text-start">{{ $dataCart[0]->po_id }}</p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div>
+              <p class="text-start">Created Purchase Order at</p>
+              <p class="text-start">{{ $dataCart[0]->created_at }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <div>
+              <p class="text-start">Invoice Number</p>
+              <p class="text-start">{{ $dataCart[0]->po_id }}</p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div>
+              <p class="text-start">Due Date</p>
+              <p class="text-start">{{ $dataCart[0]->due_date }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="row d-flex justify-content-end">
+          <div class="col-6">
+            <div>
+              <p class="text-start">Created By</p>
+              <p class="text-start">{{ $dataCart[0]->created_by }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+ * 
+ * 
+ * 
+ * <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 style="font-weight: 600">Doctor</h5>
+
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <p id="name_doc">{{ $dataCart[0]->name }}</p>
+              </li>
+              <li class="list-group-item">Clinic
+                <p id="clinic_doc">{{ $dataCart[0]->clinic }}</p>
+              </li>
+              <li class="list-group-item">Billing Phone
+                <p id="billing_phone_doc">{{ $dataCart[0]->billing_no_hp }}</p>
+              </li>
+              <li class="list-group-item">Doctor Phone
+                <p id="no_hp_doc">{{ $dataCart[0]->no_hp }}</p>
+              </li>
+              <li class="list-group-item">Address
+                <p id="address_doc">{{ $dataCart[0]->address }}</p>
+              </li>
+              <li class="list-group-item">Doctor Information
+                <p id="information_doc">{{ $dataCart[0]->information }}</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+ */
