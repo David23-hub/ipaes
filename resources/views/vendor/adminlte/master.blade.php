@@ -174,6 +174,7 @@
             text: msg,
         })
     }
+
     </script>
 
     {{-- Extra Configured Plugins Scripts --}}

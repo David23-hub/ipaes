@@ -54,52 +54,52 @@
             <input type="file" name="image_add" accept="image/*" id="image_add"  placeholder="Masukkan Image" onchange="previewImage(event)">
           </div>
           <div class="form-group">
-            <label for="nama_add">Nama</label>
+            <label for="nama_add">Nama *</label>
             <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama" >
           </div>
           <div class="form-group">
             <label for="unit_add">Unit Product</label>
             <div id="dropadd" name="dropadd" class="form-group">
               <select class="form-select form-control" id="unit_add">
-                  <option value="Box">Box</option>
+                  <option value="Box" selected>Box</option>
                   <option value="Vial">Vial</option>
               </select> 
             </div>
           </div>
           <div class="form-group">
-            <label for="price_add">Price (ex: 100000)</label>
+            <label for="qty_add">Stock *</label>
+            <input type="qty_add" class="form-control" id="qty_add"  placeholder="Masukkan Stock (Numeric Only)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+          </div>
+          <div class="form-group">
+            <label for="price_add">Price *</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend">
                 <div class="input-group-text">Rp</div>
               </div>
-              <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+              <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product (ex: 100000)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
           </div>
           <div class="form-group">
-            <label for="presentation_add">Presentation</label>
+            <label for="presentation_add">Presentation *</label>
             <div class="input-group mb-2">
-              <input type="presentation_add" class="form-control" id="presentation_add"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+              <input type="presentation_add" class="form-control" id="presentation_add"  placeholder="Masukkan Presentasi" >
             </div>
           </div>
           <div class="form-group">
-            <label for="commision_rate_add">Commission Rate (ex: 2.5)</label>
+            <label for="commision_rate_add">Commission Rate *</label>
             <div class="input-group mb-2">
-              <input type="commision_rate_add" class="form-control" id="commision_rate_add"  placeholder="Masukkan Rate Komisi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+              <input type="commision_rate_add" class="form-control" id="commision_rate_add"  placeholder="Masukkan Rate Komisi (ex: 2.5)" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
               <div class="input-group-prepend">
                 <div class="input-group-text">%</div>
               </div>
             </div>
           </div>
           <div class="form-group">
-            <label for="qty_add">Stock (Numeric Only)</label>
-            <input type="qty_add" class="form-control" id="qty_add"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
-          </div>
-          <div class="form-group">
-            <label for="mini_desc_add">Mini Description</label>
+            <label for="mini_desc_add">Mini Description *</label>
             <textarea type="mini_desc_add" class="form-control" id="mini_desc_add" rows="1"  placeholder="Masukkan Informasi Mini"></textarea>
           </div>
           <div class="form-group">
-            <label for="desc_add">Description</label>
+            <label for="desc_add">Description *</label>
             <textarea type="desc_add" class="form-control" id="desc_add" rows="4"  placeholder="Masukkan Informasi"></textarea>
           </div>
           <div class="form-group">
@@ -141,7 +141,7 @@
               <input type="file" name="image_update" accept="image/*" id="image_update"  placeholder="Masukkan Image" onchange="previewImageUpdate(event)">
             </div>
             <div class="form-group">
-              <label for="name_update">Nama</label>
+              <label for="name_update">Nama *</label>
               <input type="name_update" class="form-control" id="name_update"  placeholder="Masukkan Nama">
             </div>
             <div class="form-group">
@@ -153,42 +153,40 @@
                 </select> 
               </div>
             </div>
-  
             <div class="form-group">
-              <label for="price_update">Price (ex: 100000)</label>
+              <label for="qty_update">Stock *</label>
+              <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Stock (Numeric Only)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            </div>
+            <div class="form-group">
+              <label for="price_update">Price *</label>
               <div class="input-group mb-2">
                 <div class="input-group-prepend">
                   <div class="input-group-text">Rp</div>
                 </div>
-                <input type="price_update" class="form-control" id="price_update"  placeholder="Masukkan Harga Product" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                <input type="price_update" class="form-control" id="price_update"  placeholder="Masukkan Harga Product (ex: 100000)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
               </div>
             </div>
             <div class="form-group">
-              <label for="presentation_update">Presentation</label>
+              <label for="presentation_update">Presentation *</label>
               <div class="input-group mb-2">
-                <input type="presentation_update" class="form-control" id="presentation_update"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+                <input type="presentation_update" class="form-control" id="presentation_update"  placeholder="Masukkan Presentasi" >
               </div>
             </div>
             <div class="form-group">
-              <label for="commision_rate_update">Commission Rate (ex: 2.5)</label>
+              <label for="commision_rate_update">Commission Rate *</label>
               <div class="input-group mb-2">
-                <input type="commision_rate_update" class="form-control" id="commision_rate_update"  placeholder="Masukkan Rate Komisi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+                <input type="commision_rate_update" class="form-control" id="commision_rate_update"  placeholder="Masukkan Rate Komisi (ex: 2.5)" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
                 <div class="input-group-prepend">
                   <div class="input-group-text">%</div>
                 </div>
               </div>
             </div>
-  
             <div class="form-group">
-              <label for="qty_update">Stock (Numeric Only)</label>
-              <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
-            </div>
-            <div class="form-group">
-              <label for="mini_desc_update">Mini Description</label>
+              <label for="mini_desc_update">Mini Description *</label>
               <textarea type="mini_desc_update" class="form-control" id="mini_desc_update" rows="1"  placeholder="Masukkan Informasi Mini"></textarea>
             </div>
             <div class="form-group">
-              <label for="desc_update">Description</label>
+              <label for="desc_update">Description *</label>
               <textarea type="desc_update" class="form-control" id="desc_update" rows="4"  placeholder="Masukkan Informasi"></textarea>
             </div>
             <div class="form-group">
@@ -226,16 +224,15 @@
             <input type="nama_detail" class="form-control" id="nama_detail"  placeholder="Masukkan Nama" disabled>
           </div>
           <div class="form-group">
-            <label for="qty_detail">Stock</label>
-            <input type="qty_detail" class="form-control" id="qty_detail"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
-          </div>
-          <div class="form-group">
             <label for="unit_detail">Unit Product</label>
             <input type="unit_detail" class="form-control" id="unit_detail"  placeholder="Masukkan Status" disabled>
           </div>
           <div class="form-group">
-            <label for="price_detail">Price (ex: 100000)</label>
-            
+            <label for="qty_detail">Stock</label>
+            <input type="qty_detail" class="form-control" id="qty_detail"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
+          </div>
+          <div class="form-group">
+            <label for="price_detail">Price</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend">
                 <div class="input-group-text">Rp</div>
@@ -250,7 +247,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="commision_rate_detail">Commission Rate (ex: 2.5)</label>
+            <label for="commision_rate_detail">Commission Rate</label>
             <div class="input-group mb-2">
               <input type="commision_rate_detail" class="form-control" id="commision_rate_detail"  placeholder="Masukkan Rate Komisi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');" disabled>
               <div class="input-group-prepend">
@@ -450,6 +447,8 @@
             getAllData()
             $('#modaladd').modal("hide")
             AlertSuccess()
+          }else if(data!="gagal"){
+            AlertWarningWithMsg(data)
           }else{
             AlertError()
           }
