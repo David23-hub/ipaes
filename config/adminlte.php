@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => 'Nama Toko',
+    'logo' => 'INTI PERSADA AESTHETIC',
     // logony tokony
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
@@ -85,12 +85,12 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'vendor/adminlte/dist/img/logo.png',
             'alt' => 'Auth Logo',
             'class' => '',
-            'width' => 50,
+            'width' => 75,
             'height' => 50,
         ],
     ],

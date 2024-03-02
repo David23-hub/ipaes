@@ -44,7 +44,8 @@
     <!--PreLoader Ends-->
 	
 	<!-- header -->
-	<div class="top-header-area" id="sticker">
+	{{-- <div class="top-header-area" id="sticker"> --}}
+	<div class="top-header-area">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12 col-sm-12 text-center">
@@ -60,7 +61,7 @@
 						<!-- menu start -->
 						<nav class="main-menu">
 							<ul>
-								<li class="current-list-item"><a href="#">Home</a>
+								{{-- <li class="current-list-item"><a href="#">Home</a>
 									<ul class="sub-menu">
 										<li><a href="index.html">Static Home</a></li>
 										<li><a href="index_2.html">Slider Home</a></li>
@@ -92,11 +93,11 @@
 										<li><a href="single-product.html">Single Product</a></li>
 										<li><a href="cart.html">Cart</a></li>
 									</ul>
-								</li>
+								</li> --}}
 								<li>
 									<div class="header-icons">
-										<a class="shopping-cart" href="cart.html"><i class="fas fa-shopping-cart"></i></a>
-										<a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>
+										{{-- <a class="shopping-cart" href="cart.html"><i class="fas fa-shopping-cart"></i></a> --}}
+										{{-- <a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a> --}}
 									
 											@guest
 												<a class="nav-link" href="{{ route('login') }}"><i class="fa fa-fw fa-power-off text-red"></i>{{ __('adminlte::adminlte.sign_in') }}</a>
@@ -120,7 +121,7 @@
 	<!-- end header -->
 	
 	<!-- search area -->
-	<div class="search-area">
+	{{-- <div class="search-area">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12">
@@ -135,7 +136,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> --}}
 	<!-- end search area -->
 
 	<!-- hero area -->
@@ -145,12 +146,12 @@
 				<div class="col-lg-9 offset-lg-2 text-center">
 					<div class="hero-text">
 						<div class="hero-text-tablecell">
-							<p class="subtitle">Fresh & Organic</p>
-							<h1>Delicious Seasonal Fruits</h1>
-							<div class="hero-btns">
-								<a href="shop.html" class="boxed-btn">Fruit Collection</a>
+							<p class="subtitle">Inti Persada Aestetic</p>
+							<h1>The Best Beauty Product Seller</h1>
+							{{-- <div class="hero-btns">
+								<a href="#product-list" onclick="scrollToSection('product_list')" class="boxed-btn">Product Collection</a>
 								<a href="contact.html" class="bordered-btn">Contact Us</a>
-							</div>
+							</div> --}}
 						</div>
 					</div>
 				</div>
@@ -165,44 +166,19 @@
 	<div class="footer-area">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-3 col-md-6">
-					<div class="footer-box about-widget">
-						<h2 class="widget-title">About us</h2>
-						<p>Ut enim ad minim veniam perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae.</p>
-					</div>
+				<div class="col-lg-2 ">
+					<p><img src="assets/img/logo.png" alt=""></p>
+					<p style="font-weight: bold"><i class="fas fa-solid fa-phone" style="color: green;"></i> +62 878-2905-2023</p>
 				</div>
-				<div class="col-lg-3 col-md-6">
+				<div class="col-lg " style="text-align: right">
 					<div class="footer-box get-in-touch">
-						<h2 class="widget-title">Get in Touch</h2>
-						<ul>
-							<li>34/8, East Hukupara, Gifirtok, Sadan.</li>
-							<li>support@fruitkha.com</li>
-							<li>+00 111 222 3333</li>
-						</ul>
+						<h2 class="widget-title" style="font-weight: bold">Working Hours</h2>
+							<span style=" font-weight: bold; font-size: 20px;color:black" >EVERYDAY</span>
+							<p style="font-weight: bold; color:black"><i class="fas fa-solid fa-clock" style="color: green;"></i> 9AM - 9PM</p>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="footer-box pages">
-						<h2 class="widget-title">Pages</h2>
-						<ul>
-							<li><a href="index.html">Home</a></li>
-							<li><a href="about.html">About</a></li>
-							<li><a href="services.html">Shop</a></li>
-							<li><a href="news.html">News</a></li>
-							<li><a href="contact.html">Contact</a></li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="footer-box subscribe">
-						<h2 class="widget-title">Subscribe</h2>
-						<p>Subscribe to our mailing list to get the latest updates.</p>
-						<form action="index.html">
-							<input type="email" placeholder="Email">
-							<button type="submit"><i class="fas fa-paper-plane"></i></button>
-						</form>
-					</div>
-				</div>
+				
+				
 			</div>
 		</div>
 	</div>
@@ -213,25 +189,23 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-6 col-md-12">
-					<p>Copyrights &copy; 2019 - <a href="https://imransdesign.com/">Imran Hossain</a>,  All Rights Reserved.<br>
-						Distributed By - <a href="https://themewagon.com/">Themewagon</a>
+					<p>Copyrights &copy; PT. Inti Pratama Aesthetic 2023
 					</p>
 				</div>
-				<div class="col-lg-6 text-right col-md-12">
+				{{-- <div class="col-lg-6 text-right col-md-12">
 					<div class="social-icons">
 						<ul>
-							<li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-							<li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-							<li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-							<li><a href="#" target="_blank"><i class="fab fa-linkedin"></i></a></li>
-							<li><a href="#" target="_blank"><i class="fab fa-dribbble"></i></a></li>
+							<li><a href="https://api.whatsapp.com/send?phone=6287829052023&text=Hi! i want to ask about Inti Pratama Aesthetic product" target="_blank"><i class="fab fa-whatsapp"></i></a></li>
 						</ul>
 					</div>
-				</div>
+				</div> --}}
 			</div>
 		</div>
 	</div>
 	<!-- end copyright -->
+
+	<a href="https://api.whatsapp.com/send?phone=6287829052023&text=Hi! i want to ask about Inti Pratama Aesthetic product" target="_blank" class="floating-btn"><i class="fab fa-whatsapp" style="margin-right: 10px"></i> Chat With The Agent</a>
+
 
 	<!-- jquery -->
 	<script src="assets/js/jquery-1.11.3.min.js"></script>
