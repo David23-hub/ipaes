@@ -102,7 +102,7 @@
 											@guest
 												<a class="nav-link" href="{{ route('login') }}"><i class="fa fa-fw fa-power-off text-red"></i>{{ __('adminlte::adminlte.sign_in') }}</a>
 											@else
-												<a class="shopping-cart" href="{{route('homelist')}}"><i class="fa fa-fw fa-power-off"></i>{{ __('adminlte::adminlte.back_to_menu') }}</a>
+												<a class="shopping-cart" href="{{route('homelist')}}"><i class="fa fa-fw fa-share"></i>{{ __('adminlte::adminlte.back_to_menu') }}</a>
 											@endguest
 
 									</div>

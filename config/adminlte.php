@@ -401,9 +401,9 @@ return [
             'icon'    => 'fas fa-fw fa-users',
             'submenu' => [
                 [
-                    'text' => "User",
-                    'icon'    => 'fas fa-fw fa-user',
-                    'icon_color' => 'red',
+                    'text' => "Users",
+                    'icon'    => 'fas fa-fw fa-child',
+                    // 'icon_color' => 'red',
                     'url' => "listUser",
                 ],
             ]
