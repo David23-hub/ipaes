@@ -396,6 +396,18 @@ return [
                 // ],
             ]
         ],
+        [
+            'text' => 'User Management',
+            'icon'    => 'fas fa-fw fa-users',
+            'submenu' => [
+                [
+                    'text' => "User",
+                    'icon'    => 'fas fa-fw fa-user',
+                    'icon_color' => 'red',
+                    'url' => "listUser",
+                ],
+            ]
+        ],
         
         ['header' => 'labels'],
         [
