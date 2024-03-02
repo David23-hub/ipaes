@@ -7,6 +7,7 @@ use App\Models\CategoryProductModel;
 use App\Models\DokterModel;
 use App\Models\ItemModel;
 use App\Models\EkspedisiModel;
+use App\Models\ExtraChargeModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +19,7 @@ class ListPOController extends Controller
     private $modelCategoryProduct;
     private $doctorModel;
     private $ekspedisi;
+    private $extra_charge;
     
     public function __construct()
     {
@@ -30,6 +32,7 @@ class ListPOController extends Controller
 
         $this->doctorModel = new DokterModel;
         $this->ekspedisi = new EkspedisiModel;
+        $this->extra_charge = new ExtraChargeModel;
         
     }
 
@@ -44,48 +47,107 @@ class ListPOController extends Controller
             $dataCart = $this->cart->GetListJoinDoctorWithId($id);
             $dataCartDokter = $this->cart->GetListJoinDoctorWithDoctorId(3);
             $dokter = $this->doctorModel->SingleItem(3);
-            $category = $this->modelCategoryProduct->GetListActive();
             $items = $this->model->GetListActive();
             $cartsUser = $this->cart->GetItem($id, Auth::user()->email);
+            // $hasMany = $this->cart->HasManyExtraCharge();
             $dataEkspedisi = $this->ekspedisi->GetList();
+            $extraChargeAll = $this->extra_charge->GetListAll();
             $user = auth()->user();
             $cart=[];
             $resCart = [];
             $total = 0;
-            // if(count($cartsUser)==0){
-            //     return view('master.detailPO')->with('idCart', "0")->with('category', $category)->with('dokter', $dokter)->with('cart', $resCart)->with('total', $total)->with('user', $user)->with('dataCart', $dataCart);
-            // }
             $cartUser = $cartsUser[0];
+            // $carts = explode(",", $data->cart);
+            // foreach ($carts as $cartItem) {
+            //     $temp = explode("|", $cartItem);
+            //     foreach ($items as $item) {
+            //         if($temp[0]==$item["id"]){
+            //             $cart["name_product"]=$item["name"];
+            //             $cart["price_product"]=$item["price"];
+            //             break;
+            //         }
+            //     }
 
-            if (strlen($cartUser->cart)!=0){
-                $carts = explode(",", $cartUser->cart);
-                foreach ($carts as $cartItem) {
-                    $temp = explode("|", $cartItem);
-                    foreach ($items as $item) {
-                        if($temp[0]==$item["id"]){
-                            $cart["name_product"]=$item["name"];
-                            $cart["price_product"]=$item["price"];
-                            break;
-                        }
-                    }
-    
-                    $cart["qty"]=$temp[2];
-                    $cart["disc"]=$temp[3];
-                    $price = $cart["price_product"]*$temp[2];
-                    $disc = $price*($temp[3]/100);
-                    $cart["price"]=$price;
-                    $cart["disc_price"]=$disc;
-                    $cart["total_price"]=$price-$disc;
-                    $total+=$cart["total_price"];
-                    $cart["total_price"] = number_format($cart["total_price"],0,',','.');
-                    $cart["disc_price"] = number_format($cart["disc_price"],0,',','.');
-                    $cart["price"] = number_format($cart["price"],0,',','.');
-                    $cart["price_product"] = number_format($cart["price_product"],0,',','.');
-                    array_push($resCart, $cart);
+            //     $cart["qty"]=$temp[2];
+            //     $cart["disc"]=$temp[3];
+            //     $price = $cart["price_product"]*$temp[2];
+            //     $disc = $price*($temp[3]/100);
+            //     $cart["price"]=$price;
+            //     $cart["disc_price"]=$disc;
+            //     $cart["total_price"]=$price-$disc;
+            //     $total+=$cart["total_price"];
+            //     $cart["total_price"] = number_format($cart["total_price"],0,',','.');
+            //     $cart["disc_price"] = number_format($cart["disc_price"],0,',','.');
+            //     $cart["price"] = number_format($cart["price"],0,',','.');
+            //     $cart["price_product"] = number_format($cart["price_product"],0,',','.');
+            //     array_push($resCart, $cart);
+            // }
+
+            foreach ($dataCartDokter as $data) {
+              $totalan = 0;
+              $products = [];
+              $extraChargeOne = [];
+
+              if (strlen($data->cart)!=0){
+
+                $carts = explode(",", $data->cart);
+                // array product
+                foreach ($carts as $valueCart) {
+                  $temp = explode("|", $valueCart);
+                  foreach ($items as $item) {
+                    if($temp[0]==$item["id"]){
+                      $product["name_product"]=$item["name"];
+                      $product["price_product"]=$item["price"];
+                      break;
+                    }                      
+                  }
+                  
+                  $product["qty"]=$temp[2];
+                  $product["disc"]=$temp[3];
+                  $price = $product["price_product"]*$temp[2];
+                  $disc = $price*($temp[3]/100);
+                  $product["price"]=$price;
+                  $product["disc_price"]=$disc;
+                  $product["total_price"]=$price-$disc;
+                  $totalan+=$product["total_price"];
+                  $product["total_price"] = number_format($product["total_price"],0,',','.');
+                  $product["disc_price"] = number_format($product["disc_price"],0,',','.');
+                  $product["price"] = number_format($product["price"],0,',','.');
+                  $product["price_product"] = number_format($product["price_product"],0,',','.'); 
+                  array_push($products, $product);
                 }
-            } 
-            $total = number_format($total,0,',','.');
-            return view('master.detailPO')->with('idCart', $cartUser["id"])->with('category', $category)->with('dokter', $dokter)->with('cart', $resCart)->with('total', $total)->with('user', $user)->with('dataCart', $dataCart)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter);
+
+                $data['products'] = $products;
+                
+                foreach ($extraChargeAll as $valueExtra) {
+                  if ($data['id'] == $valueExtra['transaction_id']) {
+                    $totalan += $valueExtra['price'];
+                    $valueExtra['price'] = number_format($valueExtra["price"],0,',','.');
+                    array_push($extraChargeOne, $valueExtra);
+                  }
+                }
+                $totalan = ceil($totalan);
+                $data['total_price'] = $totalan;
+                $data['total'] = number_format($totalan,0,',','.');
+                $data['extra_charge'] = $extraChargeOne;
+              } 
+            }
+
+            // foreach ($dataCartDokter as $key => $valueDokter) {
+            //   $extraChargeOne = [];
+            //   foreach ($extraChargeAll as $key => $valueExtra) {
+            //     if ($valueDokter['id'] == $valueExtra['transaction_id']) {
+            //       $total += $valueExtra['price'];
+            //       $valueExtra['price'] = number_format($valueExtra["price"],0,',','.');
+            //       array_push($extraChargeOne, $valueExtra);
+            //     }
+            //   }
+
+            //   $valueDokter['extra_charge'] = $extraChargeOne;
+            // }
+
+            $total_price = number_format($total,0,',','.');
+            return view('master.detailPO')->with('idCart', $cartUser["id"])->with('dokter', $dokter)->with('total', $total_price)->with('user', $user)->with('dataCart', $dataCart)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll)->with('total_price', $total);
             // return $dataCart;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
@@ -231,6 +293,27 @@ class ListPOController extends Controller
             $input['data']['paid_by'] = Auth::user()->name;
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
             return "sukses";
+        }catch(\Throwable $th) {
+            Log::error("error di throwable");
+            Log::error($th);
+            return "gagal";
+        }
+    }
+
+    public function addExtraCharge(Request $request) {
+        try {
+          $input = $request->all();
+          $data['transaction_id'] = $input['data']['transaction_id'];
+          $data['description'] = $input['data']['description'];
+          $data['price'] = $input['data']['price'];
+          $data['created_at'] = date('Y-m-d H:i:s');
+          $data['created_by'] = Auth::user()->name;
+          $data['updated_at'] = date('Y-m-d H:i:s');
+          $data['updated_by'] = Auth::user()->name;
+          $this->extra_charge->AddItem($data);
+          $result['message'] = "sukses";
+          $result['price'] = number_format($data["price"],0,',','.');
+          return $result;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
             Log::error($th);
