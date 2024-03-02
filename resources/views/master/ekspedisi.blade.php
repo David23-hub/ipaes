@@ -42,7 +42,7 @@
       <form id="formadd" role="form">
         <div class="modal-body">
           <div class="form-group">
-            <label for="nama_add">Nama</label>
+            <label for="nama_add">Nama *</label>
             <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama">
           </div>
           <div class="form-group">
@@ -77,7 +77,7 @@
         <div class="modal-body">
             <input type="hidden" class="form-control" id="id_update">
           <div class="form-group">
-            <label for="nama_update">Nama</label>
+            <label for="nama_update">Nama *</label>
             <input type="nama_update" class="form-control" id="nama_update"  placeholder="Masukkan Nama">
           </div>
           <div class="form-group">
@@ -234,6 +234,8 @@
             getAllData()
             $('#modaladd').modal("hide")
             AlertSuccess()
+          }else if(data!="gagal"){
+            AlertWarningWithMsg(data)
           }else{
             AlertError()
           }
@@ -309,6 +311,8 @@
             getAllData()
             $('#modalUpdate').modal("hide")
             AlertSuccess()
+          }else if(data!="gagal"){
+            AlertWarningWithMsg(data)
           }else{
             AlertError()
           }

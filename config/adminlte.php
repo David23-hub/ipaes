@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => 'Nama Toko',
+    'logo' => 'INTI PERSADA AESTHETIC',
     // logony tokony
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
@@ -85,12 +85,12 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'vendor/adminlte/dist/img/logo.png',
             'alt' => 'Auth Logo',
             'class' => '',
-            'width' => 50,
+            'width' => 75,
             'height' => 50,
         ],
     ],
@@ -361,27 +361,27 @@ return [
             'submenu' => [
                 [
                     'text' => "Product",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => "listItem",
                 ],
                 [
                     'text' => "Ekspedisi",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => "listEkspedisi",
                 ],
                 [
                     'text' => "Dokter",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => "listDokter",
                 ],
                 [
                     'text' => "Category Product",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => "listCategoryProduct",
                 ],
                 [
                     'text' => "Product Bundle",
-                    'icon_color' => 'cyan',
+                    'icon_color' => 'red',
                     'url' => 'listProductBundle'
                 ]
                 // [
@@ -394,6 +394,18 @@ return [
                 //     'icon_color' => 'red',
                 //     'url' => "#",
                 // ],
+            ]
+        ],
+        [
+            'text' => 'User Management',
+            'icon'    => 'fas fa-fw fa-users',
+            'submenu' => [
+                [
+                    'text' => "Users",
+                    'icon'    => 'fas fa-fw fa-child',
+                    // 'icon_color' => 'red',
+                    'url' => "listUser",
+                ],
             ]
         ],
         

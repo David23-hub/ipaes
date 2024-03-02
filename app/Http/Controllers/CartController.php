@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PackageModel;
 use App\Models\CartModel;
 use App\Models\CategoryProductModel;
 use App\Models\DokterModel;
@@ -12,6 +13,9 @@ use Illuminate\Http\Request;
 class CartController extends Controller
 {
     private $model;
+
+    private $itemPackage;
+
     private $cart;
     private $modelCategoryProduct;
     private $doctorModel;
@@ -20,6 +24,8 @@ class CartController extends Controller
     {
         $this->middleware('auth');
         $this->model = new ItemModel;
+
+        $this->itemPackage = new PackageModel;
 
         $this->cart = new CartModel;
         
@@ -35,6 +41,7 @@ class CartController extends Controller
         $category = $this->modelCategoryProduct->GetListActive();
         $dokter = $this->doctorModel->GetListActive();
         $items = $this->model->GetListActive();
+        $itemsBundle = $this->itemPackage->GetListActive();
         $cartsUser = $this->cart->GetCart(Auth::user()->email);
         
         $user = auth()->user();
@@ -52,25 +59,46 @@ class CartController extends Controller
             $carts = explode(",", $cartUser->cart);
             foreach ($carts as $cartItem) {
                 $temp = explode("|", $cartItem);
-                foreach ($items as $item) {
-                    if($temp[0]==$item["id"]){
-                        $cart["name_product"]=$item["name"];
-                        $cart["price_product"]=$item["price"];
-                        break;
+                if ($temp[1]=="product"){
+                    foreach ($items as $item) {
+                        if($temp[0]==$item["id"]){
+                            $cart["name_product"]=$item["name"];
+                            $cart["price_product"]=$item["price"];
+                            break;
+                        }
                     }
+
+                    $cart["qty"]=$temp[2];
+                    $cart["disc"]=$temp[3];
+                    $price = $cart["price_product"]*$temp[2];
+                    $disc = $price*($temp[3]/100);
+                    $cart["price"]=$price;
+                    $cart["disc_price"]=$disc;
+                    $cart["total_price"]=$price-$disc;
+                    $total+=$cart["total_price"];
+                    array_push($resCart, $cart);
+                }else if ($temp[1]=="paket"){
+                    foreach ($itemsBundle as $item) {
+                        if($temp[0]==$item["id"]){
+                            $cart["name_product"]=$item["name"];
+                            $cart["price_product"]=$item["price"];
+                            break;
+                        }
+                    }
+
+                    $cart["qty"]=$temp[2];
+                    $cart["disc"]=$temp[3];
+                    $price = $cart["price_product"]*$temp[2];
+                    $disc = $price*($temp[3]/100);
+                    $cart["price"]=$price;
+                    $cart["disc_price"]=$disc;
+                    $cart["total_price"]=$price-$disc;
+                    $total+=$cart["total_price"];
+                    array_push($resCart, $cart);
                 }
 
-                $cart["qty"]=$temp[2];
-                $cart["disc"]=$temp[3];
-                $price = $cart["price_product"]*$temp[2];
-                $disc = $price*($temp[3]/100);
-                $cart["price"]=$price;
-                $cart["disc_price"]=$disc;
-                $cart["total_price"]=$price-$disc;
-                $total+=$cart["total_price"];
-                array_push($resCart, $cart);
-
             }
+            
         }
 
         return view('master.cart')->with('idCart', $cartUser["id"])->with('category', $category)->with('dokter', $dokter)->with('cart', $resCart)->with('total', $total)->with('user', $user);

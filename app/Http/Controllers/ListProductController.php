@@ -5,18 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\CartModel;
 use App\Models\CategoryProductModel;
 use App\Models\ItemModel;
+use App\Models\PackageModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ListProductController extends Controller
 {
     private $model;
+    private $itemPackage;
     private $cartDetail;
     private $modelCategoryProduct;
     public function __construct()
     {
         $this->middleware('auth');
         $this->model = new ItemModel;
+
+        $this->itemPackage = new PackageModel;
 
         $this->cartDetail = new CartModel;
         
@@ -30,6 +34,7 @@ class ListProductController extends Controller
 
         $category = $this->modelCategoryProduct->GetListActive();
         $product = $this->model->GetListActive();
+        $productBundle = $this->itemPackage->GetListActive();
         
         $email = Auth::user()->email;
         $cartsUser = $this->cartDetail->GetCart($email);
@@ -37,6 +42,7 @@ class ListProductController extends Controller
 
         $productVal=[];
         $resProduct = [];
+        $resProductBundle = [];
         $bool = false;
         if (count($cartsUser)==0){
             foreach ($product as  $productVal) {
@@ -44,12 +50,17 @@ class ListProductController extends Controller
                 $productVal['disc_cart'] = '';
                 array_push($resProduct,$productVal);
             }
-            return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('resProduct', $resProduct);
+            foreach ($productBundle as  $value) {
+                $value['qty_cart'] = '';
+                $value['disc_cart'] = '';
+                array_push($resProductBundle,$value);
+            }
+            return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);
         }
         $cartUser = $cartsUser[0];
 
+        //add list item for each product
         foreach ($product as  $productVal) {
-            if (strlen($cartUser->cart)!=0){
                 $bool = false;
 
                 $carts = explode(",", $cartUser->cart);
@@ -67,14 +78,41 @@ class ListProductController extends Controller
                     $productVal['disc_cart'] = '';
                 }
                 array_push($resProduct,$productVal);
-            }
         }
 
-        return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('resProduct', $resProduct);
+        //add list item for bundle
+        foreach ($productBundle as  $productVal) {
+                $bool = false;
+
+                $carts = explode(",", $cartUser->cart);
+                foreach ($carts as $cartItem) {
+                    $temp = explode("|", $cartItem);
+                    if ($productVal["id"] == $temp[0] && $temp[1] == "paket"){
+                        $bool = true;
+                        $productVal['qty_cart'] = $temp[2];
+                        $productVal['disc_cart'] = $temp[3];
+                        break;
+                    }   
+                }
+                if(!$bool){
+                    $productVal['qty_cart'] = '';
+                    $productVal['disc_cart'] = '';
+                }
+                $productVal['unit'] = "Package";
+                array_push($resProductBundle,$productVal);
+        }
+
+        return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);
     }
 
     public function addCartDetail(Request $request){
         $input = $request->all();
+
+        if (!preg_match('/^[0-9]+$/', $input["qty"])) {
+            return "Kuantity Barang Harus Diisi!";
+        }else if (!preg_match('/^[0-9]+$/', $input["disc"]) && $input["disc"]!="") {
+            return "Diskon Harus Diisi!";
+        }
 
         if ($input['disc']>100){
             $res="gagal";

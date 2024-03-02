@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CategoryProductModel;
 use App\Models\DokterModel;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -42,6 +43,11 @@ class CategoryProductController extends Controller
     public function addItem(Request $request){
         $input = $request->all();
 
+        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+            return "Nama Category Harus Diisi!";
+        }
+
+
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
@@ -66,6 +72,10 @@ class CategoryProductController extends Controller
 
     public function updateItem(Request $request){
         $input = $request->all();
+
+    if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+        return "Nama Category Harus Diisi!";
+    }
 
         $data = [
             'name' => $input['name'],

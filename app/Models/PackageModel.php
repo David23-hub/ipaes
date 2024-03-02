@@ -14,6 +14,10 @@ class PackageModel extends Model
     public function GetList(){
         return PackageModel::all()->where('deleted_by',null);
     }
+
+    public function GetListActive(){
+        return PackageModel::all()->where('deleted_by',null)->where('status',1);
+    }
     
     public function GetItem($id){
         return $this

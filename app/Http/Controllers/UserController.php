@@ -4,10 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Providers\RouteServiceProvider;
+
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    private function isAdmin(){
+        if(Auth::user()->role=="admin"){
+            return true;
+        }
+        return false;
+    }
+
     public function index(){
+        if(!$this->isAdmin()){
+            return redirect(RouteServiceProvider::HOME);
+        }
+
         $users = User::all();
         return view('users.index', [
             'users' => $users
@@ -16,10 +35,18 @@ class UserController extends Controller
 
     public function create()
     {
+        if(!$this->isAdmin()){
+            return redirect(RouteServiceProvider::HOME);
+        }
+
         return view('users.create');
     }
     public function store(Request $request)
     {
+        if(!$this->isAdmin()){
+            return redirect(RouteServiceProvider::HOME);
+        }
+
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
@@ -30,12 +57,16 @@ class UserController extends Controller
         ]);
         $array['password'] = bcrypt($array['password']);
         $user = User::create($array);
-        return redirect()->rute('users.index')
+        return redirect()->route('users.index')
             ->with('success_message', 'Berhasil menambah user baru');
     }
 
     public function edit($id)
     {
+        if(!$this->isAdmin()){
+            return redirect(RouteServiceProvider::HOME);
+        }
+
         $user = User::find($id);
         if (!$user) return redirect()->route('users.index')
             ->with('error_message', 'User dengan id'.$id.' tidak ditemukan');
@@ -48,6 +79,10 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+        if(!$this->isAdmin()){
+            return redirect(RouteServiceProvider::HOME);
+        }
+
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
@@ -66,6 +101,10 @@ class UserController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        if(!$this->isAdmin()){
+            return redirect(RouteServiceProvider::HOME);
+        }
+
         $user = User::find($id);
         if ($id == $request->user()->id) return redirect()->route('users.index')
             ->with('error_message', 'Anda tidak dapat menghapus diri sendiri.');

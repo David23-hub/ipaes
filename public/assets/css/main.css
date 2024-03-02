@@ -1,4 +1,11 @@
-/*Template Name: Fruitkha - Responsive Bootstrap4 Shop TemplateTemplate URI: Description: Bootstrap template for fruits or any other kind of shopAuthor: Imran HossainAuthor URI: https://imransdesign.com/Version: 1.0*/
+/*
+Template Name: Fruitkha - Responsive Bootstrap4 Shop Template
+Template URI: 
+Description: Bootstrap template for fruits or any other kind of shop
+Author: Imran Hossain
+Author URI: https://imransdesign.com/
+Version: 1.0
+*/
 /* -----------------------------------------------------------------------------
 
 # Base - Genral & Typography
@@ -714,8 +721,9 @@ nav.main-menu li a {
   z-index: 999 !important;
 }
 
+/* HEADER COLOR */
 .sticky-wrapper.is-sticky .top-header-area {
-  background-color: #051922;
+  background-color: #C5FFF6;
   padding: 15px 0;
 }
 
@@ -854,21 +862,22 @@ a.mobile-show {
   padding: 50px 0;
 }
 
+/* FOOTER COLOR*/
 .footer-area {
-  background-color: #051922;
+  background-color: #C5FFF6;
   color: #fff;
-  padding: 150px 0;
+  padding: 50px 0;
 }
 
 h2.widget-title {
   font-size: 24px;
   font-weight: 500;
   position: relative;
-  padding-bottom: 20px;
-  color: #fff;
+  /* padding-bottom: 20px; */
+  color: #000000;
 }
 
-h2.widget-title:after {
+/* h2.widget-title:after {
   position: absolute;
   left: 0;
   bottom: 0;
@@ -876,7 +885,7 @@ h2.widget-title:after {
   height: 2px;
   background-color: #F28123;
   content: "";
-}
+} */
 
 .footer-box p {
   color: #fff;
@@ -894,6 +903,7 @@ h2.widget-title:after {
   opacity: 0.7;
   margin-bottom: 10px;
   line-height: 1.8;
+  color: #000000;
 }
 
 .footer-box ul li:last-child {
@@ -1396,7 +1406,7 @@ html, body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 7px;
-  font-size: 15px;
+  font-size: 20px;
 }
 
 .hero-text h1 {
@@ -1430,6 +1440,10 @@ html, body {
 }
 
 .hero-btns a.bordered-btn {
+  margin-left: 15px;
+}
+
+.hero-btns button.bordered-btn {
   margin-left: 15px;
 }
 
@@ -2747,4 +2761,26 @@ table.order-details tbody td {
   display: table-cell;
   vertical-align: middle;
   width: 100%;
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 20px; /* Adjust the distance from the bottom */
+  right: 20px; /* Adjust the distance from the right */
+  background-color: #25D366; /* WhatsApp green color */
+  color: #fff; /* Text color */
+  width: auto; /* Allow button width to adjust based on content */
+  height: 60px; /* Button height */
+  padding: 0 20px; /* Adjust padding to create space around the icon */
+  border-radius: 30px; /* Set border radius to half of button height to maintain circular shape */
+  display: flex; /* Align icon vertically and horizontally */
+  justify-content: center; /* Center the icon horizontally */
+  align-items: center; /* Center the icon vertically */
+  text-decoration: none; /* Remove default underline */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for button */
+}
+
+/* Hover effect */
+.floating-btn:hover {
+  background-color: #128C7E; /* Darker shade of WhatsApp green on hover */
 }

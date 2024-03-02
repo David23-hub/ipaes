@@ -31,7 +31,6 @@ class ItemModel extends Model
         $d->status = $data['status'];
         $d->qty = $data['qty'];
 
-        $d->category_product = $data['category_product'];
         $d->unit = $data['unit'];
         $d->price = $data['price'];
         $d->presentation = $data['presentation'];

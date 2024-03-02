@@ -46,43 +46,28 @@
           <div class="container text-center">
             <div class="row">
               <div class="col">
+                <div class="form-group">
+                  <label for="nama_add">Nama *</label>
+                  <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama" >
+                </div>
                 <div class="row">
                   <div class="col">
+                    
                     <div class="form-group">
-                      <label for="category_product_add">Category Product</label>
-                      <div id="dropadd" name="dropadd" class="form-group">
-                        <select class="form-select form-control" id="category_product_add">
-                          @foreach($data["dataCategory"] as $item)
-                            <option value={{$item->id}}>{{$item->name}}</option>
-                          @endforeach
-                        </select> 
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="form-group">
-                      <label for="price_add">Price</label>
+                      <label for="price_add">Price * (ex: 10000)</label>
                       <div class="input-group mb-2">
                         <div class="input-group-prepend">
                           <div class="input-group-text">Rp</div>
                         </div>
-                        <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                        <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product (ex: 100000)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col">
                     <div class="form-group">
-                      <label for="nama_add">Nama</label>
-                      <input type="nama_add" class="form-control" id="nama_add"  placeholder="Masukkan Nama" >
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="form-group">
-                      <label for="commision_rate_add">Commission Rate</label>
+                      <label for="commision_rate_add">Commission Rate *</label>
                       <div class="input-group mb-2">
-                        <input type="commision_rate_add" class="form-control" id="commision_rate_add"  placeholder="Masukkan Rate Komisi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
+                        <input type="commision_rate_add" class="form-control" id="commision_rate_add"  placeholder="Masukkan Rate Komisi (ex: 2.5)" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');">
                         <div class="input-group-prepend">
                           <div class="input-group-text">%</div>
                         </div>
@@ -96,19 +81,8 @@
                 </div>
                 <div class="form-group">
                   <input class="btn-check" type="checkbox" id="status_add" checked/>
-                  {{-- <label class="form-check-label" for="flexCheckDefault">Default checkbox</label> --}}
                  <label for="status_add" class="form-check-label" >Status</label>
                 </div>
-                {{-- <label for="status_add">Status</label> --}}
-                {{-- <div class="form-group"> --}}
-                  {{-- <div id="dropupdate" name="dropupdate" class="form-group">
-                    <select class="form-select form-control" id="status_add">
-                      <option value="0">InActive</option>
-                      <option value="1">Active</option>
-                    </select> 
-                  </div> --}}
-                  
-                {{-- </div> --}}
                 <div class="form-group" >
                   <img id="preview" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0; ">
                 </div>
@@ -324,7 +298,11 @@
             stat = "InActive"
           }
           path = "images/"+item['img']
-          img = `<img style="display:block; margin:auto;" src="{{asset("`+path+`")}}" height="50px" width="50px"/>`
+          if(item['img']!=""){
+            img = `<img style="display:block; margin:auto;" src="{{asset("`+path+`")}}" height="50px" width="50px"/>`
+          }else{
+            img = `<img id="preview" style="width: 50px; height: 50px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;">`
+          }
 
           str = item['product']
           strName = `<ul class="list-group list-group-flush">`
@@ -344,7 +322,6 @@
               item['commision_rate'] + "%",
               strName,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
-              <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
               <button class="btn btn-danger" onclick="deleteItem(`+item['id']+`)">Delete</button>`,
           ])
             dataTable.draw();
@@ -378,10 +355,10 @@
 
       var arr = $("input[name=input-data]").map(function (index) { 
         if($(this).val() !== "") {
-          return $(this).val() + "," + $(this).attr('data-id').trim() 
+          return $(this).val() + "|" + $(this).attr('data-id').trim() 
         }
       }).get()
-      arr = arr.join(";")
+      arr = arr.join(",")
 
       var fileInput = document.getElementById('image_add');
 

@@ -1,19 +1,30 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\ItemModel;
+use App\Models\PackageModel;
 
-use Illuminate\Http\Request;
+
 
 class HomeController extends Controller
 {
     /**
      * Create a new controller instance.
      *
+     * 
      * @return void
      */
+
+    private $model;
+    private $package;
+     
     public function __construct()
     {
         // $this->middleware('auth');
+        $this->model = new ItemModel;
+        $this->package = new PackageModel;
+
+
     }
 
     /**
@@ -23,6 +34,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('part/home');
+        $items = $this->model->GetListActive();
+        $package = $this->package->GetListActive();
+        return view('part/home')->with('items',$items)->with('package',$package);
     }
 }

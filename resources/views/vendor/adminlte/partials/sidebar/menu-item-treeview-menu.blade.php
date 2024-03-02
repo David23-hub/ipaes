@@ -23,7 +23,9 @@
 
     {{-- Menu items --}}
     <ul class="nav nav-treeview">
-        @each('adminlte::partials.sidebar.menu-item', $item['submenu'], 'item')
+        <div style="margin-left:20px">
+            @each('adminlte::partials.sidebar.menu-item', $item['submenu'], 'item')
+        </div>
     </ul>
 
 </li>
