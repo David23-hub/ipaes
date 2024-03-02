@@ -18,6 +18,10 @@ Route::get('password/reset', function () {
 });
 
 
+Route::get('/listUser', [App\Http\Controllers\UserController::class, 'index'])->middleware('auth');
+
+
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 

@@ -30,7 +30,7 @@ class UserController extends Controller
         ]);
         $array['password'] = bcrypt($array['password']);
         $user = User::create($array);
-        return redirect()->rute('users.index')
+        return redirect()->route('users.index')
             ->with('success_message', 'Berhasil menambah user baru');
     }
 

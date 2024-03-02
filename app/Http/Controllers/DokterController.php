@@ -18,12 +18,7 @@ class DokterController extends Controller
 
     public function index()
     {
-
-        // $data = $this->model->GetList();
-
-        // $data['data'] = json_encode($data);
         return view('master.dokter');
-        // return view('items.list',$data);
     }
 
     public function getAll(Request $request){
