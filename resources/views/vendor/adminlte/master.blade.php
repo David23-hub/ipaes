@@ -168,6 +168,8 @@
                                     
                                 });
                                 counting.innerHTML+=isi;
+                            }else{
+                                 document.getElementById('notif-count').innerHTML=0
                             }
                         },
                         error: function (result, status, err) {
