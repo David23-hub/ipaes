@@ -230,7 +230,10 @@ class ListPOController extends Controller
             $input['data']['packing_by'] = Auth::user()->name;
             $input['data']['packing_at'] = date('Y-m-d H:i:s');
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
-            return "sukses";
+            $data['message'] = "sukses";
+            $data['packing_by'] = $input['data']['packing_by'];
+            $data['packing_at'] = $input['data']['packing_at'];
+            return $data;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
             Log::error($th);
@@ -244,7 +247,10 @@ class ListPOController extends Controller
             $input['data']['sent_by'] = Auth::user()->name;
             $input['data']['sent_at'] = date('Y-m-d H:i:s');
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
-            return "sukses";
+            $data['message'] = "sukses";
+            $data['sent_by'] = $input['data']['sent_by'];
+            $data['sent_at'] = $input['data']['sent_at'];
+            return $data;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
             Log::error($th);
@@ -271,7 +277,10 @@ class ListPOController extends Controller
             $input['data']['paid_at'] = date('Y-m-d H:i:s', $input['data']['paid_at']);
             $input['data']['paid_by'] = Auth::user()->name;
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
-            return "sukses";
+            $data['message'] = "sukses";
+            $data['paid_by'] = $input['data']['paid_by'];
+            $data['paid_at'] = $input['data']['paid_at'];
+            return $data;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
             Log::error($th);

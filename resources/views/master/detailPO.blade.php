@@ -91,9 +91,14 @@
                         Status  | 
                       </strong>
                       <span id="span_status{{ $key }}"></span>
+                      @if ($itemDokter['status'] == 4 || $itemDokter['status'] == 3)
                       <span class="p-2">
-                        <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus">Edit Status</button>
+                      </span>                          
+                      @else
+                      <span class="p-2">
+                        <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{ $key }}">Edit Status</button>
                       </span>
+                      @endif
                     </div>
                     <div class="col" style="text-align: right">
                       <button class="btn btn-primary">
@@ -806,12 +811,17 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          if(data=="sukses"){
-            $(`#modalSent${key}`).modal("hide")
+          if(data['message']=="sukses"){
+            dataCartDokter[key]['expedition_id'] = ekspedisi
+            dataCartDokter[key]['recepient_number'] = receipt_number_input
+            dataCartDokter[key]['shipping_cost'] = shippingCost
+            dataCartDokter[key]['sent_by'] = data['sent_by']
+            dataCartDokter[key]['sent_at'] = data['sent_at']
             dataCartDokter[key].status = 2
+            $(`#modalSent${key}`).modal("hide")
             checkForButtonStatus()
             AlertSuccess()
-          }else if(data!='gagal'|| data!="gagal2"){
+          }else if(data['message']!='gagal'|| data['message']!="gagal2"){
             AlertWarningWithMsg(data)
           }else{
             AlertError()
@@ -841,14 +851,20 @@
           paid_at: paid_at,
           paid_bank_name: bank_name,
           paid_account_bank_name: bank_account_name,
+          nominal: nominal_payment_input,
           id:id,
         }},
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           if(data=="sukses"){
-            $(`#modalPayment${key}`).modal("hide")
+            dataCartDokter[key]['paid_bank_name'] = bank_name
+            dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
+            dataCartDokter[key]['nominal'] = nominal_payment_input
+            dataCartDokter[key]['paid_by'] = data['paid_by']
+            dataCartDokter[key]['paid_at'] = data['paid_at']
             dataCartDokter[key].status = 3
+            $(`#modalPayment${key}`).modal("hide")
             checkForButtonStatus()
             AlertSuccess()
           }else if(data!='gagal'|| data!="gagal2"){
@@ -915,11 +931,13 @@
           beforeSend: $.LoadingOverlay("show"),
           afterSend:$.LoadingOverlay("hide"),
           success: function (data) {
-            if(data=="sukses"){
+            if(data.message=="sukses"){
               dataCartDokter[key].status = 1
+              dataCartDokter[key]['packing_by'] = data['packing_by']
+              dataCartDokter[key]['packing_at'] = data['packing_at']
               checkForButtonStatus()
               AlertSuccess()
-            }else if(data!='gagal'|| data!="gagal2"){
+            }else if(data.message !='gagal'|| data.message !="gagal2"){
               AlertWarningWithMsg(data)
             }else{
               AlertError()
