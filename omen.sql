@@ -21,13 +21,13 @@ USE `laravel`;
 DROP TABLE IF EXISTS `cart`;
 
 CREATE TABLE `cart` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `po_id` varchar(50) DEFAULT NULL,
-  `doctor_id` int(11) DEFAULT NULL,
+  `doctor_id` int DEFAULT NULL,
   `item_category` varchar(20) DEFAULT NULL,
   `cart` varchar(255) DEFAULT NULL,
   `notes` varchar(255) DEFAULT NULL,
-  `management_order` tinyint(4) DEFAULT NULL,
+  `management_order` tinyint DEFAULT NULL,
   `due_date` timestamp NULL DEFAULT NULL,
   `created_by` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -35,8 +35,24 @@ CREATE TABLE `cart` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_by` varchar(50) DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
+  `status` tinyint DEFAULT NULL,
+  `packing_at` timestamp NULL DEFAULT NULL,
+  `packing_by` varchar(50) DEFAULT NULL,
+  `sent_at` timestamp NULL DEFAULT NULL,
+  `sent_by` varchar(50) DEFAULT NULL,
+  `expedition_id` int DEFAULT NULL,
+  `shipping_cost` int DEFAULT NULL,
+  `recepient_number` varchar(100) DEFAULT NULL,
+  `paid_at` timestamp NULL DEFAULT NULL,
+  `paid_by` varchar(50) DEFAULT NULL,
+  `paid_bank_name` varchar(100) DEFAULT NULL,
+  `paid_account_bank_name` varchar(100) DEFAULT NULL,
+  `cancel_at` timestamp NULL DEFAULT NULL,
+  `cancel_by` varchar(50) DEFAULT NULL,
+  `cancel_reason` varchar(100) DEFAULT NULL,
+  `nominal` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `cart` */
 
@@ -323,3 +339,20 @@ CREATE TABLE `package` (
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+CREATE TABLE `extra_charge` (
+  `transaction_id` int DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `price` int DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `updated_by` varchar(50) DEFAULT NULL,
+  `dokter_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `extra_charge_id_IDX` (`id`) USING BTREE,
+  KEY `extra_charge_FK` (`transaction_id`),
+  CONSTRAINT `extra_charge_FK` FOREIGN KEY (`transaction_id`) REFERENCES `cart` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+

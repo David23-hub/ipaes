@@ -4,19 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
-class CartModel extends Model
+class ExtraChargeModel extends Model
 {
     use HasFactory;
-    protected $table = 'cart';
+    protected $table = 'extra_charge';
     public $timestamps = false;
 
-    public function GetList($email){
-        return CartModel::all()->where('deleted_by',null)->where('created_by',$email);
+    public function GetList($id){
+        return ExtraChargeModel::all()->where('transaction_id',$id);
     }
 
     public function GetListAll(){
-        return CartModel::all()->where('deleted_by',null);
+        return ExtraChargeModel::all();
     }
 
     public function GetListJoinDoctor() {
@@ -55,9 +56,10 @@ class CartModel extends Model
     }
 
     public function AddItem($data){
-        $d = new CartModel;
-        $d->cart = $data['cart'];
-
+        $d = new ExtraChargeModel;
+        $d->transaction_id = $data['transaction_id'];
+        $d->description = $data['description'];
+        $d->price = $data['price'];
         $d->created_by = $data['created_by'];
         $d->created_at = $data['created_at'];
         return $d->save();
