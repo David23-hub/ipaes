@@ -18,6 +18,9 @@ Route::get('password/reset', function () {
 });
 
 
+Route::post('/getNotif', [App\Http\Controllers\NotifController::class, 'getAll'])->name('getAll');
+
+
 Route::get('/listUser', [App\Http\Controllers\UserController::class, 'index'])->middleware('auth');
 
 

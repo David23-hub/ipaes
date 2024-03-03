@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CategoryProductModel;
 use App\Models\DokterModel;
+use App\Models\NotifModel;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -11,10 +12,12 @@ use Illuminate\Http\Request;
 class CategoryProductController extends Controller
 {
     private $model;
+    private $notif;
     public function __construct()
     {
         $this->middleware('auth');
         $this->model = new CategoryProductModel;
+        $this->notif = new NotifModel;
     }
 
     public function index()
@@ -65,7 +68,14 @@ class CategoryProductController extends Controller
             }
         } catch (\Throwable $th) {
             $result="gagal";
-        }        
+        }
+
+        $notif = [
+            'msg'=>$input['name']." Category Has Been Create By".Auth::user()->username,
+            'created_by' => Auth::user()->email,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        $this->notif->AddItem($notif);
 
         return $result;
     }
