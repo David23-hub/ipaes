@@ -142,6 +142,12 @@
         });
 
     function getAllData(){
+      var selectElement = document.getElementById("list_doctor");
+
+      // Set its value to the value of the first option (or any default value)
+      selectElement.value = selectElement.options[0].value;
+
+        dataTable.destroy();
         $.each(cart,function(i, item){
           price = `Rp `+item['price']+`<br>- Rp `+item['disc_price']+`<br><div style="border-top: 1px solid #ccc;"></div>Rp `+item["total_price"];
 
@@ -200,18 +206,8 @@
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           if(data=="sukses"){
-            Swal.fire({
-              icon: 'success',
-              title: 'Success',
-              text: 'Your data has been saved!',
-              button: "OK",
-            })
-            .then((value) => {
-              // Action to be executed after the user clicks the "OK" button
-              location.reload();
-              // Add your custom action here
-            });
-
+            getAllData()
+            AlertSuccess()
           }else if(data!='gagal'|| data!="gagal2"){
             AlertWarningWithMsg(data)
           }else{

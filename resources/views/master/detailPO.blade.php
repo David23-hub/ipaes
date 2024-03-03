@@ -92,7 +92,7 @@
                       </strong>
                       <span id="span_status{{ $key }}"></span>
                       <span class="p-2">
-                        <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus">Edit Status</button>
+                        <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{$key}}">Edit Status</button>
                       </span>
                     </div>
                     <div class="col" style="text-align: right">
