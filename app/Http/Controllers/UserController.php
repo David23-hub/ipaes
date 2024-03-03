@@ -50,10 +50,11 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
+            'role' => 'required',
             'password' => 'required|confirmed'
         ]);
         $array = $request->only([
-            'name', 'email', 'password'
+            'name', 'email','role', 'password'
         ]);
         $array['password'] = bcrypt($array['password']);
         $user = User::create($array);
