@@ -54,165 +54,169 @@
         </div>
       </div>
     </div>
-    @foreach ($dataCartDokter as $key => $itemDokter)
-      <div>
-        <div class="row">
-          <div class="col-sm-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 style="font-weight: 600">Detail Information</h5>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">
-                    <p class="text-start">PO Number</p>
-                    <p class="text-start">{{ $itemDokter->po_id }}</p>
-                  </li>
-                  <li class="list-group-item">
-                    <p class="text-start">Created Purchase Order at</p>
-                    <p class="text-start">{{ $itemDokter->created_at }}</p>
-                  </li>
-                  <li class="list-group-item">
-                    <p class="text-start">Invoice Number</p>
-                    <p class="text-start">{{ $itemDokter->po_id }}</p>
-                  </li>
-                  <li class="list-group-item">
-                    <p class="text-start">Due Date</p>
-                    <p class="text-start">{{ $itemDokter->due_date }}</p>
-                  </li>
-                  <li class="list-group-item">
-                    <p class="text-start">Created By</p>
-                    <p class="text-start">{{ $itemDokter->created_by }}</p>
-                  </li>
-                </ul>
-                <div class="row">
-                  <div class="col" style="text-align: left">
-                    <strong class="text-black fs-2">
-                      Status  | 
-                    </strong>
-                    <span id="span_status{{ $key }}"></span>
-                    <span class="p-2">
-                      <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus">Edit Status</button>
-                    </span>
+    @foreach ($dataCartDokter as $key => $itemDokter)`
+    <div>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 style="font-weight: 600">Detail Information</h5>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <p class="text-start">PO Number</p>
+                      <p class="text-start">{{ $itemDokter->po_id }}</p>
+                    </li>
+                    <li class="list-group-item">
+                      <p class="text-start">Created Purchase Order at</p>
+                      <p class="text-start">{{ $itemDokter->created_at }}</p>
+                    </li>
+                    <li class="list-group-item">
+                      <p class="text-start">Invoice Number</p>
+                      <p class="text-start">{{ $itemDokter->po_id }}</p>
+                    </li>
+                    <li class="list-group-item">
+                      <p class="text-start">Due Date</p>
+                      <p class="text-start">{{ $itemDokter->due_date }}</p>
+                    </li>
+                    <li class="list-group-item">
+                      <p class="text-start">Created By</p>
+                      <p class="text-start">{{ $itemDokter->created_by }}</p>
+                    </li>
+                  </ul>
+                  <div class="row">
+                    <div class="col" style="text-align: left">
+                      <strong class="text-black fs-2">
+                        Status  | 
+                      </strong>
+                      <span id="span_status{{ $key }}"></span>
+                      <span class="p-2">
+                        <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus">Edit Status</button>
+                      </span>
+                    </div>
+                    <div class="col" style="text-align: right">
+                      <button class="btn btn-primary">
+                        Print
+                      </button>
+                    </div>
                   </div>
-                  <div class="col" style="text-align: right">
-                    <button class="btn btn-primary">
-                      Print
-                    </button>
-                  </div>
-                </div>
-                <br>
-                <div class="d-flex justify-content-end">
-                  <div class="p-2" id="button-status-canceled{{ $key }}">
-                    <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
-                      Cancel Purchase Order
-                    </button>
-                  </div>
-                  <div class="p-2" id="button_status_update{{ $key }}">
+                  <br>
+                  <div class="d-flex justify-content-end">
+                    <div class="p-2" id="button-status-canceled{{ $key }}">
+                      <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+                        Cancel Purchase Order
+                      </button>
+                    </div>
+                    <div class="p-2" id="button_status_update{{ $key }}">
+                    </div>
                   </div>
                 </div>
               </div>
+              {{-- Column Packing Information --}}
             </div>
-            {{-- Column Packing Information --}}
-          </div>
-          <div class="col-sm-8">
-            <div class="card">
-              <div class="card-body">
-              <h5 style="font-weight: 600">Transaction Details</h5>
-              <div class="form-group">
-                <div class="table-responsive">
-                  <table id="tableList" class="table table-bordered" >
-                    <thead>
-                      <tr style="background-color: #E3EFFF;">
-                          <th>Product</th>
-                          <th>Qty</th>
-                          <th>Price</th>
-                          <th>Discount</th>
-                          <th>TotalPrice</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($itemDokter['products'] as $item)
-                        <tr>
-                          <td>{{ $item['name_product'] }}</td>
-                          <td>{{ $item['qty'] }}</td>
-                          <td>IDR {{ $item['price_product'] }}</td>
-                          <td><div class="badge bg-secondary">{{ $item['disc'] }}%</div></td>
-                          <td>IDR {{ $item['price'] }} <br>- IDR {{ $item['disc_price'] }}
-                          <div style="border-top: 1px solid #ccc;"></div>
-                          IDR {{ $item['total_price'] }}
-                          </td>
+            <div class="col-sm-8">
+              <div class="card">
+                <div class="card-body">
+                <h5 style="font-weight: 600">Transaction Details</h5>
+                <div class="form-group">
+                  <div class="table-responsive">
+                    <table id="tableList" class="table table-bordered" >
+                      <thead>
+                        <tr style="background-color: #E3EFFF;">
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>TotalPrice</th>
                         </tr>
-                      @endforeach
-                    </div>
-                  </tbody>
-                  <tfoot id="t-foot{{ $key }}">
-                    <div id="extra_charge_list{{ $key }}">
-                      @foreach ($itemDokter['extra_charge'] as $item)
+                      </thead>
+                      <tbody>
+                        @foreach ($itemDokter['products'] as $item)
+                          <tr>
+                            <td>{{ $item['name_product'] }}</td>
+                            <td>{{ $item['qty'] }}</td>
+                            <td>IDR {{ $item['price_product'] }}</td>
+                            <td><div class="badge bg-secondary">{{ $item['disc'] }}%</div></td>
+                            <td>IDR {{ $item['price'] }} <br>- IDR {{ $item['disc_price'] }}
+                            <div style="border-top: 1px solid #ccc;"></div>
+                            IDR {{ $item['total_price'] }}
+                            </td>
+                          </tr>
+                        @endforeach
+                      </div>
+                    </tbody>
+                    <tfoot id="t-foot{{ $key }}">
+                      <div id="extra_charge_list{{ $key }}">
+                        @foreach ($itemDokter['extra_charge'] as $item)
+                            <tr>
+                              <td colspan="4">
+                                <div class="d-flex justify-content-end">
+                                  <p class="fw-bold"> 
+                                    Extra Charge:
+                                  </p>
+                                </div>
+                              </td>
+                              <td>
+                                IDR {{ $item['price'] }}
+                              </td>
+                            </tr>
+                        @endforeach
                           <tr>
                             <td colspan="4">
                               <div class="d-flex justify-content-end">
-                                <p class="fw-bold"> 
-                                  Extra Charge:
+                                <p class="fw-bold">
+                                  Grand Total: 
                                 </p>
                               </div>
                             </td>
                             <td>
-                              IDR {{ $item['price'] }}
+                              <div id="grand_total{{ $key }}">
+                                IDR {{ $itemDokter['total'] }}
+                              </div>
                             </td>
                           </tr>
-                      @endforeach
-                        <tr>
-                          <td colspan="4">
-                            <div class="d-flex justify-content-end">
-                              <p class="fw-bold">
-                                Grand Total: 
-                              </p>
-                            </div>
-                          </td>
-                          <td>
-                            <div id="grand_total{{ $key }}">
-                              IDR {{ $itemDokter['total'] }}
-                            </div>
-                          </td>
-                        </tr>
-                    </tfoot>
-                  </table>  
+                      </tfoot>
+                    </table>  
+                  </div>
+                  {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
+                  <div class="d-flex justify-content-end">
+                    <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
+                      Add Extra Charges
+                    </button>
+                  </div>
+                  <div class="form-group">
+                    <label for="notes_form">Note For Admin</label>
+                    <p class="text-start">{{ $itemDokter->notes }}</p>
+                  </div>
                 </div>
-                {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
-                <div class="d-flex justify-content-end">
-                  <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
-                    Add Extra Charges
-                  </button>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4">
+                <div id="column_packing{{ $key }}">
                 </div>
-                <div class="form-group">
-                  <label for="notes_form">Note For Admin</label>
-                  <p class="text-start">{{ $itemDokter->notes }}</p>
+              </div>
+              <div class="col-sm-8">
+                <div id="column_sent{{ $key }}">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4"></div>
+              <div class="col-sm-8">
+                <div id="column_payment{{ $key }}">
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-4">
-            <div id="column_packing{{ $key }}">
-            </div>
-          </div>
-          <div class="col-sm-8">
-            <div id="column_sent{{ $key }}">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-4"></div>
-          <div class="col-sm-8">
-            <div id="column_payment{{ $key }}">
-            </div>
-          </div>
-        </div>
-      </div>
+    </div>
 
     <!-- Modal Cancel-->
     <div class="modal fade" id="modalCancel{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">

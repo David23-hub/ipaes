@@ -9,24 +9,30 @@
 @section('content')
     <div class="card">
       <div class="card-header">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modaladd">
-          Transaction List
-        </button>
+        <h5 style="font-weight: 600">Transaction List</h5>
       </div>
       <div class="card-body">
         <table id="tableList" class="table table-bordered" >
           <thead>
             <tr>
-                <th>PO Number</th>
-                <th>PO Date</th>
                 <th>Doctor</th>
                 <th>Clinic</th>
-                <th>Payment Due Date</th>
-                <th>Marketing</th>
-                <th>Status</th>
+                <th>NoHp</th>
+                <th>Transaction</th>
                 <th>Action</th>
             </tr>
           </thead>
+          {{-- <tbody>
+            @foreach ($data as $item)
+            <tr>
+              <td>{{ $item['name'] }}</td>
+              <td>{{ $item['clinic'] }}</td>
+              <td>{{ $item['no_hp'] }}</td>
+              <td>{{ $item['total_transaction'] }}</td>
+              <td><a class="btn btn-info" href="{{url('detailPO/'. $item['id'])}}">Detail</a></td>
+            </tr>
+            @endforeach
+          </tbody> --}}
         </table>
       </div>
     </div>
@@ -35,6 +41,8 @@
 
 @push('js')
 <script>
+  dokter = @json($data);
+  console.log(dokter, 'current_page')
   window.onload = function() {
     getAllData()
   };
@@ -68,12 +76,17 @@
             //turn off info current page data index
             // "bInfo": false,
             // pagingType: 'full_numbers',
-        });
+    });
+
+    $('#tableList').on('search.dt', function () {
+      var value = $('.dataTables_filter input').val();
+      console.log(value); // <-- the value
+    })
 
     function getAllData(){
       $.ajax({
       type: "POST",
-      url: "{{url('/')}}"+"/getCart",
+      url: "{{url('/')}}"+"/getAllPO",
       beforeSend: $.LoadingOverlay("show"),
       afterSend:$.LoadingOverlay("hide"),
       data: { "_token": "{{ csrf_token() }}"},
@@ -93,13 +106,10 @@
           // alert(urlDetail)
           // console.log("detailPO/" + item["id"], "url")
           dataTable.row.add([
-              item['po_id'],
-              item['created_at'],
-              item['doctor_name'],
+              item['name'],
               item['clinic'],
-              item['due_date'],
-              item['created_by'],
-              item['management_order'],
+              item['no_hp'],
+              item['total_transaction'],
               `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
           ])
             dataTable.draw();
@@ -115,46 +125,6 @@
       }
     });
     }
-
-    function getItem(id){
-      $.ajax({
-        type: "POST",
-        url: "{{url('/')}}"+"/detailPO",
-        data: { "_token": "{{ csrf_token() }}","id":id},
-        beforeSend: $.LoadingOverlay("show"),
-        afterSend:$.LoadingOverlay("hide"),
-        success: function (data) {
-          console.log({data})
-        },
-        error: function (result, status, err) {
-          alert(err)
-        }
-      });
-    };
-
-    function deleteItem(id){
-      $.ajax({
-        type: "POST",
-        url: "{{url('/')}}"+"/deleteItem",
-        data: { "_token": "{{ csrf_token() }}", "id":id},
-        beforeSend: $.LoadingOverlay("show"),
-        afterSend:$.LoadingOverlay("hide"),
-        success: function (data) {
-          console.log(data)
-          if(data=="sukses"){
-            getAllData()
-            AlertSuccess()
-          }else{
-            AlertError()
-          }
-        },
-        error: function (result, status, err) {
-          alert(err)
-          AlertError()
-        },
-      });
-    };
-    
 
 </script>
     

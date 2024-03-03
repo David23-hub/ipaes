@@ -18,6 +18,10 @@ class DokterModel extends Model
     public function GetListActive(){
         return DokterModel::all()->where('deleted_by',null)->where('status',1);
     }
+
+    public function GetListWithOrderTransaction() {
+        return $this->leftJoin('cart', 'dokter.id', '=', 'cart.doctor_id')->orderBy('cart.created_at', 'desc')->select('dokter.*')->get();
+    }
     
     
     public function GetItem($id){

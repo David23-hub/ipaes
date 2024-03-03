@@ -67,6 +67,7 @@ Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index']);
 Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO']);
 
 Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index']);
+Route::post('/getAllPO', [App\Http\Controllers\ListPOController::class, 'getAll']);
 Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'getListAllCart']);
 Route::get('/detailPO/{id}', [App\Http\Controllers\ListPOController::class, 'detailPOIndex']);
 Route::post('/canceledPO', [App\Http\Controllers\ListPOController::class, 'canceledOrder']);
