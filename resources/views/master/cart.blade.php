@@ -141,7 +141,33 @@
             // pagingType: 'full_numbers',
         });
 
+        function autoSelectAndShow(value) {
+          var selectElement = document.getElementById("list_doctor");
+          
+          // Find the option element with the specified value
+          var option = selectElement.querySelector('option[value="' + value + '"]');
+          
+          if (option) {
+            // Set selected attribute to true for the found option
+            option.selected = true;
+            
+            // Update the displayed text to match the selected option
+            selectElement.dispatchEvent(new Event('change'));
+            $('#clinic_doc').text('')
+            $('#billing_phone_doc').text('')
+            $('#no_hp_doc').text('')
+            $('#address_doc').text('')
+            $('#information_doc').text('')
+          } else {
+            console.log("Option not found");
+          }
+        }
+
+
     function getAllData(){
+        autoSelectAndShow("kosong")
+
+        dataTable.destroy();
         $.each(cart,function(i, item){
           price = `Rp `+item['price']+`<br>- Rp `+item['disc_price']+`<br><div style="border-top: 1px solid #ccc;"></div>Rp `+item["total_price"];
 
@@ -200,18 +226,9 @@
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           if(data=="sukses"){
-            Swal.fire({
-              icon: 'success',
-              title: 'Success',
-              text: 'Your data has been saved!',
-              button: "OK",
-            })
-            .then((value) => {
-              // Action to be executed after the user clicks the "OK" button
-              location.reload();
-              // Add your custom action here
-            });
-
+            getAllData()
+            AlertSuccess()
+            idCart=""
           }else if(data!='gagal'|| data!="gagal2"){
             AlertWarningWithMsg(data)
           }else{

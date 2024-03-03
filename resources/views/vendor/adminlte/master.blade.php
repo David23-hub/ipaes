@@ -126,7 +126,6 @@
                 var sound = new Audio('/sounds/notification.mp3');  
                 sound.play()
                     .then(() => {
-                        console.log("HEHEHEH")
                     })
                     .catch(error => {
                         // Handle error

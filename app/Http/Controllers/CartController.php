@@ -116,7 +116,7 @@ class CartController extends Controller
             return "Empty Cart!";
         }
 
-        if($input["id_doctor"]==""){
+        if($input["id_doctor"]=="" || $input["id_doctor"]=="kosong"){
             return "Select The Doctor Please!";
         }
 
