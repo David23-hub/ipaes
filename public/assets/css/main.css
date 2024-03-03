@@ -2784,3 +2784,16 @@ table.order-details tbody td {
 .floating-btn:hover {
   background-color: #128C7E; /* Darker shade of WhatsApp green on hover */
 }
+
+.circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%; /* This makes it a circle */
+  background-color: #007bff; /* Background color of the circle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white; /* Color of the number */
+  font-size: 24px;
+  font-weight: bold;
+}

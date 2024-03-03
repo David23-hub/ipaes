@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\CategoryProductModel;
-use App\Models\DokterModel;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -65,7 +63,7 @@ class CategoryProductController extends Controller
             }
         } catch (\Throwable $th) {
             $result="gagal";
-        }        
+        }
 
         return $result;
     }

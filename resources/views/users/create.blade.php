@@ -26,6 +26,21 @@
                         @error('email') <span class="text-danger">{{$message}}</span> @enderror
                     </div>
                     <div class="form-group">
+                        <label for="exampleInputRole">Role</label>
+                        <select  class="form-select form-control" name="role" id="role" style="width: 100%;max-width:100%">
+                            <option value="" selected disabled>-- Choose --</option>
+                            <option value="admin" >Admin</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="sales">Sales</option>
+                            {{-- @foreach($dokter as $dok)
+                              <option value={{$dok->id}}>{{$dok->name}}</option>
+                            @endforeach --}}
+                        </select>
+                        {{-- <input type="text" class="form-control @error('role') is-invalid @enderror" id="exampleInputRole" placeholder="Masukkan Role" name="role" value="{{old('email')}}"> --}}
+
+                        @error('role') <span class="text-danger">{{$message}}</span> @enderror
+                    </div>
+                    <div class="form-group">
                         <label for="exampleInputPassword">Password</label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror" id="exampleInputPassword" placeholder="Password" name="password">
                         @error('password') <span class="text-danger">{{$message}}</span> @enderror

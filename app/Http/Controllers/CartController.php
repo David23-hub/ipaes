@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NotifModel;
 use App\Models\PackageModel;
 use App\Models\CartModel;
 use App\Models\CategoryProductModel;
@@ -19,6 +20,9 @@ class CartController extends Controller
     private $cart;
     private $modelCategoryProduct;
     private $doctorModel;
+
+    private $notif;
+
     
     public function __construct()
     {
@@ -32,6 +36,7 @@ class CartController extends Controller
         $this->modelCategoryProduct = new CategoryProductModel;
 
         $this->doctorModel = new DokterModel;
+        $this->notif = new NotifModel;
 
         
     }
@@ -127,7 +132,10 @@ class CartController extends Controller
         // Format the new time as a readable date/time string
         $new_time_formatted = date('Y-m-d H:i:s', $new_time);
 
+        $po_id= "PO/".date('Y', $new_time)."/".date('mdHis', $new_time);
+
         $data = [
+            'po_id'=>$po_id,
             'management_order' => $input['management_order'],
             'notes' => $input['notes_form'],
             'doctor_id' => $input['id_doctor'],
@@ -148,6 +156,14 @@ class CartController extends Controller
         } catch (\Throwable $th) {
             $result="gagal";
         }        
+        
+
+        $notif = [
+            'msg'=>$po_id." Has Been Create By ".Auth::user()->name,
+            'created_by' => Auth::user()->email,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        $this->notif->AddItem($notif);
 
         return $result;
 
