@@ -141,11 +141,31 @@
             // pagingType: 'full_numbers',
         });
 
-    function getAllData(){
-      var selectElement = document.getElementById("list_doctor");
+        function autoSelectAndShow(value) {
+          var selectElement = document.getElementById("list_doctor");
+          
+          // Find the option element with the specified value
+          var option = selectElement.querySelector('option[value="' + value + '"]');
+          
+          if (option) {
+            // Set selected attribute to true for the found option
+            option.selected = true;
+            
+            // Update the displayed text to match the selected option
+            selectElement.dispatchEvent(new Event('change'));
+            $('#clinic_doc').text('')
+            $('#billing_phone_doc').text('')
+            $('#no_hp_doc').text('')
+            $('#address_doc').text('')
+            $('#information_doc').text('')
+          } else {
+            console.log("Option not found");
+          }
+        }
 
-      // Set its value to the value of the first option (or any default value)
-      selectElement.value = selectElement.options[0].value;
+
+    function getAllData(){
+        autoSelectAndShow("kosong")
 
         dataTable.destroy();
         $.each(cart,function(i, item){
@@ -208,6 +228,7 @@
           if(data=="sukses"){
             getAllData()
             AlertSuccess()
+            idCart=""
           }else if(data!='gagal'|| data!="gagal2"){
             AlertWarningWithMsg(data)
           }else{
