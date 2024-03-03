@@ -18,8 +18,8 @@ class CartController extends Controller
 
     private $cart;
     private $modelCategoryProduct;
-
     private $doctorModel;
+    
     public function __construct()
     {
         $this->middleware('auth');
@@ -31,7 +31,7 @@ class CartController extends Controller
         
         $this->modelCategoryProduct = new CategoryProductModel;
 
-        $this->dokter = new DokterModel;
+        $this->doctorModel = new DokterModel;
 
         
     }
@@ -39,7 +39,7 @@ class CartController extends Controller
     public function index()
     {
         $category = $this->modelCategoryProduct->GetListActive();
-        $dokter = $this->dokter->GetListActive();
+        $dokter = $this->doctorModel->GetListActive();
         $items = $this->model->GetListActive();
         $itemsBundle = $this->itemPackage->GetListActive();
         $cartsUser = $this->cart->GetCart(Auth::user()->email);

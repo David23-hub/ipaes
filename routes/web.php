@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 
 Auth::routes();
@@ -69,7 +70,16 @@ Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index']);
 Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO']);
 
 Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index']);
-Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'GetListCart']);
+Route::post('/getAllPO', [App\Http\Controllers\ListPOController::class, 'getAll']);
+Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'getListAllCart']);
+Route::get('/detailPO/{id}', [App\Http\Controllers\ListPOController::class, 'detailPOIndex']);
+Route::post('/canceledPO', [App\Http\Controllers\ListPOController::class, 'canceledOrder']);
+Route::post('/packingPO', [App\Http\Controllers\ListPOController::class, 'packingOrder']);
+Route::post('/sentPO', [App\Http\Controllers\ListPOController::class, 'sentOrder']);
+Route::post('/updateStatus', [App\Http\Controllers\ListPOController::class, 'updateStatus']);
+Route::post('/paymentOrder', [App\Http\Controllers\ListPOController::class, 'paymentOrder']);
+Route::post('/addExtraCharge', [App\Http\Controllers\ListPOController::class, 'addExtraCharge']);
+
 // productBundle
 Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index']);
 Route::post('/getProductBundles', [App\Http\Controllers\PackageController::class, 'getAll']);

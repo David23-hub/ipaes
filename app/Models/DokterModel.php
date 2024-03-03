@@ -14,14 +14,26 @@ class DokterModel extends Model
     public function GetList(){
         return DokterModel::all()->where('deleted_by',null);
     }
+
     public function GetListActive(){
         return DokterModel::all()->where('deleted_by',null)->where('status',1);
     }
+
+    public function GetListWithOrderTransaction() {
+        return $this->leftJoin('cart', 'dokter.id', '=', 'cart.doctor_id')->orderBy('cart.created_at', 'desc')->select('dokter.*')->get();
+    }
+    
     
     public function GetItem($id){
         return $this
         ->where('id', '=', $id)
         ->get();
+    }
+
+    public function SingleItem($id){
+        return $this
+        ->where('id', '=', $id)
+        ->first();
     }
 
     public function AddItem($data){
