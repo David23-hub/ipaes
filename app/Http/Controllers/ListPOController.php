@@ -81,6 +81,7 @@ class ListPOController extends Controller
               $totalan = 0;
               $products = [];
               $extraChargeOne = [];
+              $stepPayment = [];
 
               if (strlen($data->cart)!=0){
 
@@ -123,7 +124,30 @@ class ListPOController extends Controller
                 $totalan = ceil($totalan);
                 $data['total_price'] = $totalan;
                 $data['total'] = number_format($totalan,0,',','.');
+                $data['shipping_cost_number'] = $data['shipping_cost'];
+                $data['shipping_cost'] = number_format($data['shipping_cost'],0,',','.');
+                $data['nominal_number'] = $data['nominal'];
+                // $data['nominal'] = number_format($data['nominal'],0,',','.');
                 $data['extra_charge'] = $extraChargeOne;
+
+                // step payment
+                if($data['status_payment'] == 1) {
+                  $dataPaidBy = explode("|", $data['paid_by']);
+                  $dataPaidAt = explode("|", $data['paid_at']);
+                  $dataPaidBankName = explode("|", $data['paid_bank_name']);
+                  $dataPaidAccountBankName = explode("|", $data['paid_account_bank_name']);
+                  $dataNominal = explode("|", $data['nominal']);
+                  foreach ($dataPaidBy as $key => $value) {
+                    $dataStepPayment['paid_by'] = $value;
+                    $dataStepPayment['paid_at'] = $dataPaidAt[$key];
+                    $dataStepPayment['paid_bank_name'] = $dataPaidBankName[$key];
+                    $dataStepPayment['paid_account_bank_name'] = $dataPaidAccountBankName[$key];
+                    $dataStepPayment['nominal'] = $dataNominal[$key];
+                    array_push($stepPayment, $dataStepPayment);
+                  }
+
+                  $data['step_payment'] = $stepPayment;
+                }
               } 
             }
             return view('master.detailPO')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
@@ -248,6 +272,7 @@ class ListPOController extends Controller
             $input['data']['sent_at'] = date('Y-m-d H:i:s');
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
             $data['message'] = "sukses";
+            $data['shipping_cost'] = number_format($input['data']['shipping_cost'],0,',','.');
             $data['sent_by'] = $input['data']['sent_by'];
             $data['sent_at'] = $input['data']['sent_at'];
             return $data;
@@ -271,23 +296,50 @@ class ListPOController extends Controller
     }
 
     public function paymentOrder(Request $request) {
-        try {
-            $input = $request->all();
-            $input['data']['paid_at'] = strtotime($input['data']['paid_at']);
-            $input['data']['paid_at'] = date('Y-m-d H:i:s', $input['data']['paid_at']);
-            $input['data']['paid_by'] = Auth::user()->name;
-            $this->cart->UpdateItem($input['data']['id'], $input['data']);
-            $data['message'] = "sukses";
-            $data['paid_by'] = $input['data']['paid_by'];
-            $data['paid_at'] = $input['data']['paid_at'];
-            return $data;
-        }catch(\Throwable $th) {
-            Log::error("error di throwable");
-            Log::error($th);
-            return "gagal";
-        }
+      try {
+          $input = $request->all();
+          $input['data']['paid_at'] = strtotime($input['data']['paid_at']);
+          $input['data']['paid_at'] = date('Y-m-d', $input['data']['paid_at']);
+          $input['data']['paid_by'] = Auth::user()->name;
+          $this->cart->UpdateItem($input['data']['id'], $input['data']);
+          $data['message'] = "sukses";
+          $data['nominal'] = number_format($input['data']['nominal'],0,',','.');
+          $data['paid_by'] = $input['data']['paid_by'];
+          $data['paid_at'] = $input['data']['paid_at'];
+          return $data;
+      }catch(\Throwable $th) {
+          Log::error("error di throwable");
+          Log::error($th);
+          return "gagal";
+      }
     }
 
+    public function stepPaymentOrder(Request $request) {
+      try {
+        $input = $request->all();
+        $this->cart->UpdateItem($input['data']['id'], $input['data']);
+        $data['message'] = "sukses";
+        return $data;
+      }catch(\Throwable $th) {
+          Log::error("error di throwable");
+          Log::error($th);
+          return "gagal";
+      }
+    }
+
+    public function editStepPaymentOrder(Request $request) {
+      try {
+        $input = $request->all();
+        $this->cart->UpdateItem($input['data']['id'], $input['data']);
+        $data['message'] = "sukses";
+        return $data;
+        return $data;
+      }catch(\Throwable $th) {
+          Log::error("error di throwable");
+          Log::error($th);
+          return "gagal";
+      }
+    }
     public function addExtraCharge(Request $request) {
         try {
           $input = $request->all();

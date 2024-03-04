@@ -78,6 +78,8 @@ Route::post('/packingPO', [App\Http\Controllers\ListPOController::class, 'packin
 Route::post('/sentPO', [App\Http\Controllers\ListPOController::class, 'sentOrder']);
 Route::post('/updateStatus', [App\Http\Controllers\ListPOController::class, 'updateStatus']);
 Route::post('/paymentOrder', [App\Http\Controllers\ListPOController::class, 'paymentOrder']);
+Route::post('/stepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'stepPaymentOrder']);
+Route::post('/editStepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'editStepPaymentOrder']);
 Route::post('/addExtraCharge', [App\Http\Controllers\ListPOController::class, 'addExtraCharge']);
 
 // productBundle
