@@ -201,6 +201,11 @@
           <div class="container">
             <div class="row">
               <div class="col-sm-4">
+                <div id="column_cancel{{ $key }}"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
                 <div id="column_packing{{ $key }}">
                 </div>
               </div>
@@ -362,7 +367,7 @@
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" id="status_btn{{ $key }}" class="btn btn-primary">Save changes</button>
+            <button type="button" id="status_btn{{ $key }}" class="btn btn-primary" onclick="UpdateStatus({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
           </div>
         </form>
         </div>
@@ -533,6 +538,10 @@
             Packing Purchase Order
           </button> 
           `
+          document.querySelector(`#column_packing${i}`).innerHTML = ""
+          document.querySelector(`#column_sent${i}`).innerHTML = ""
+          document.querySelector(`#column_payment${i}`).innerHTML = ""
+          document.querySelector(`#column_cancel${i}`).innerHTML = ""
         } else if (dataCartDokter[i].status == 1) {
           document.querySelector(`#span_status${i}`).innerHTML = `
           <span class="badge bg-warning text-wrap fs-2">
@@ -562,6 +571,9 @@
                 </div>
               </div>
           `
+          document.querySelector(`#column_sent${i}`).innerHTML = ""
+          document.querySelector(`#column_payment${i}`).innerHTML = ""
+          document.querySelector(`#column_cancel${i}`).innerHTML = ""
         } else if (dataCartDokter[i].status == 2) {
           document.querySelector(`#span_status${i}`).innerHTML = `
           <span class="badge bg-info text-wrap fs-2">
@@ -569,6 +581,8 @@
           </span>
           `
 
+          document.querySelector(`#column_payment${i}`).innerHTML = ""
+          document.querySelector(`#column_cancel${i}`).innerHTML = ""
           document.querySelector(`#button_status_update${i}`).innerHTML = `
           <button class="btn btn-outline-success" id="payment_btn_modal" data-toggle="modal" data-target="#modalPayment${i}" onclick="clearModalPayment(${i})">
             Submit Payment
@@ -707,42 +721,6 @@
                 </div>
               </div>
           `
-          // if(dataCartDokter[i].status_payment == 0) {
-          // } else if (dataCartDokter[i].status_payment == 1) {
-          //   for (let j = 0; j < dataCartDokter[i]['step_payment'].length; j++) {
-          //     const element = dataCartDokter[i]['step_payment'][j];
-          //     checkNominal += `
-          //     <div class="card">
-          //           <div class="card-body">
-          //             <h5 style="font-weight: 600">Payment Information</h5>
-          //             <table class="table table-boredered">
-          //               <tr>
-          //                 <td class="border">Paid at</td>
-          //                 <td class="border">${element.paid_at}</td>
-          //               </tr>
-          //               <tr>
-          //                 <td class="border">Paid status by</td>
-          //                 <td class="border">${element.paid_by}</td>
-          //               </tr>
-          //               <tr>
-          //                 <td class="border">Bank Name</td>
-          //                 <td class="border">${element.paid_bank_name}</td>
-          //               </tr>
-          //               <tr>
-          //                 <td class="border">Bank Account Name</td>
-          //                 <td class="border">${element.paid_account_bank_name}</td>
-          //               </tr>
-          //               <tr>
-          //               <td class="border">Nominal</td>
-          //               <td class="border">IDR ${element.nominal}</td>
-          //             </tr>
-          //             </table>
-          //             <button type="button" class="btn btn-block btn-outline-success" onclick="EditStepPaymentButton(${i}, ${j})">Edit Payment Information</button>
-          //           </div>
-          //         </div>
-          //     `
-          //   }
-          // }
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
         } else if (dataCartDokter[i].status == 4) {
           document.querySelector(`#span_status${i}`).innerHTML = `
@@ -750,7 +728,33 @@
             Canceled
           </span>
           `
+
+          document.querySelector(`#column_cancel${i}`).innerHTML = `
+          <div class="card">
+                <div class="card-body">
+                  <h5 style="font-weight: 600">Cancel Information</h5>
+                  <table class="table table-boredered table-responsive">
+                    <tr>
+                      <td class="border">Cancel at</td>
+                      <td class="border">${dataCartDokter[i].cancel_at}</td>
+                    </tr>
+                    <tr>
+                      <td class="border">Cancel by</td>
+                      <td class="border">${dataCartDokter[i].cancel_by}</td>
+                    </tr>
+                    <tr>
+                      <td class="border">Cancel Reason</td>
+                      <td class="border">${dataCartDokter[i].cancel_reason}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+          `
+          document.querySelector(`#column_packing${i}`).innerHTML = ""
+          document.querySelector(`#column_sent${i}`).innerHTML = ""
+          document.querySelector(`#column_payment${i}`).innerHTML = ""
           document.querySelector(`#button-status-canceled${i}`).innerHTML = ""
+          document.querySelector(`#button_status_update${i}`).innerHTML =""
         } else if (dataCartDokter[i].status == 5) {
           document.querySelector(`#span_status${i}`).innerHTML = `
           <span class="badge bg-success text-wrap fs-2">
@@ -875,6 +879,59 @@
       document.getElementById(`nominal_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal_number
       document.getElementById(`key_step_payment${key}`).value = index
       $(`#modalStepPayment${key}`).modal("show")
+    }
+
+    function UpdateStatus(id, key) {
+      var select_id = document.getElementById(`status_select${key}`).value
+      var objectStatus = {}
+      if (select_id == "0") {
+      objectStatus = {
+          updated_by: user.name,
+          status: select_id,
+        }
+      } else if(select_id == "1") {
+        objectStatus = {
+          updated_by: user.name,
+          status: select_id,
+          packing_by: user.name
+        }
+      } else if(select_id == "2") {
+        objectStatus = {
+          updated_by: user.name,
+          status: select_id,
+          sent_by: user.name
+        }
+      }
+      console.log({
+        id: id,
+        ...objectStatus,
+      })
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/updateStatus",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          id: id,
+          ...objectStatus,
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data.message=="sukses"){
+            $(`#modalEditStatus${key}`).modal("hide")
+            dataCartDokter[key]['status'] = select_id
+            checkForButtonStatus()
+            AlertSuccess()
+          }else if(data!='gagal'|| data!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      })
     }
 
     function ExtraCharge(id, key) {
