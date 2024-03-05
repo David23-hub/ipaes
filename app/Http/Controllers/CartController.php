@@ -140,7 +140,7 @@ class CartController extends Controller
             'notes' => $input['notes_form'],
             'doctor_id' => $input['id_doctor'],
             'due_date' => $new_time_formatted,
-
+            'status' => "0", 
             'updated_by' => Auth::user()->email,
             'updated_at' => date('Y-m-d H:i:s')
         ];
