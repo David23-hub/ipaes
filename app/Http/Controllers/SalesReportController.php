@@ -89,7 +89,7 @@ class SalesReportController extends Controller
                 
 
                 if($items[3]!=0){
-                    $total += ($tempPrice *$items[2] * $items[3])/100;
+                    $total += $tempPrice *$items[2] * ((100-$items[3])/100);
                 }else{
                     $total +=$tempPrice*$items[2];
                 }

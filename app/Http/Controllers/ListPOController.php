@@ -8,6 +8,7 @@ use App\Models\DokterModel;
 use App\Models\ItemModel;
 use App\Models\EkspedisiModel;
 use App\Models\ExtraChargeModel;
+use App\Models\PackageModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 class ListPOController extends Controller
 {
     private $model;
+    private $bundle;
     private $cart;
     private $modelCategoryProduct;
     private $doctorModel;
@@ -27,6 +29,7 @@ class ListPOController extends Controller
         $this->model = new ItemModel;
 
         $this->cart = new CartModel;
+        $this->bundle = new PackageModel;
         
         $this->modelCategoryProduct = new CategoryProductModel;
 
@@ -72,7 +75,8 @@ class ListPOController extends Controller
         try {
             $dataCartDokter = $this->cart->GetListJoinDoctorWithDoctorId($id);
             $dokter = $this->doctorModel->SingleItem($id);
-            $items = $this->model->GetListActive();
+            $items = $this->model->getAll();
+            $bundles = $this->bundle->getAll();
             $dataEkspedisi = $this->ekspedisi->GetList();
             $extraChargeAll = $this->extra_charge->GetListAll();
             $user = auth()->user();
@@ -89,13 +93,26 @@ class ListPOController extends Controller
                 // array product
                 foreach ($carts as $valueCart) {
                   $temp = explode("|", $valueCart);
-                  foreach ($items as $item) {
-                    if($temp[0]==$item["id"]){
-                      $product["name_product"]=$item["name"];
-                      $product["price_product"]=$item["price"];
-                      break;
-                    }                      
+
+                  if($temp[1]=="product"){
+                    foreach ($items as $item) {
+                      if($temp[0]==$item["id"]){
+                        $product["name_product"]=$item["name"];
+                        $product["price_product"]=$item["price"];
+                        break;
+                      }                      
+                    }
+                  }else if($temp[1]=="paket"){
+                    foreach ($bundles as $bundle) {
+                      if($temp[0]==$bundle["id"]){
+                        $product["name_product"]=$bundle["name"];
+                        $product["price_product"]=$bundle["price"];
+                        break;
+                      }                      
+                    }
                   }
+
+                  
                   
                   $product["qty"]=$temp[2];
                   $product["disc"]=$temp[3];
@@ -153,6 +170,7 @@ class ListPOController extends Controller
             return view('master.detailPO')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
             // return $dataCart;
         }catch(\Throwable $th) {
+          dd($th);
             Log::error("error di throwable");
             Log::error($th);
         }
