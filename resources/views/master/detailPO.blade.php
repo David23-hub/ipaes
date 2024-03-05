@@ -1066,12 +1066,10 @@
       var bank_account_name = $(`#bank_account_name${key}`).val();
       var nominal_payment_input = $(`#nominal_payment_input${key}`).val();
       var nominal_input = document.getElementById(`container_nominal_input${key}`);
-      var status_payment = 0
-      var status = 3
+      var status = 5
       if(nominal_input.style.display == "none") {
         nominal_payment_input = 0
-        status_payment = 1
-        status = 5
+        status = 3
       }
       $.ajax({
         type: "POST",
@@ -1083,7 +1081,6 @@
           paid_account_bank_name: bank_account_name,
           nominal: nominal_payment_input,
           id:id,
-          status_payment: status_payment,
         }},
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
@@ -1117,7 +1114,6 @@
       var bank_name = $(`#step_bank_name${key}`).val();
       var bank_account_name = $(`#step_bank_account_name${key}`).val();
       var nominal_payment_input = $(`#nominal_step_payment_input${key}`).val();
-      var status_payment = 1
       var paid_at_before = dataCartDokter[key]['paid_at']
       var paid_bank_name_before = dataCartDokter[key]['paid_bank_name']
       var paid_account_bank_name_before = dataCartDokter[key]['paid_account_bank_name']
@@ -1139,7 +1135,6 @@
             paid_account_bank_name: bank_account_name,
             nominal: nominal_payment_input,
             id:id,
-            status_payment: status_payment,
             paid_at_before: dataCartDokter[key]['paid_at'],
             paid_bank_name_before: dataCartDokter[key]['paid_bank_name'],
             paid_account_bank_name_before: dataCartDokter[key]['paid_account_bank_name'],
