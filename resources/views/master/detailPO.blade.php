@@ -387,8 +387,8 @@
           <form id="formUpdate" role="form">
             <div class="modal-body">
               <div>
-                <button type="button" class="btn btn-secondary" id="one_payment{{ $key }}" onclick="OnePayment({{ $key }})">One Payment</button>
-                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPayment({{ $key }})">Step Payment</button>
+                <button type="button" class="btn btn-secondary" id="one_payment{{ $key }}" onclick="OnePaymentToggle({{ $key }})">One Payment</button>
+                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPaymentToggle({{ $key }})">Step Payment</button>
               </div>
               <div class="form-group">
                 <label for="paid_at">Paid at *</label>
@@ -447,7 +447,7 @@
                 <label for="bank_account_name">Bank Account Name *</label>
                 <input type="text" class="form-control" id="step_bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name">
               </div>
-              <div class="form-group" id="container_nominal_input{{ $key }}">
+              <div class="form-group" id="container_step_nominal_input{{ $key }}">
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
@@ -493,7 +493,7 @@
       checkForButtonStatus()
     };
 
-    function OnePayment(key) {
+    function OnePaymentToggle(key) {
       var x = document.getElementById(`container_nominal_input${key}`);
       x.style.display = "none"
     }
@@ -505,7 +505,7 @@
       document.getElementById(`nominal_payment_input${key}`).value = '';
     }
 
-    function StepPayment(key) {
+    function StepPaymentToggle(key) {
       var x = document.getElementById(`container_nominal_input${key}`);
       x.style.display = "block"
     }
