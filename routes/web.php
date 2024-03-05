@@ -82,6 +82,8 @@ Route::post('/stepPaymentOrder', [App\Http\Controllers\ListPOController::class, 
 Route::post('/editStepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'editStepPaymentOrder']);
 Route::post('/addExtraCharge', [App\Http\Controllers\ListPOController::class, 'addExtraCharge']);
 
+Route::get('generate-pdf', [App\Http\Controllers\PDFController::class, 'generatePDF']);
+
 // productBundle
 Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index']);
 Route::post('/getProductBundles', [App\Http\Controllers\PackageController::class, 'getAll']);
