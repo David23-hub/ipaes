@@ -1,0 +1,189 @@
+@extends('adminlte::page')
+
+@section('title', 'AdminLTE')
+
+@section('content_header')
+    <h1 class="m-0 text-dark">List Dokter</h1>
+@stop
+
+@section('content')
+    <div class="card">
+      <div class="card-body">
+        <label for="dob_add">Date of Birth *</label>
+
+          <div class="row">
+            <div class="col">
+              <div style="width: 50%">
+                {{-- <input type="text" class="form-control" name="daterange" id="daterange" placeholder="Range Date"> --}}
+                <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: space-between; width: 100%">
+                  <div>
+                      <i class="fa fa-calendar"></i>&nbsp;
+                      <span id="date_input"></span>
+                  </div>
+                  <div>
+                      <i class="fa fa-caret-down"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <button class="btn btn-info" id="src_btn">View Reports</button>
+            </div>
+          </div>
+
+        
+      </div>
+    </div>
+
+    <div id="tbl-body-sales-report" class="card" style="display:none">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table id="tableList" class="table table-striped table-bordered table-hover" >
+            <thead>
+              <tr>
+                  <th>No</th>
+                  <th>Invoice</th>
+                  <th>PO Date</th>
+                  <th>Doctor</th>
+                  <th>Clinic</th>
+                  <th>Address</th>
+                  <th>Billing Phone</th>
+                  <th>Doctor Phone</th>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Discount</th>
+                  <th>Extra Charges</th>
+                  <th>Total Price</th>
+                  <th>Shipping Cost</th>
+                  <th>Revenue</th>
+                  <th>Payment Status</th>
+                  <th>Payment Step</th>
+                  <th>Marketing</th>
+                  <th>Paid At</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+             
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+@stop
+
+@push('js')
+<script>
+  window.onload = function() {
+    cb(start, end);
+  };
+      function cb(start, end) {
+          $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+      }
+      var start = moment().subtract(6, 'days');
+      var end = moment();
+      $('#reportrange').daterangepicker({
+          startDate: start,
+          endDate: end,
+          ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          }
+      }, cb);
+
+    var dataTable = $("#tableList").DataTable({
+            "ordering": true,
+            "destroy": true,
+            //to turn off pagination
+            // paging: false,
+            // "bFilter": true,
+            //turn off info current page data index
+            // "bInfo": false,
+            // pagingType: 'full_numbers',
+        });
+
+    function formatDate(dateString) {
+            var parts = dateString.split(' ');
+            var day = parts[1].slice(0, -1); // Remove comma from the day
+            var month = parts[0];
+            var year = parts[2];
+            // Convert month name to month number
+            var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            var monthIndex = monthNames.indexOf(month) + 1;
+            return day.padStart(2, '0') + '/' + monthIndex.toString().padStart(2, '0') + '/' + year;
+        }
+        
+    $('#src_btn').on('click', function(e) {
+      var spanText = $('#reportrange span').text();
+        var dateArray = spanText.split(' - '); // Split text by hyphen
+       var startDate = formatDate(dateArray[0]);
+
+        // Format end date
+        var endDate = formatDate(dateArray[1]);
+        
+
+        $.ajax({
+          type: "POST",
+          url: "{{url('/')}}"+"/sales/getReport",
+          beforeSend: $.LoadingOverlay("show"),
+          afterSend:$.LoadingOverlay("hide"),
+          data: { "_token": "{{ csrf_token() }}", "startDate":startDate,"endDate":endDate},
+          success: function (data) {
+            dataTable.clear();
+            dataTable.draw();
+            no = 0
+            $.each(data,function(i, item){
+              no++
+
+              dataTable.row.add([
+                  no,
+                  item['po_id'],
+                  item['created_at'],
+                  item['doctor_name'],
+                  item['clinic'],
+                  item['address'],
+                  item['billing_no_hp'],
+                  item['no_hp'],
+                  item['product'],
+                  item['qty'],
+                  item['price'],
+                  item['disc'],
+                  item['extras'],
+                  item['total'],
+                  "IDR "+item['shipping_cost'],
+                  item['revenue'],
+                  item['status'],
+                  'PAYMENT STEP',
+                  item['created_by'],
+                  item['paid_at'],
+              ])
+                dataTable.draw();
+
+            }
+            )
+
+            var element = document.getElementById('tbl-body-sales-report');
+
+            // Change the display property to 'block'
+            element.style.display = 'block';
+
+            
+            
+          },
+          error: function (result, status, err) {
+            console.log(err)
+          }
+        });
+
+
+      });
+    
+
+</script>
+    
+@endpush

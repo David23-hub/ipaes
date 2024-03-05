@@ -66,28 +66,33 @@ Route::get('/listProduct', [App\Http\Controllers\ListProductController::class, '
 Route::post('/addCart', [App\Http\Controllers\ListProductController::class, 'addCartDetail'])->middleware('auth');
 
 // List Product
-Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index']);
-Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO']);
+Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index'])->middleware('auth');
+Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO'])->middleware('auth');
 
-Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index']);
-Route::post('/getAllPO', [App\Http\Controllers\ListPOController::class, 'getAll']);
-Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'getListAllCart']);
-Route::get('/detailPO/{id}', [App\Http\Controllers\ListPOController::class, 'detailPOIndex']);
-Route::post('/canceledPO', [App\Http\Controllers\ListPOController::class, 'canceledOrder']);
-Route::post('/packingPO', [App\Http\Controllers\ListPOController::class, 'packingOrder']);
-Route::post('/sentPO', [App\Http\Controllers\ListPOController::class, 'sentOrder']);
-Route::post('/updateStatus', [App\Http\Controllers\ListPOController::class, 'updateStatus']);
-Route::post('/paymentOrder', [App\Http\Controllers\ListPOController::class, 'paymentOrder']);
-Route::post('/stepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'stepPaymentOrder']);
-Route::post('/editStepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'editStepPaymentOrder']);
-Route::post('/addExtraCharge', [App\Http\Controllers\ListPOController::class, 'addExtraCharge']);
+Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index'])->middleware('auth');
+Route::post('/getAllPO', [App\Http\Controllers\ListPOController::class, 'getAll'])->middleware('auth');
+Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'getListAllCart'])->middleware('auth');
+Route::get('/detailPO/{id}', [App\Http\Controllers\ListPOController::class, 'detailPOIndex'])->middleware('auth');
+Route::post('/canceledPO', [App\Http\Controllers\ListPOController::class, 'canceledOrder'])->middleware('auth');
+Route::post('/packingPO', [App\Http\Controllers\ListPOController::class, 'packingOrder'])->middleware('auth');
+Route::post('/sentPO', [App\Http\Controllers\ListPOController::class, 'sentOrder'])->middleware('auth');
+Route::post('/updateStatus', [App\Http\Controllers\ListPOController::class, 'updateStatus'])->middleware('auth');
+Route::post('/paymentOrder', [App\Http\Controllers\ListPOController::class, 'paymentOrder'])->middleware('auth');
+Route::post('/stepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'stepPaymentOrder'])->middleware('auth');
+Route::post('/editStepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'editStepPaymentOrder'])->middleware('auth');
+Route::post('/addExtraCharge', [App\Http\Controllers\ListPOController::class, 'addExtraCharge'])->middleware('auth');
 
 Route::get('generate-pdf', [App\Http\Controllers\PDFController::class, 'generatePDF']);
 
 // productBundle
-Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index']);
-Route::post('/getProductBundles', [App\Http\Controllers\PackageController::class, 'getAll']);
-Route::post('/addProductBundle', [App\Http\Controllers\PackageController::class, 'addItem']);
-Route::post('/getProductBundle', [App\Http\Controllers\PackageController::class, 'getItem']);
-Route::post('/updateProductBundle', [App\Http\Controllers\PackageController::class, 'updateItem']);
-Route::post('/deleteProductBundle', [App\Http\Controllers\PackageController::class, 'deleteItem']);
+Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index'])->middleware('auth');
+Route::post('/getProductBundles', [App\Http\Controllers\PackageController::class, 'getAll'])->middleware('auth');
+Route::post('/addProductBundle', [App\Http\Controllers\PackageController::class, 'addItem'])->middleware('auth');
+Route::post('/getProductBundle', [App\Http\Controllers\PackageController::class, 'getItem'])->middleware('auth');
+Route::post('/updateProductBundle', [App\Http\Controllers\PackageController::class, 'updateItem'])->middleware('auth');
+Route::post('/deleteProductBundle', [App\Http\Controllers\PackageController::class, 'deleteItem'])->middleware('auth');
+
+
+//REPORTING SALES
+Route::get('/sales/report', [App\Http\Controllers\SalesReportController::class, 'index'])->middleware('auth');
+Route::post('/sales/getReport', [App\Http\Controllers\SalesReportController::class, 'getAll'])->middleware('auth');

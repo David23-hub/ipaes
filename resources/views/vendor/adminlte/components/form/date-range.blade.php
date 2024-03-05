@@ -40,6 +40,7 @@
                     : startDate + picker.locale.separator + endDate;
 
                 $(this).val(value);
+                alert(":HAO")
             });
 
             $('#{{ $id }}').on('cancel.daterangepicker', function(ev, picker)
@@ -56,7 +57,6 @@
 
             usrCfg.ranges = usrCfg.ranges || _AdminLTE_DateRange.defaultRanges;
             let range = usrCfg.ranges[ @json($enableDefaultRanges) ];
-
             if (Array.isArray(range) && range.length > 1) {
                 usrCfg.startDate = range[0];
                 usrCfg.endDate = range[1];

@@ -408,7 +408,18 @@ return [
                 ],
             ]
         ],
-        
+        [
+            'text' => 'Reporting',
+            'icon'    => 'fas fa-fw fa-clipboard-list',
+            'submenu' => [
+                [
+                    'text' => "Sales",
+                    'icon'    => 'fas fa-fw fa-user-tag',
+                    'icon_color' => 'green',
+                    'url' => "sales/report",
+                ],
+            ]
+        ],
         ['header' => 'labels'],
         [
             'text'       => 'important',

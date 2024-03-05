@@ -11,6 +11,10 @@ class ItemModel extends Model
     protected $table = 'items';
     public $timestamps = false;
 
+    public function GetAll(){
+        return ItemModel::all();
+    }
+
     public function GetList(){
         return ItemModel::all()->where('deleted_by',null);
     }
