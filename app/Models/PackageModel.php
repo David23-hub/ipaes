@@ -11,6 +11,10 @@ class PackageModel extends Model
     protected $table = 'package';
     public $timestamps = false;
 
+    public function GetAll(){
+        return PackageModel::all();
+    }
+
     public function GetList(){
         return PackageModel::all()->where('deleted_by',null);
     }
