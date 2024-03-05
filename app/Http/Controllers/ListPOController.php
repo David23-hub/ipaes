@@ -286,12 +286,20 @@ class ListPOController extends Controller
     public function updateStatus(Request $request) {
         try {
             $input = $request->all();
+            $input['data']['updated_at'] = date('Y-m-d H:i:s');
+            if ($input['data']['status'] == "1") {
+              $input['data']['packing_at'] = date('Y-m-d H:i:s');
+            } else if($input['data']['status'] == "2") {
+              $input['data']['sent_at'] = date('Y-m-d H:i:s');
+            }
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
-            return "sukses";
+            $data['message'] = "sukses";
+            return $data;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
             Log::error($th);
-            return "gagal";
+            $data['message'] = "gagal";
+            return $data;
         }
     }
 
