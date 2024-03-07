@@ -327,9 +327,21 @@ class ListPOController extends Controller
           $input['data']['paid_at'] = strtotime($input['data']['paid_at']);
           $input['data']['paid_at'] = date('Y-m-d', $input['data']['paid_at']);
           $input['data']['paid_by'] = Auth::user()->name;
+          if($input['data']['status'] == 5) {
+            $input['data']['paid_at'] .= "|";
+            $input['data']['paid_by'] .= "|";
+            $input['data']['paid_bank_name'] .= "|";
+            $input['data']['paid_account_bank_name'] .= "|";
+            $input['data']['nominal'] .= "|";
+          }
           $this->cart->UpdateItem($input['data']['id'], $input['data']);
           $data['message'] = "sukses";
-          $data['nominal'] = number_format($input['data']['nominal'],0,',','.');
+          if($input['data']['status'] == 3) {
+            $data['nominal'] = number_format($input['data']['nominal'],0,',','.');
+          } else {
+            
+          }
+          
           $data['paid_by'] = $input['data']['paid_by'];
           $data['paid_at'] = $input['data']['paid_at'];
           return $data;

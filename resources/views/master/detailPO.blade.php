@@ -1070,7 +1070,8 @@
       if(nominal_input.style.display == "none") {
         nominal_payment_input = 0
         status = 3
-      }
+      } 
+
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/paymentOrder",
@@ -1086,11 +1087,24 @@
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           if(data['message']=="sukses"){
-            dataCartDokter[key]['paid_bank_name'] = bank_name
-            dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
-            dataCartDokter[key]['nominal'] = data['nominal']
-            dataCartDokter[key]['paid_by'] = data['paid_by']
-            dataCartDokter[key]['paid_at'] = data['paid_at']
+            if(status == 3) {
+              dataCartDokter[key]['paid_bank_name'] = bank_name
+              dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
+              dataCartDokter[key]['nominal'] = data['nominal']
+              dataCartDokter[key]['paid_by'] = data['paid_by']
+              dataCartDokter[key]['paid_at'] = data['paid_at']
+            } else if(status == 5) {
+              var paid_at = data['paid_by'].split('|')[0]
+              dataCartDokter[key]['step_payment'] = [
+                {
+                  paid_by: user.name,
+                  paid_at: paid_at,
+                  paid_bank_name: bank_name,
+                  paid_account_bank_name: bank_account_name,
+                  nominal: nominal_payment_input,
+                }
+              ]
+            }
             dataCartDokter[key].status = status
             $(`#modalPayment${key}`).modal("hide")
             checkForButtonStatus()
