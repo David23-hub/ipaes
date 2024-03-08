@@ -361,6 +361,7 @@ class ListPOController extends Controller
       }catch(\Throwable $th) {
           Log::error("error di throwable");
           Log::error($th);
+
           return "gagal";
       }
     }

@@ -3,13 +3,13 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Sales Report</h1>
+    <h1 class="m-0 text-dark">Incentive Report</h1>
 @stop
 
 @section('content')
     <div class="card">
       <div class="card-body">
-        <label for="dob_add">Period*</label>
+        <label for="dob_add">Period *</label>
         <p style="color: #a5a6a7">This date is a reference of the paid date.</p>
           <div class="row">
             <div class="col">
@@ -30,41 +30,28 @@
               <button class="btn btn-info" id="src_btn">View Reports</button>
             </div>
           </div>
+
+          <label for="dob_add">Marketing</label>
+          <p style="color: #a5a6a7">This date is a reference of the paid date.</p>
+          <div id="dropadd" name="dropadd" class="form-group">
+            <select multiple class="form-select form-control" name="list_doctor" id="list_doctor"  style="width: 100%;max-width:100%">
+                @foreach($users as $dok)
+                  <option value={{$dok->email}}>{{$dok->name}}</option>
+                @endforeach
+
+            </select>
+          </div>
       </div>
     </div>
 
     <div id="tbl-body-sales-report" class="card" style="display:none">
+      <div class="card-header">
+        <h2 style="font-weight: bold">Detail Report</h2>
+        <h5>Marketing: <span style="font-weight: bold" id="marketing-name"></span></h5>
+        <h5>Period: <span style="font-weight: bold" id="periode"></span></h5>
+      </div>
       <div class="card-body">
-        <div class="table-responsive">
-          <table id="tableList" class="table table-striped table-bordered table-hover" style="width: auto">
-            <thead>
-              <tr>
-                  <th>No</th>
-                  <th>Invoice</th>
-                  <th>PO Date</th>
-                  <th>Doctor</th>
-                  <th>Clinic</th>
-                  <th>Address</th>
-                  <th>Billing Phone</th>
-                  <th>Doctor Phone</th>
-                  <th>Product</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Discount</th>
-                  <th>Extra Charges</th>
-                  <th>Total Price</th>
-                  <th>Shipping Cost</th>
-                  <th>Revenue</th>
-                  <th>Payment Status</th>
-                  <th>Payment Step</th>
-                  <th>Marketing</th>
-                  <th>Paid At</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-             
-            </tbody>
-          </table>
+        <div id="listTbl">
         </div>
       </div>
     </div>
@@ -72,6 +59,33 @@
       .th, td {
         white-space: nowrap;
       }
+      .select2-container .select2-selection--single {
+          height: calc(1.5em + 0.75rem + 2px); /* Match Bootstrap input height */
+          padding: 0.375rem 0.75rem; /* Match Bootstrap input padding */
+          font-size: 1rem; /* Match Bootstrap input font size */
+          line-height: 1.5; /* Match Bootstrap input line height */
+          color: #495057; /* Match Bootstrap input text color */
+          background-color: #fff; /* Match Bootstrap input background color */
+          background-clip: padding-box;
+          border: 1px solid #ced4da; /* Match Bootstrap input border */
+          border-radius: 0.25rem; /* Match Bootstrap input border radius */
+          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+      .select2-container--default .select2-selection--multiple .select2-selection__choice {
+      background-color: #0080ff;
+      color: #fff;
+      border-radius: 15px; 
+    }
+
+    /* Style for the close button of selected options */
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+      color: #fff;
+    }
+    .select2-results__option[aria-selected=true] { display: none;}
+    
+    /* .select2-container--open .select2-dropdown {
+            display: block !important;
+        } */
     </style>
 
 @stop
@@ -80,8 +94,16 @@
 <script>
   window.onload = function() {
     cb(start, end);
-    
+    $('#list_doctor').select2( {
+      closeOnSelect: false,
+      placeholder: "Select Marketing",}
+      ).on('select2:unselect', function (e) {
+        setTimeout(function() {
+            $('#list_doctor').select2('open');
+        }, 0);
+      });
   };
+
       function cb(start, end) {
           $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
       }
@@ -130,57 +152,40 @@
 
         // Format end date
         var endDate = formatDate(dateArray[1]);
+
+        var list = $('#list_doctor').val()
+        if(list==""){
+          list = "all"
+        }
         
 
         $.ajax({
           type: "POST",
-          url: "{{url('/')}}"+"/sales/getReport",
+          url: "{{url('/')}}"+"/incentive/getReport",
           beforeSend: $.LoadingOverlay("show"),
           afterSend:$.LoadingOverlay("hide"),
-          data: { "_token": "{{ csrf_token() }}", "startDate":startDate,"endDate":endDate},
-          success: function (data) {
+          data: { "_token": "{{ csrf_token() }}", "startDate":startDate,"endDate":endDate,"listUser":list},
+          success: function (datas) {
             dataTable.clear();
             dataTable.draw();
             if(datas=="KOSONG"){
               AlertWarningWithMsg("DATA NOT FOUND")
             }else{
-            no = 0
-            $.each(data,function(i, item){
-              no++
+              data = datas.data
+              var marketing_name = document.getElementById('marketing-name');
+              marketing_name.innerHTML = datas.marketing
 
-              dataTable.row.add([
-                  no,
-                  item['po_id'],
-                  item['created_at'],
-                  item['doctor_name'],
-                  item['clinic'],
-                  item['address'],
-                  item['billing_no_hp'],
-                  item['no_hp'],
-                  item['product'],
-                  item['qty'],
-                  item['price'],
-                  item['disc'],
-                  item['extras'],
-                  item['total'],
-                  "IDR "+item['shipping_cost'],
-                  item['revenue'],
-                  item['status'],
-                  item['stepPayment'],
-                  item['created_by'],
-                  item['paid_at'],
-              ])
-                dataTable.draw();
+              var container = document.getElementById('listTbl');
+              container.innerHTML= datas.tbldiv;
+              
+              var period = document.getElementById('periode');
+              period.innerHTML = datas.periode
+
+
+              var element = document.getElementById('tbl-body-sales-report');
+              element.style.display = 'block';
 
             }
-            )
-
-            var element = document.getElementById('tbl-body-sales-report');
-
-            // Change the display property to 'block'
-            element.style.display = 'block';
-
-          }
             
           },
           error: function (result, status, err) {
@@ -190,7 +195,6 @@
 
 
       });
-    
 
 </script>
     

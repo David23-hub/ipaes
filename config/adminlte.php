@@ -418,6 +418,12 @@ return [
                     'icon_color' => 'green',
                     'url' => "sales/report",
                 ],
+                [
+                    'text' => "Insentive",
+                    'icon'    => 'fas fa-fw fa-user-tag',
+                    'icon_color' => 'green',
+                    'url' => "incentive/report",
+                ],
             ]
         ],
         ['header' => 'labels'],
