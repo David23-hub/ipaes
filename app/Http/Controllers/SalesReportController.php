@@ -9,6 +9,7 @@ use App\Models\PackageModel;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SalesReportController extends Controller
@@ -408,6 +409,10 @@ class SalesReportController extends Controller
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
                 ],
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '00B6FF'], // Specify the color in RGB format
             ],
         ]);
 
