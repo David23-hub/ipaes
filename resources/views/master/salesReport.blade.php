@@ -34,37 +34,18 @@
     </div>
 
     <div id="tbl-body-sales-report" class="card" style="display:none">
+      <div class="card-header">
+        <div class="row">
+          <div class="col">
+            <h2 style="font-weight: bold">Detail Report</h2>
+          </div>
+          <div id="div-down" class="col" style="text-align: right;">
+            <button id="dwnld-excl" class="btn btn-success">Download To Excel</button>
+          </div>
+        </div>
+      </div>
       <div class="card-body">
-        <div class="table-responsive">
-          <table id="tableList" class="table table-striped table-bordered table-hover" style="width: auto">
-            <thead>
-              <tr>
-                  <th>No</th>
-                  <th>Invoice</th>
-                  <th>PO Date</th>
-                  <th>Doctor</th>
-                  <th>Clinic</th>
-                  <th>Address</th>
-                  <th>Billing Phone</th>
-                  <th>Doctor Phone</th>
-                  <th>Product</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Discount</th>
-                  <th>Extra Charges</th>
-                  <th>Total Price</th>
-                  <th>Shipping Cost</th>
-                  <th>Revenue</th>
-                  <th>Payment Status</th>
-                  <th>Payment Step</th>
-                  <th>Marketing</th>
-                  <th>Paid At</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody">
-             
-            </tbody>
-          </table>
+        <div id="listTbl">
         </div>
       </div>
     </div>
@@ -103,6 +84,7 @@
     var dataTable = $("#tableList").DataTable({
             "ordering": true,
             "destroy": true,
+            "paging": false
 
             //to turn off pagination
             // paging: false,
@@ -123,6 +105,9 @@
             return day.padStart(2, '0') + '/' + monthIndex.toString().padStart(2, '0') + '/' + year;
         }
         
+        var startTemp = ""
+    var endTemp = ""
+
     $('#src_btn').on('click', function(e) {
       var spanText = $('#reportrange span').text();
         var dateArray = spanText.split(' - '); // Split text by hyphen
@@ -130,6 +115,10 @@
 
         // Format end date
         var endDate = formatDate(dateArray[1]);
+
+        startTemp= startDate
+        endTemp = endDate
+
         
 
         $.ajax({
@@ -138,49 +127,53 @@
           beforeSend: $.LoadingOverlay("show"),
           afterSend:$.LoadingOverlay("hide"),
           data: { "_token": "{{ csrf_token() }}", "startDate":startDate,"endDate":endDate},
-          success: function (data) {
+          success: function (datas) {
             dataTable.clear();
             dataTable.draw();
             if(datas=="KOSONG"){
               AlertWarningWithMsg("DATA NOT FOUND")
             }else{
-            no = 0
-            $.each(data,function(i, item){
-              no++
+              data = datas.data
+              
 
-              dataTable.row.add([
-                  no,
-                  item['po_id'],
-                  item['created_at'],
-                  item['doctor_name'],
-                  item['clinic'],
-                  item['address'],
-                  item['billing_no_hp'],
-                  item['no_hp'],
-                  item['product'],
-                  item['qty'],
-                  item['price'],
-                  item['disc'],
-                  item['extras'],
-                  item['total'],
-                  "IDR "+item['shipping_cost'],
-                  item['revenue'],
-                  item['status'],
-                  item['stepPayment'],
-                  item['created_by'],
-                  item['paid_at'],
-              ])
-                dataTable.draw();
+              var container = document.getElementById('listTbl');
+              container.innerHTML= datas.tbldiv;
+
+              var element = document.getElementById('tbl-body-sales-report');
+              element.style.display = 'block';
+              
+              var period = document.getElementById('periode');
+              period.innerHTML = datas.periode
+              alert("woi")
+            }
+            
+          },
+          error: function (result, status, err) {
+            console.log(err)
+          }
+        });
+
+
+      });
+
+      $('#dwnld-excl').on('click', function(e) {
+        $.ajax({
+          type: "POST",
+          url: "{{url('/')}}"+"/sales/getReport/download",
+          beforeSend: $.LoadingOverlay("show"),
+          afterSend:$.LoadingOverlay("hide"),
+          data: { "_token": "{{ csrf_token() }}", "startDate":startTemp,"endDate":endTemp},
+          success: function (datas) {
+            dataTable.draw();
+            if(datas=="KOSONG"){
+              AlertWarningWithMsg("DATA NOT FOUND")
+              dataTable.clear();
+
+            }else{
+              alert(datas.url)
+              window.location.href = datas.url;
 
             }
-            )
-
-            var element = document.getElementById('tbl-body-sales-report');
-
-            // Change the display property to 'block'
-            element.style.display = 'block';
-
-          }
             
           },
           error: function (result, status, err) {

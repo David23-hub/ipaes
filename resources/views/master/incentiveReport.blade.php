@@ -27,6 +27,7 @@
               </div>
             </div>
             <div class="col">
+              <button class="btn btn-info" id="src_summary_btn">View Summary Reports</button>
               <button class="btn btn-info" id="src_btn">View Reports</button>
             </div>
           </div>
@@ -46,7 +47,14 @@
 
     <div id="tbl-body-sales-report" class="card" style="display:none">
       <div class="card-header">
-        <h2 style="font-weight: bold">Detail Report</h2>
+        <div class="row">
+          <div class="col">
+            <h2 style="font-weight: bold">Detail Report</h2>
+          </div>
+          <div id="div-down" class="col" style="text-align: right; display:none;">
+              <button id="dwnld-excl" class="btn btn-success">Download To Excel</button>
+          </div>
+        </div>
         <h5>Marketing: <span style="font-weight: bold" id="marketing-name"></span></h5>
         <h5>Period: <span style="font-weight: bold" id="periode"></span></h5>
       </div>
@@ -145,6 +153,11 @@
             return day.padStart(2, '0') + '/' + monthIndex.toString().padStart(2, '0') + '/' + year;
         }
         
+
+    var startTemp = ""
+    var endTemp = ""
+    var listTemp = ""
+
     $('#src_btn').on('click', function(e) {
       var spanText = $('#reportrange span').text();
         var dateArray = spanText.split(' - '); // Split text by hyphen
@@ -157,7 +170,9 @@
         if(list==""){
           list = "all"
         }
-        
+        listTemp = list
+        startTemp= startDate
+        endTemp = endDate
 
         $.ajax({
           type: "POST",
@@ -169,6 +184,8 @@
             dataTable.clear();
             dataTable.draw();
             if(datas=="KOSONG"){
+              var element = document.getElementById('tbl-body-sales-report');
+              element.style.display = 'none';
               AlertWarningWithMsg("DATA NOT FOUND")
             }else{
               data = datas.data
@@ -185,6 +202,9 @@
               var element = document.getElementById('tbl-body-sales-report');
               element.style.display = 'block';
 
+              var x = document.getElementById('div-down');
+              x.style.display = "block";
+
             }
             
           },
@@ -195,6 +215,92 @@
 
 
       });
+
+      $('#src_summary_btn').on('click', function(e) {
+      var spanText = $('#reportrange span').text();
+        var dateArray = spanText.split(' - '); // Split text by hyphen
+       var startDate = formatDate(dateArray[0]);
+
+        // Format end date
+        var endDate = formatDate(dateArray[1]);
+
+        var list = $('#list_doctor').val()
+        if(list==""){
+          list = "all"
+        }
+        listTemp = list
+        startTemp= startDate
+        endTemp = endDate
+
+        $.ajax({
+          type: "POST",
+          url: "{{url('/')}}"+"/incentive/getReport/summary",
+          beforeSend: $.LoadingOverlay("show"),
+          afterSend:$.LoadingOverlay("hide"),
+          data: { "_token": "{{ csrf_token() }}", "startDate":startDate,"endDate":endDate,"listUser":list},
+          success: function (datas) {
+            dataTable.clear();
+            dataTable.draw();
+            if(datas=="KOSONG"){
+              var element = document.getElementById('tbl-body-sales-report');
+              element.style.display = 'none';
+              AlertWarningWithMsg("DATA NOT FOUND")
+            }else{
+              data = datas.data
+
+              var container = document.getElementById('listTbl');
+              container.innerHTML= datas.tbldiv;
+              
+              var period = document.getElementById('periode');
+              period.innerHTML = datas.periode
+
+
+              var element = document.getElementById('tbl-body-sales-report');
+              element.style.display = 'block';
+
+              var x = document.getElementById(`div-down`);
+              x.style.display = "none"
+
+            }
+            
+          },
+          error: function (result, status, err) {
+            console.log(err)
+          }
+        });
+
+
+      });
+
+      $('#dwnld-excl').on('click', function(e) {
+        $.ajax({
+          type: "POST",
+          url: "{{url('/')}}"+"/incentive/getReport/download",
+          beforeSend: $.LoadingOverlay("show"),
+          afterSend:$.LoadingOverlay("hide"),
+          data: { "_token": "{{ csrf_token() }}", "startDate":startTemp,"endDate":endTemp,"listUser":listTemp},
+          success: function (datas) {
+            dataTable.draw();
+            if(datas=="KOSONG"){
+              AlertWarningWithMsg("DATA NOT FOUND")
+              dataTable.clear();
+
+            }else{
+              alert(datas.url)
+              window.location.href = datas.url;
+
+            }
+            
+          },
+          error: function (result, status, err) {
+            console.log(err)
+          }
+        });
+
+
+      });
+
+        
 
 </script>
     
