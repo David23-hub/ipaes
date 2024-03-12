@@ -96,3 +96,9 @@ Route::post('/deleteProductBundle', [App\Http\Controllers\PackageController::cla
 //REPORTING SALES
 Route::get('/sales/report', [App\Http\Controllers\SalesReportController::class, 'index'])->middleware('auth');
 Route::post('/sales/getReport', [App\Http\Controllers\SalesReportController::class, 'getAll'])->middleware('auth');
+Route::post('/sales/getReport/download', [App\Http\Controllers\SalesReportController::class, 'download'])->middleware('auth');
+
+Route::get('/incentive/report', [App\Http\Controllers\IncentiveReportController::class, 'index'])->middleware('auth');
+Route::post('/incentive/getReport', [App\Http\Controllers\IncentiveReportController::class, 'getAll'])->middleware('auth');
+Route::post('/incentive/getReport/summary', [App\Http\Controllers\IncentiveReportController::class, 'getSummary'])->middleware('auth');
+Route::post('/incentive/getReport/download', [App\Http\Controllers\IncentiveReportController::class, 'download'])->middleware('auth')->name('dwnld-inctv');

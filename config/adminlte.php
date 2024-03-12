@@ -63,10 +63,12 @@ return [
     |
     */
 
+    'logoSimple' => 'IPAES',
     'logo' => 'INTI PERSADA AESTHETIC',
+
     // logony tokony
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo_img' => 'vendor/adminlte/dist/img/logo.png',
+    'logo_img_class' => 'brand-image elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Admin Logo',
@@ -193,7 +195,7 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar' => 'sidebar-light-primary elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-white navbar-light',
     'classes_topnav_nav' => 'navbar-expand',
@@ -417,6 +419,12 @@ return [
                     'icon'    => 'fas fa-fw fa-user-tag',
                     'icon_color' => 'green',
                     'url' => "sales/report",
+                ],
+                [
+                    'text' => "Insentive",
+                    'icon'    => 'fas fa-fw fa-user-tag',
+                    'icon_color' => 'green',
+                    'url' => "incentive/report",
                 ],
             ]
         ],
