@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class IncentiveReportController extends Controller
 {
@@ -553,7 +554,6 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
             'bold' => true,
         ],
     ];
-    
 
     //start to convert
     $spreadsheet = new Spreadsheet();
@@ -570,11 +570,16 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
     $sheet->getStyle('B'.($rows-1).':B'.($rows-1))->applyFromArray($styleArray);
 
     $sheet->fromArray([$headers], NULL, 'A4');
+    
     $sheet->getStyle('A4:K4')->applyFromArray([
         'borders' => [
             'allBorders' => [
                 'borderStyle' => Border::BORDER_THIN,
             ],
+        ],
+        'fill' => [
+            'fillType' => Fill::FILL_SOLID,
+            'startColor' => ['rgb' => '00B6FF'], // Specify the color in RGB format
         ],
     ]);
 
@@ -592,6 +597,10 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
                     ],
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '00B6FF'], // Specify the color in RGB format
                 ],
             ]);
             $sheet->getStyle('B'.($rows-1).':B'.($rows-1))->applyFromArray($styleArray);
