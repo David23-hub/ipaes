@@ -71,6 +71,14 @@ class ExtraChargeModel extends Model
         ->update($data);
     }
 
+    public function UpdatesItem($data){
+        foreach ($data as $key => $value) {
+            $this
+            ->where('id', '=', $value['id'])
+            ->update($value);
+        }
+    }
+
     public function DeleteItem($id, $data){
         return $this
         ->where('id', '=', $id)

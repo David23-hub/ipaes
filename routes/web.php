@@ -81,7 +81,7 @@ Route::post('/paymentOrder', [App\Http\Controllers\ListPOController::class, 'pay
 Route::post('/stepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'stepPaymentOrder'])->middleware('auth');
 Route::post('/editStepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'editStepPaymentOrder'])->middleware('auth');
 Route::post('/addExtraCharge', [App\Http\Controllers\ListPOController::class, 'addExtraCharge'])->middleware('auth');
-
+Route::post('/editProduct', [App\Http\Controllers\ListPOController::class, 'editProduct'])->middleware('auth');
 Route::get('generate-pdf', [App\Http\Controllers\PDFController::class, 'generatePDF']);
 
 // productBundle

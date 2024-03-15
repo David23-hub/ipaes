@@ -113,7 +113,8 @@ class ListPOController extends Controller
                   }
 
                   
-                  
+                  $product["type"] = $temp[1];
+                  $product["id"] = $temp[0];
                   $product["qty"]=$temp[2];
                   $product["disc"]=$temp[3];
                   $price = $product["price_product"]*$temp[2];
@@ -134,6 +135,7 @@ class ListPOController extends Controller
                 foreach ($extraChargeAll as $valueExtra) {
                   if ($data['id'] == $valueExtra['transaction_id']) {
                     $totalan += $valueExtra['price'];
+                    $valueExtra['real_price'] = $valueExtra['price'];
                     $valueExtra['price'] = number_format($valueExtra["price"],0,',','.');
                     array_push($extraChargeOne, $valueExtra);
                   }
@@ -148,7 +150,7 @@ class ListPOController extends Controller
                 $data['extra_charge'] = $extraChargeOne;
 
                 // step payment
-                if($data['status_payment'] == 1) {
+                if($data['status'] == 5) {
                   $dataPaidBy = explode("|", $data['paid_by']);
                   $dataPaidAt = explode("|", $data['paid_at']);
                   $dataPaidBankName = explode("|", $data['paid_bank_name']);
@@ -338,8 +340,6 @@ class ListPOController extends Controller
           $data['message'] = "sukses";
           if($input['data']['status'] == 3) {
             $data['nominal'] = number_format($input['data']['nominal'],0,',','.');
-          } else {
-            
           }
           
           $data['paid_by'] = $input['data']['paid_by'];
@@ -392,6 +392,21 @@ class ListPOController extends Controller
           $this->extra_charge->AddItem($data);
           $result['message'] = "sukses";
           $result['price'] = number_format($data["price"],0,',','.');
+          return $result;
+        }catch(\Throwable $th) {
+            Log::error("error di throwable");
+            Log::error($th);
+            return "gagal";
+        }
+    }
+
+    public function editProduct(Request $request) {
+        try {
+          $input = $request->all();
+          $data['extra_charge'] = $input['data']['extra_charge'];
+          $this->cart->UpdateItem($input['data']['id'], $input['data']['cart']);
+          $this->extra_charge->UpdatesItem($data['extra_charge']);
+          $result = "sukses";
           return $result;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
