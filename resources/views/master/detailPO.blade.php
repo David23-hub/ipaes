@@ -54,7 +54,7 @@
         </div>
       </div>
     </div>
-    @foreach ($dataCartDokter as $key => $itemDokter)`
+    @foreach ($dataCartDokter as $key => $itemDokter)
     <div>
       <div class="card">
         <div class="card-body">
@@ -124,8 +124,442 @@
               <div class="card">
                 <div class="card-body">
                 <h5 style="font-weight: 600">Transaction Details</h5>
-                <div class="form-group">
+                <div class="form-group" id="table-product{{ $key }}">
                   <div class="table-responsive">
+                    <table id="tableList" class="table table-bordered" >
+                      <thead>
+                        <tr style="background-color: #E3EFFF;">
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>TotalPrice</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach ($itemDokter['products'] as $item)
+                          <tr>
+                            <td>{{ $item['name_product'] }}</td>
+                            <td>{{ $item['qty'] }}</td>
+                            <td>IDR {{ $item['price_product'] }}</td>
+                            <td><div class="badge bg-secondary">{{ $item['disc'] }}%</div></td>
+                            <td>IDR {{ $item['price'] }} <br>- IDR {{ $item['disc_price'] }}
+                            <div style="border-top: 1px solid #ccc;"></div>
+                            IDR {{ $item['total_price'] }}
+                            </td>
+                          </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot id="t-foot{{ $key }}">
+                      <div id="extra_charge_list{{ $key }}">
+                          @foreach ($itemDokter['extra_charge'] as $item)
+                              <tr>
+                                <td colspan="4">
+                                  <div class="d-flex justify-content-end">
+                                    <p class="fw-bold"> 
+                                      Extra Charge:
+                                    </p>
+                                  </div>
+                                </td>
+                                <td>
+                                  IDR {{ $item['price'] }}
+                                </td>
+                              </tr>
+                          @endforeach
+                          <tr>
+                            <td colspan="4">
+                              <div class="d-flex justify-content-end">
+                                <p class="fw-bold">
+                                  Grand Total: 
+                                </p>
+                              </div>
+                            </td>
+                            <td>
+                              <div id="grand_total{{ $key }}">
+                                IDR {{ $itemDokter['total'] }}
+                              </div>
+                            </td>
+                          </tr>
+                        </div>
+                    </tfoot>
+                  </table>  
+                  {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
+                  <div class="d-flex justify-content-end">
+                    <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
+                      Add Extra Charges
+                    </button>
+                  </div>
+                  <div class="form-group">
+                    <label for="notes_form">Note For Admin</label>
+                    <p class="text-start">{{ $itemDokter->notes }}</p>
+                  </div>
+                  <div class="form-group">
+                    <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct{{ $key }}">
+                      Edit Product
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4">
+                <div id="column_cancel{{ $key }}"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <div id="column_packing{{ $key }}">
+                </div>
+              </div>
+              <div class="col-sm-8">
+                <div id="column_sent{{ $key }}">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4"></div>
+              <div class="col-sm-8">
+                <div id="column_payment{{ $key }}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Cancel-->
+    <div class="modal fade" id="modalCancel{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Cancel Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+                <input type="hidden" class="form-control" id="id_update">
+              <div class="form-group">
+                <label for="nama_update">Cancel Reason</label>
+                <input type="nama_update" class="form-control" id="cancel_reason{{ $key }}"  placeholder="Masukkan Reason" required>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="cancel_btn{{ $key }}" class="btn btn-primary" onclick="CancelButton({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Extra Charge-->
+    <div class="modal fade" id="modalExtraCharge{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Add Extra Charge</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formExtraCharge" role="form">
+            <div class="modal-body d-flex">
+              <div class="form-group p-2">
+                <label for="extra_charge">Extra Charge *</label>
+                <input type="text" class="form-control" id="extra_charge_desc{{ $key }}"  placeholder="description" required>
+              </div>
+              <div class="form-group p-2">
+                <label for="extra_charge">Price *</label>
+                <input type="text" class="form-control" id="extra_charge_price{{ $key }}"  placeholder="price" required>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="extra_charge{{ $key }}" class="btn btn-primary" onclick="ExtraCharge({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Sent-->
+    <div class="modal fade" id="modalSent{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Sent Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <input type="hidden" class="form-control" id="id_update">
+              <div class="form-group">
+                <label for="category_product_add">Category Product</label>
+                <div id="dropadd" name="dropadd" class="form-group">
+                  <select class="form-select form-control" id="ekspedisi_select{{ $key }}">
+                    @foreach($dataEkspedisi as $item)
+                      <option value={{$item->id}}>{{$item->name}}</option>
+                    @endforeach
+                  </select> 
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="receipt-number">Receipt Number</label>
+                <input type="receipt-number" class="form-control" id="receipt_number_input{{ $key }}"  placeholder="Masukkan Receipt Number" required>
+              </div>
+              <div class="form-group">
+                <label for="shipping-cost">Shipping Cost</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">IDR</span>
+                  <input type="text" class="form-control" placeholder="Masukan Cost" aria-label="Username" aria-describedby="basic-addon1" value="" id="shipping_cost_input{{ $key }}" required>
+                </div>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="sent_btn{{ $key }}" class="btn btn-primary" onclick="SentButton({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Edit Status-->
+    <div class="modal fade" id="modalEditStatus{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Edit Status</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <input type="hidden" class="form-control" id="id_update">
+              <div class="form-group">
+                <label for="category_product_add">Status</label>
+                <div id="dropaddstatus{{ $key }}" name="dropadd" class="form-group">
+                  <select class="form-select form-control" id="status_select{{ $key }}" required>
+                    @if ($itemDokter->status == 0)
+                      <option value="0" selected>SUBMITED</option>
+                    @elseif($itemDokter->status == 1)
+                      <option value="0" id="">SUBMITED</option>
+                      <option value="1" selected>PACKING</option>
+                    @elseif($itemDokter->status == 2)
+                      <option value="0">SUBMITED</option>
+                      <option value="1">PACKING</option>
+                      <option value="2" selected>SENT</option>
+                    @elseif($itemDokter->status == 3 || $itemDokter->status == 5)
+                      <option value="0">SUBMITED</option>
+                      <option value="1">PACKING</option>
+                      <option value="2">SENT</option>
+                      <option value="3" selected>PAID</option>
+                    @endif
+                  </select> 
+                </div>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="status_btn{{ $key }}" class="btn btn-primary" onclick="UpdateStatus({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Payment-->
+    <div class="modal fade" id="modalPayment{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Payment Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <div>
+                <button type="button" class="btn btn-secondary" id="one_payment{{ $key }}" onclick="OnePaymentToggle({{ $key }})">One Payment</button>
+                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPaymentToggle({{ $key }})">Step Payment</button>
+              </div>
+              <div class="form-group">
+                <label for="paid_at">Paid at *</label>
+                <input type="date" class="form-control" id="paid_at{{ $key }}"  placeholder="Masukkan Tanggal Pembayaran" required>
+              </div>
+              <div class="form-group">
+                <label for="bank_name">Bank Name *</label>
+                <input type="text" class="form-control" id="bank_name{{ $key }}"  placeholder="Masukkan Bank Name" required>
+              </div>
+              <div class="form-group">
+                <label for="bank_account_name">Bank Account Name *</label>
+                <input type="text" class="form-control" id="bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name" required>
+              </div>
+              <div class="form-group" style="display: none" id="container_nominal_input{{ $key }}">
+                <label for="shipping-cost">Nominal *</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">IDR</span>
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" value="" id="nominal_payment_input{{ $key }}" required>
+                </div>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalPayment({{ $key }})">Close</button>
+            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" onclick="PaymentButton({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Step Payment-->
+    <div class="modal fade" id="modalStepPayment{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Payment Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <input type="hidden" id="key_step_payment{{ $key }}" value="">
+              <div>
+                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPayment({{ $key }})">Step Payment</button>
+              </div>
+              <div class="form-group">
+                <label for="paid_at">Paid at *</label>
+                <input type="date" class="form-control" id="step_paid_at{{ $key }}"  placeholder="Masukkan Tanggal Pembayaran" required>
+              </div>
+              <div class="form-group">
+                <label for="bank_name">Bank Name *</label>
+                <input type="text" class="form-control" id="step_bank_name{{ $key }}"  placeholder="Masukkan Bank Name" required>
+              </div>
+              <div class="form-group">
+                <label for="bank_account_name">Bank Account Name *</label>
+                <input type="text" class="form-control" id="step_bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name" required>
+              </div>
+              <div class="form-group" id="container_step_nominal_input{{ $key }}">
+                <label for="shipping-cost">Nominal *</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">IDR</span>
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" required>
+                </div>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalPayment({{ $key }})">Close</button>
+            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" type="submit" onclick="StepPayment({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Edit Product-->
+    <div class="modal fade" id="modalEditProduct{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Product Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <span>Product</span>
+              @foreach ($itemDokter['products'] as $keyProduct => $itemProduct)
+                <div id="body-product{{ $key }}-{{ $keyProduct }}" class="input-group">
+                  <div class="d-inline-flex p-2">
+                    <div id="name-product">
+                      <span class="input-group-text">Name</span>
+                      <span class="input-group-text">{{ $itemProduct['name_product'] }}</span>
+                    </div>
+                    <div>
+                      <span class="input-group-text">Stok</span>
+                      <input type="number" class="form-control" id="productQty-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0">
+                    </div>
+                    <div>
+                      <span class="input-group-text">Discount</span>
+                      <input type="number" class="form-control" id="productDiscount-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0">
+                    </div>
+                  </div>
+                </div>
+                @endforeach
+              @if ($itemDokter['extra_charge'])
+              <span>Extra Charge</span>
+                @foreach ($itemDokter['extra_charge'] as $keyCharge => $itemExtraCharge)
+                <div id="body-product{{ $key }}-{{ $keyCharge }}" class="input-group">
+                  <div class="d-inline-flex p-2">
+                    <div id="name-product">
+                      <span class="input-group-text">Description</span>
+                      {{-- <span class="input-group-text">{{ $itemExtraCharge['description'] }}</span> --}}
+                      <input type="text" class="form-control" id="extraChargeDescription-{{ $key }}-{{ $keyCharge }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemExtraCharge['description'] }}">
+                    </div>
+                    <div>
+                      <span class="input-group-text">Stok</span>
+                      <input type="number" class="form-control" id="extraChargePrice-{{ $key }}-{{ $keyCharge }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemExtraCharge['real_price'] }}" min="0">
+                    </div>
+                  </div>
+                </div>
+                @endforeach
+              @endif
+
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" onclick="EditProduct({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+    
+    @endforeach
+
+    <style>
+      .select2-container .select2-selection--single {
+          height: calc(1.5em + 0.75rem + 2px); /* Match Bootstrap input height */
+          padding: 0.375rem 0.75rem; /* Match Bootstrap input padding */
+          font-size: 1rem; /* Match Bootstrap input font size */
+          line-height: 1.5; /* Match Bootstrap input line height */
+          color: #495057; /* Match Bootstrap input text color */
+          background-color: #fff; /* Match Bootstrap input background color */
+          background-clip: padding-box;
+          border: 1px solid #ced4da; /* Match Bootstrap input border */
+          border-radius: 0.25rem; /* Match Bootstrap input border radius */
+          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+    </style>
+@stop
+
+@push('js')
+<script>
+    // const Swal = require('sweetalert2');
+    dokter = @json($dokter);
+    user = @json($user);
+    dataCartDokter = @json($dataCartDokter);
+    console.log({dataCartDokter})
+    window.onload = function() {
+      checkForButtonStatus()
+    };
+
+    function RefreshTable(key) {
+      /*
+      <div class="table-responsive">
                     <table id="tableList" class="table table-bordered" >
                       <thead>
                         <tr style="background-color: #E3EFFF;">
@@ -194,304 +628,105 @@
                     <label for="notes_form">Note For Admin</label>
                     <p class="text-start">{{ $itemDokter->notes }}</p>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="container">
-            <div class="row">
-              <div class="col-sm-4">
-                <div id="column_cancel{{ $key }}"></div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-4">
-                <div id="column_packing{{ $key }}">
-                </div>
-              </div>
-              <div class="col-sm-8">
-                <div id="column_sent{{ $key }}">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="container">
-            <div class="row">
-              <div class="col-sm-4"></div>
-              <div class="col-sm-8">
-                <div id="column_payment{{ $key }}">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                  <div class="form-group">
+                    <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct{{ $key }}">
+                      Edit Product
+                    </button>
+                  </div>
+      */
 
-    <!-- Modal Cancel-->
-    <div class="modal fade" id="modalCancel{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Cancel Form</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form id="formUpdate" role="form">
-            <div class="modal-body">
-                <input type="hidden" class="form-control" id="id_update">
-              <div class="form-group">
-                <label for="nama_update">Cancel Reason</label>
-                <input type="nama_update" class="form-control" id="cancel_reason{{ $key }}"  placeholder="Masukkan Reason">
-              </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" id="cancel_btn{{ $key }}" class="btn btn-primary" onclick="CancelButton({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
-          </div>
-        </form>
-        </div>
-      </div>
-    </div>
+      let productsTable = ""
 
-    <!-- Modal Extra Charge-->
-    <div class="modal fade" id="modalExtraCharge{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Add Extra Charge</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form id="formExtraCharge" role="form">
-            <div class="modal-body d-flex">
-              <div class="form-group p-2">
-                <label for="extra_charge">Extra Charge *</label>
-                <input type="text" class="form-control" id="extra_charge_desc{{ $key }}"  placeholder="description">
-              </div>
-              <div class="form-group p-2">
-                <label for="extra_charge">Price *</label>
-                <input type="text" class="form-control" id="extra_charge_price{{ $key }}"  placeholder="price">
-              </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" id="extra_charge{{ $key }}" class="btn btn-primary" onclick="ExtraCharge({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
-          </div>
-        </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Sent-->
-    <div class="modal fade" id="modalSent{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Sent Form</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form id="formUpdate" role="form">
-            <div class="modal-body">
-              <input type="hidden" class="form-control" id="id_update">
-              <div class="form-group">
-                <label for="category_product_add">Category Product</label>
-                <div id="dropadd" name="dropadd" class="form-group">
-                  <select class="form-select form-control" id="ekspedisi_select{{ $key }}">
-                    @foreach($dataEkspedisi as $item)
-                      <option value={{$item->id}}>{{$item->name}}</option>
-                    @endforeach
-                  </select> 
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="receipt-number">Receipt Number</label>
-                <input type="receipt-number" class="form-control" id="receipt_number_input{{ $key }}"  placeholder="Masukkan Receipt Number">
-              </div>
-              <div class="form-group">
-                <label for="shipping-cost">Shipping Cost</label>
-                <div class="input-group mb-3">
-                  <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="text" class="form-control" placeholder="Masukan Cost" aria-label="Username" aria-describedby="basic-addon1" value="" id="shipping_cost_input{{ $key }}">
-                </div>
-              </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" id="sent_btn{{ $key }}" class="btn btn-primary" onclick="SentButton({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
-          </div>
-        </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Edit Status-->
-    <div class="modal fade" id="modalEditStatus{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Edit Status</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form id="formUpdate" role="form">
-            <div class="modal-body">
-              <input type="hidden" class="form-control" id="id_update">
-              <div class="form-group">
-                <label for="category_product_add">Status</label>
-                <div id="dropadd" name="dropadd" class="form-group">
-                  <select class="form-select form-control" id="status_select{{ $key }}">
-                    @if ($itemDokter->status == 0)
-                      <option value="0" selected>SUBMITED</option>
-                    @elseif($itemDokter->status == 1)
-                      <option value="0" id="">SUBMITED</option>
-                      <option value="1" selected>PACKING</option>
-                    @elseif($itemDokter->status == 2)
-                      <option value="0">SUBMITED</option>
-                      <option value="1">PACKING</option>
-                      <option value="2" selected>SENT</option>
-                    @elseif($itemDokter->status == 3 || $itemDokter->status == 5)
-                      <option value="0">SUBMITED</option>
-                      <option value="1">PACKING</option>
-                      <option value="2">SENT</option>
-                      <option value="3" selected>PAID</option>
-                    @endif
-                  </select> 
-                </div>
-              </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" id="status_btn{{ $key }}" class="btn btn-primary" onclick="UpdateStatus({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
-          </div>
-        </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Payment-->
-    <div class="modal fade" id="modalPayment{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Payment Form</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form id="formUpdate" role="form">
-            <div class="modal-body">
-              <div>
-                <button type="button" class="btn btn-secondary" id="one_payment{{ $key }}" onclick="OnePaymentToggle({{ $key }})">One Payment</button>
-                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPaymentToggle({{ $key }})">Step Payment</button>
-              </div>
-              <div class="form-group">
-                <label for="paid_at">Paid at *</label>
-                <input type="date" class="form-control" id="paid_at{{ $key }}"  placeholder="Masukkan Tanggal Pembayaran">
-              </div>
-              <div class="form-group">
-                <label for="bank_name">Bank Name *</label>
-                <input type="text" class="form-control" id="bank_name{{ $key }}"  placeholder="Masukkan Bank Name">
-              </div>
-              <div class="form-group">
-                <label for="bank_account_name">Bank Account Name *</label>
-                <input type="text" class="form-control" id="bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name">
-              </div>
-              <div class="form-group" style="display: none" id="container_nominal_input{{ $key }}">
-                <label for="shipping-cost">Nominal *</label>
-                <div class="input-group mb-3">
-                  <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" value="" id="nominal_payment_input{{ $key }}">
-                </div>
-              </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalPayment({{ $key }})">Close</button>
-            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" onclick="PaymentButton({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
-          </div>
-        </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Step Payment-->
-    <div class="modal fade" id="modalStepPayment{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Payment Form</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form id="formUpdate" role="form">
-            <div class="modal-body">
-              <input type="hidden" id="key_step_payment{{ $key }}" value="">
-              <div>
-                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPayment({{ $key }})">Step Payment</button>
-              </div>
-              <div class="form-group">
-                <label for="paid_at">Paid at *</label>
-                <input type="date" class="form-control" id="step_paid_at{{ $key }}"  placeholder="Masukkan Tanggal Pembayaran">
-              </div>
-              <div class="form-group">
-                <label for="bank_name">Bank Name *</label>
-                <input type="text" class="form-control" id="step_bank_name{{ $key }}"  placeholder="Masukkan Bank Name">
-              </div>
-              <div class="form-group">
-                <label for="bank_account_name">Bank Account Name *</label>
-                <input type="text" class="form-control" id="step_bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name">
-              </div>
-              <div class="form-group" id="container_step_nominal_input{{ $key }}">
-                <label for="shipping-cost">Nominal *</label>
-                <div class="input-group mb-3">
-                  <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}">
-                </div>
-              </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalPayment({{ $key }})">Close</button>
-            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" onclick="StepPayment({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
-          </div>
-        </form>
-        </div>
-      </div>
-    </div>
-    
-    @endforeach
-
-    <style>
-      .select2-container .select2-selection--single {
-          height: calc(1.5em + 0.75rem + 2px); /* Match Bootstrap input height */
-          padding: 0.375rem 0.75rem; /* Match Bootstrap input padding */
-          font-size: 1rem; /* Match Bootstrap input font size */
-          line-height: 1.5; /* Match Bootstrap input line height */
-          color: #495057; /* Match Bootstrap input text color */
-          background-color: #fff; /* Match Bootstrap input background color */
-          background-clip: padding-box;
-          border: 1px solid #ced4da; /* Match Bootstrap input border */
-          border-radius: 0.25rem; /* Match Bootstrap input border radius */
-          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      for (let i = 0; i < dataCartDokter[key]['products'].length; i++) {
+        let item = dataCartDokter[key]['products'][i]
+        productsTable += `
+        <tr>
+          <td>${item['name_product']}</td>
+          <td>${item['qty']}</td>
+          <td>IDR ${item['price_product']}</td>
+          <td><div class="badge bg-secondary">${item['disc']}%</div></td>
+          <td>IDR {{ $item['price'] }} <br>- IDR ${item['disc_price']}
+          <div style="border-top: 1px solid #ccc;"></div>
+          IDR ${item['total_price']}
+          </td>
+        </tr>
+        `
       }
-    </style>
-@stop
 
-@push('js')
-<script>
-    // const Swal = require('sweetalert2');
-    dokter = @json($dokter);
-    user = @json($user);
-    dataCartDokter = @json($dataCartDokter);
-    console.log({dataCartDokter})
-    window.onload = function() {
-      checkForButtonStatus()
-    };
+      let extraChargeTable = ``
+      for (let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
+        const element = dataCartDokter[key]['extra_charge'][i];
+        extraChargeTable += `
+        <tr>
+          <td colspan="4">
+            <div class="d-flex justify-content-end">
+              <p class="fw-bold"> 
+                Extra Charge:
+              </p>
+            </div>
+          </td>
+          <td>
+            IDR ${element['price']}
+          </td>
+        </tr>
+        `
+      }
+
+      console.log({extraChargeTable, productsTable})
+      // document.querySelector(`#table-product${key}`).innerHTML
+      let total = `
+      <div class="table-responsive">
+        <table id="tableList" class="table table-bordered" >
+          <thead>
+            <tr style="background-color: #E3EFFF;">
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>TotalPrice</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${productsTable}
+          </div>
+        </tbody>
+        <tfoot id="t-foot${key}">
+          <div id="extra_charge_list${key}">
+            ${extraChargeTable}
+              <tr>
+                <td colspan="4">
+                  <div class="d-flex justify-content-end">
+                    <p class="fw-bold">
+                      Grand Total: 
+                    </p>
+                  </div>
+                </td>
+                <td>
+                  <div id="grand_total${key}">
+                    IDR ${dataCartDokter[key]['total']}
+                  </div>
+                </td>
+              </tr>
+          </tfoot>
+        </table>  
+      </div>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-outline-success" data-target="#modalExtraCharge${key}" data-toggle="modal">
+          Add Extra Charges
+        </button>
+      </div>
+      <div class="form-group">
+        <label for="notes_form">Note For Admin</label>
+        <p class="text-start">${dataCartDokter[key]['notes']}</p>
+      </div>
+      <div class="form-group">
+        <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct${key}">
+          Edit Product
+        </button>
+      </div>
+      `
+      // console.log({total})
+    }
 
     function OnePaymentToggle(key) {
       var x = document.getElementById(`container_nominal_input${key}`);
@@ -538,6 +773,13 @@
             Packing Purchase Order
           </button> 
           `
+
+          document.querySelector(`#dropaddstatus${i}`).innerHTML = `
+          <select class="form-select form-control" id="status_select${i}" required>
+            <option value="0" selected>SUBMITED</option>
+          </select>
+          `
+
           document.querySelector(`#column_packing${i}`).innerHTML = ""
           document.querySelector(`#column_sent${i}`).innerHTML = ""
           document.querySelector(`#column_payment${i}`).innerHTML = ""
@@ -552,6 +794,13 @@
           <button class="btn btn-outline-info" id="sent_btn_modal" data-toggle="modal" data-target="#modalSent${i}">
             Sent Order
           </button> 
+          `
+
+          document.querySelector(`#dropaddstatus${i}`).innerHTML = `
+          <select class="form-select form-control" id="status_select${i}" required>
+            <option value="0" id="">SUBMITED</option>
+            <option value="1" selected>PACKING</option>
+          </select>
           `
 
           document.querySelector(`#column_packing${i}`).innerHTML = `
@@ -587,6 +836,14 @@
           <button class="btn btn-outline-success" id="payment_btn_modal" data-toggle="modal" data-target="#modalPayment${i}" onclick="clearModalPayment(${i})">
             Submit Payment
           </button> 
+          `
+
+          document.querySelector(`#dropaddstatus${i}`).innerHTML = `
+          <select class="form-select form-control" id="status_select${i}" required>
+            <option value="0">SUBMITED</option>
+            <option value="1">PACKING</option>
+            <option value="2" selected>SENT</option>
+          </select>
           `
 
           document.querySelector(`#column_packing${i}`).innerHTML = `
@@ -662,6 +919,15 @@
                   </table>
                 </div>
               </div>
+          `
+
+          document.querySelector(`#dropaddstatus${i}`).innerHTML = `
+          <select class="form-select form-control" id="status_select${i}" required>
+            <option value="0">SUBMITED</option>
+            <option value="1">PACKING</option>
+            <option value="2">SENT</option>
+            <option value="3" selected>PAID</option>
+          </select>
           `
 
           document.querySelector(`#column_sent${i}`).innerHTML = `
@@ -783,6 +1049,14 @@
                 </div>
               </div>
           `
+          document.querySelector(`#dropaddstatus${i}`).innerHTML = `
+          <select class="form-select form-control" id="status_select${i}" required>
+            <option value="0">SUBMITED</option>
+            <option value="1">PACKING</option>
+            <option value="2">SENT</option>
+            <option value="3" selected>PAID</option>
+          </select>
+          `
 
           document.querySelector(`#column_sent${i}`).innerHTML = `
           <div class="card">
@@ -817,6 +1091,9 @@
           var checkNominal = ""
           for (let j = 0; j < dataCartDokter[i]['step_payment'].length; j++) {
               const element = dataCartDokter[i]['step_payment'][j];
+              if(!element.paid_at) {
+                continue
+              }
               checkNominal += `
               <div class="card">
                     <div class="card-body">
@@ -1070,7 +1347,27 @@
       if(nominal_input.style.display == "none") {
         nominal_payment_input = 0
         status = 3
-      } 
+      }
+
+      if (!paid_at) {
+        AlertWarningWithMsg("must fill the paid at")
+        return
+      }
+
+      if (!bank_name) {
+        AlertWarningWithMsg("must fill the bank name")
+        return
+      }
+
+      if (!bank_account_name) {
+        AlertWarningWithMsg("must fill the bank account name")
+        return
+      }
+
+      if (!nominal_payment_input && status == 5) {
+        AlertWarningWithMsg("must fill the bank nominal payment")
+        return
+      }
 
       $.ajax({
         type: "POST",
@@ -1094,7 +1391,7 @@
               dataCartDokter[key]['paid_by'] = data['paid_by']
               dataCartDokter[key]['paid_at'] = data['paid_at']
             } else if(status == 5) {
-              var paid_at = data['paid_by'].split('|')[0]
+              var paid_at = data['paid_at'].split('|')[0]
               dataCartDokter[key]['step_payment'] = [
                 {
                   paid_by: user.name,
@@ -1102,6 +1399,7 @@
                   paid_bank_name: bank_name,
                   paid_account_bank_name: bank_account_name,
                   nominal: nominal_payment_input,
+                  nominal_number: nominal_payment_input
                 }
               ]
             }
@@ -1133,6 +1431,26 @@
       var paid_account_bank_name_before = dataCartDokter[key]['paid_account_bank_name']
       var nominal_before = dataCartDokter[key]['nominal']
       var paid_by_before = dataCartDokter[key]['paid_by']
+      if (!paid_at) {
+        AlertWarningWithMsg("must fill the paid at")
+        return
+      }
+
+      if (!bank_name) {
+        AlertWarningWithMsg("must fill the bank name")
+        return
+      }
+
+      if (!bank_account_name) {
+        AlertWarningWithMsg("must fill the bank account name")
+        return
+      }
+
+      if (!nominal_payment_input && status == 5) {
+        AlertWarningWithMsg("must fill the bank nominal payment")
+        return
+      }
+
       console.log({indexEdit})
       if (!indexEdit) {
         // add with status payment 1
@@ -1344,6 +1662,75 @@
         });
         }
       })
+    }
+
+    function EditProduct(id, key) {
+      console.log({id, key})
+      
+      let productJoin = ""
+      for(let i = 0; i < dataCartDokter[key]['products'].length; i++) {
+        let el = dataCartDokter[key]['products'][i]
+        var quantity = $(`#productQty-${key}-${i}`).val()
+        var discount = $(`#productDiscount-${key}-${i}`).val()
+        dataCartDokter[key]['products'][i]['qty'] = quantity
+        dataCartDokter[key]['products'][i]['disc'] = discount
+        if(dataCartDokter[key]['products'].length -1 == i) {
+          productJoin += `${el['id']}|${el['type']}|${quantity}|${discount}`
+        } else {
+          productJoin += `${el['id']}|${el['type']}|${quantity}|${discount},`
+        }
+      }
+
+      console.log({productJoin})
+
+      let extraCharge = []
+      for(let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
+        // let el = dataCartDokter[key]['extra_charge'][i]
+        var desc = $(`#extraChargeDescription-${key}-${i}`).val()
+        var price = $(`#extraChargePrice-${key}-${i}`).val()
+        console.log({desc, price})
+        extraCharge.push({
+          id: dataCartDokter[key]['extra_charge'][i]['id'],
+          transaction_id: dataCartDokter[key]['extra_charge'][i]['transaction_id'],
+          description: desc,
+          price: price,
+        })      
+      }
+
+      console.log({extraCharge})
+
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/editProduct",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          id: id,
+          cart: {cart: productJoin},
+          extra_charge: extraCharge
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data=="sukses"){
+            $(`#modalEditProduct${key}`).modal("hide")
+            // dataCartDokter[key].status = 4
+            // checkForButtonStatus()
+            // AlertSuccess()
+            $(document).ajaxStop(function(){
+            window.location.reload();
+            });
+          }else if(data!='gagal'|| data!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      });
+
+      // RefreshTable(key)
     }
 
 </script>
