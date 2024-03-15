@@ -426,6 +426,12 @@ return [
                     'icon_color' => 'green',
                     'url' => "incentive/report",
                 ],
+                [
+                    'text' => "Stock",
+                    'icon'    => 'fas fa-fw fa-user-tag',
+                    'icon_color' => 'green',
+                    'url' => "stock/report",
+                ],
             ]
         ],
         ['header' => 'labels'],
