@@ -102,3 +102,8 @@ Route::get('/incentive/report', [App\Http\Controllers\IncentiveReportController:
 Route::post('/incentive/getReport', [App\Http\Controllers\IncentiveReportController::class, 'getAll'])->middleware('auth');
 Route::post('/incentive/getReport/summary', [App\Http\Controllers\IncentiveReportController::class, 'getSummary'])->middleware('auth');
 Route::post('/incentive/getReport/download', [App\Http\Controllers\IncentiveReportController::class, 'download'])->middleware('auth')->name('dwnld-inctv');
+
+Route::get('/stock/report', [App\Http\Controllers\StockController::class, 'index'])->middleware('auth');
+Route::post('/stock/getReport', [App\Http\Controllers\StockController::class, 'getAll'])->middleware('auth');
+Route::post('/stock/getReport/download', [App\Http\Controllers\StockController::class, 'download'])->middleware('auth');
+Route::post('/stock/getReport/summary', [App\Http\Controllers\StockController::class, 'getSummary'])->middleware('auth');

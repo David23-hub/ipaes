@@ -340,10 +340,14 @@ class ListPOController extends Controller
           $data['message'] = "sukses";
           if($input['data']['status'] == 3) {
             $data['nominal'] = number_format($input['data']['nominal'],0,',','.');
+          } else {
+            $data['nominal_step'] = $input['data']['nominal'];
           }
           
           $data['paid_by'] = $input['data']['paid_by'];
           $data['paid_at'] = $input['data']['paid_at'];
+          $data['paid_bank_name'] = $input['data']['paid_bank_name'];
+          $data['paid_account_bank_name'] = $input['data']['paid_account_bank_name'];
           return $data;
       }catch(\Throwable $th) {
           Log::error("error di throwable");

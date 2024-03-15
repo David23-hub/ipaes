@@ -55,7 +55,7 @@
       </div>
     </div>
     @foreach ($dataCartDokter as $key => $itemDokter)
-    <div>
+
       <div class="card">
         <div class="card-body">
           <div class="row">
@@ -194,7 +194,8 @@
                     <p class="text-start">{{ $itemDokter->notes }}</p>
                   </div>
                   <div class="form-group">
-                    <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct{{ $key }}">
+                    <button class="btn me-3 btn-outline-success" id="edit_product" onclick="EditProductShow({{ $key }})">
+                      {{-- data-toggle="modal" data-target="#modalEditProduct{{ $key }}" --}}
                       Edit Product
                     </button>
                   </div>
@@ -229,6 +230,7 @@
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -281,7 +283,7 @@
               </div>
             </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalExtraCharge({{ $key }})">Close</button>
             <button type="button" id="extra_charge{{ $key }}" class="btn btn-primary" onclick="ExtraCharge({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
           </div>
         </form>
@@ -480,32 +482,33 @@
           </div>
           <form id="formUpdate" role="form">
             <div class="modal-body">
+              <input type="hidden" id="key_edit_step_payment{{ $key }}" value="">
               <div>
-                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPayment({{ $key }})">Step Payment</button>
+                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary">Step Payment</button>
               </div>
               <div class="form-group">
                 <label for="paid_at">Paid at *</label>
-                <input type="date" class="form-control" id="step_paid_at{{ $key }}"  placeholder="Masukkan Tanggal Pembayaran" required>
+                <input type="date" class="form-control" id="step_edit_paid_at{{ $key }}"  placeholder="Masukkan Tanggal Pembayaran" required>
               </div>
               <div class="form-group">
                 <label for="bank_name">Bank Name *</label>
-                <input type="text" class="form-control" id="step_bank_name{{ $key }}"  placeholder="Masukkan Bank Name" required>
+                <input type="text" class="form-control" id="step_edit_bank_name{{ $key }}"  placeholder="Masukkan Bank Name" required>
               </div>
               <div class="form-group">
                 <label for="bank_account_name">Bank Account Name *</label>
-                <input type="text" class="form-control" id="step_bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name" required>
+                <input type="text" class="form-control" id="step_edit_bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name" required>
               </div>
               <div class="form-group" id="container_step_nominal_input{{ $key }}">
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" required>
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_edit_step_payment_input{{ $key }}" required>
                 </div>
               </div>
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalPayment({{ $key }})">Close</button>
-            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" type="submit" onclick="StepPayment({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" type="submit" onclick="EditStepPayment({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
           </div>
         </form>
         </div>
@@ -543,14 +546,14 @@
                   </div>
                 </div>
                 @endforeach
-              @if ($itemDokter['extra_charge'])
+              {{-- @if ($itemDokter['extra_charge']) --}}
               <span>Extra Charge</span>
-                @foreach ($itemDokter['extra_charge'] as $keyCharge => $itemExtraCharge)
+              <div id="extra-charge-edit-product{{ $key }}">
+                {{-- @foreach ($itemDokter['extra_charge'] as $keyCharge => $itemExtraCharge)
                 <div id="body-product{{ $key }}-{{ $keyCharge }}" class="input-group">
                   <div class="d-inline-flex p-2">
                     <div id="name-product">
                       <span class="input-group-text">Description</span>
-                      {{-- <span class="input-group-text">{{ $itemExtraCharge['description'] }}</span> --}}
                       <input type="text" class="form-control" id="extraChargeDescription-{{ $key }}-{{ $keyCharge }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemExtraCharge['description'] }}">
                     </div>
                     <div>
@@ -559,8 +562,9 @@
                     </div>
                   </div>
                 </div>
-                @endforeach
-              @endif
+                @endforeach --}}
+              </div>
+              {{-- @endif --}}
 
             </div>
           <div class="modal-footer">
@@ -782,6 +786,20 @@
       document.getElementById(`bank_name${key}`).value = '';
       document.getElementById(`bank_account_name${key}`).value = '';
       document.getElementById(`nominal_payment_input${key}`).value = '';
+    }
+
+    function clearStepModalPayment(key) {
+      document.getElementById(`step_paid_at${key}`).value = '';
+      document.getElementById(`step_bank_name${key}`).value = '';
+      document.getElementById(`step_bank_account_name${key}`).value = '';
+      document.getElementById(`nominal_step_payment_input${key}`).value = '';
+    }
+
+    function clearEditStepModalPayment(key) {
+      document.getElementById(`step_edit_paid_at${key}`).value = '';
+      document.getElementById(`step_edit_bank_name${key}`).value = '';
+      document.getElementById(`step_edit_bank_account_name${key}`).value = '';
+      document.getElementById(`nominal_edit_step_payment_input${key}`).value = '';
     }
 
     function StepPaymentToggle(key) {
@@ -1194,12 +1212,37 @@
 
     function EditStepPaymentButton(key, index) {
       console.log({key, index})
-      document.getElementById(`step_paid_at${key}`).value = dataCartDokter[key]['step_payment'][index].paid_at
-      document.getElementById(`step_bank_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_bank_name
-      document.getElementById(`step_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
-      document.getElementById(`nominal_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal_number
-      document.getElementById(`key_step_payment${key}`).value = index
+      document.getElementById(`step_edit_paid_at${key}`).value = dataCartDokter[key]['step_payment'][index].paid_at
+      document.getElementById(`step_edit_bank_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_bank_name
+      document.getElementById(`step_edit_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
+      document.getElementById(`nominal_edit_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal
+      document.getElementById(`key_edit_step_payment${key}`).value = index
       $(`#modalEditStepPayment${key}`).modal("show")
+    }
+
+    function EditProductShow(key) {
+      let htmlExtraCharge = ``
+      for (let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
+        const element = dataCartDokter[key]['extra_charge'][i];
+        htmlExtraCharge += `      
+        <div id="body-product${key}-${i}" class="input-group">
+            <div class="d-inline-flex p-2">
+              <div id="name-product">
+                <span class="input-group-text">Description</span>
+                {{-- <span class="input-group-text">{{ ${element['description']} }}</span> --}}
+                <input type="text" class="form-control" id="extraChargeDescription-${key}-${i}"  aria-describedby="inputGroupPrepend2" required value="${element['description']}">
+              </div>
+              <div>
+                <span class="input-group-text">Price</span>
+                <input type="number" class="form-control" id="extraChargePrice-${key}-${i}"  aria-describedby="inputGroupPrepend2" required value="${element['price']}" min="0">
+              </div>
+            </div>
+          </div>
+          `
+      }
+      console.log(htmlExtraCharge, "html extra charge")
+      document.querySelector(`#extra-charge-edit-product${key}`).innerHTML = htmlExtraCharge
+      $(`#modalEditProduct${key}`).modal("show")
     }
 
     function UpdateStatus(id, key) {
@@ -1255,6 +1298,11 @@
       })
     }
 
+    function clearModalExtraCharge(key) {
+      document.getElementById(`extra_charge_desc${key}`).value = ""
+      document.getElementById(`extra_charge_price${key}`).value = ""
+    }
+
     function ExtraCharge(id, key) {
       var desc = $(`#extra_charge_desc${key}`).val()
       var price = $(`#extra_charge_price${key}`).val()
@@ -1272,6 +1320,7 @@
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           if(data.message=="sukses"){
+            clearModalExtraCharge(key)
             $(`#modalExtraCharge${key}`).modal("hide")
             dataCartDokter[key]['extra_charge'].push({
               transaction_id: id,
@@ -1279,6 +1328,7 @@
               price: price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
             })
             refreshTableExtraCharge(key, dataCartDokter[key]['total_price'], price)
+
             AlertSuccess()
           }else if(data!='gagal'|| data!="gagal2"){
             AlertWarningWithMsg(data)
@@ -1431,10 +1481,15 @@
             if(status == 3) {
               dataCartDokter[key]['paid_bank_name'] = bank_name
               dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
-              dataCartDokter[key]['nominal'] = data['nominal']
+              // dataCartDokter[key]['nominal'] = data['nominal']
               dataCartDokter[key]['paid_by'] = data['paid_by']
               dataCartDokter[key]['paid_at'] = data['paid_at']
             } else if(status == 5) {
+              dataCartDokter[key]['paid_bank_name'] = data['paid_bank_name']
+              dataCartDokter[key]['paid_account_bank_name'] = data['paid_account_bank_name']
+              dataCartDokter[key]['nominal'] = data['nominal_step']
+              dataCartDokter[key]['paid_by'] = data['paid_by']
+              dataCartDokter[key]['paid_at'] = data['paid_at']
               var paid_at = data['paid_at'].split('|')[0]
               dataCartDokter[key]['step_payment'] = [
                 {
@@ -1448,7 +1503,9 @@
               ]
             }
             dataCartDokter[key].status = status
+            console.log(dataCartDokter[key], "data cart dokter")
             $(`#modalPayment${key}`).modal("hide")
+            clearModalPayment(key)
             checkForButtonStatus()
             AlertSuccess()
           }else if(data['message']!='gagal'|| data['message']!="gagal2"){
@@ -1496,11 +1553,11 @@
       }
 
       // console.log({indexEdit})
-      var paid_at_after = paid_at_before + "|" +paid_at
-      var bank_name_after = paid_bank_name_before + "|" +bank_name
-      var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
-      var nominal_after = nominal_before + "|" + nominal_payment_input
-      var paid_by_after = paid_by_before + "|" + user.name
+      var paid_at_after = paid_at_before +paid_at + "|"
+      var bank_name_after = paid_bank_name_before  +bank_name + "|"
+      var bank_account_name_after = paid_account_bank_name_before  +bank_account_name + "|"
+      var nominal_after = nominal_before  + nominal_payment_input + "|"
+      var paid_by_after = paid_by_before  + user.name + "|"
       console.log({
         dataBefore: {
           status: 5,
@@ -1514,7 +1571,7 @@
           paid_account_bank_name_before: dataCartDokter[key]['paid_account_bank_name'],
           nominal_before: dataCartDokter[key]['nominal'],
           paid_by_before: dataCartDokter[key]['paid_by'],
-          indexEdit,
+          // indexEdit,
           paid_by: paid_by_after,
         }
       })
@@ -1550,6 +1607,7 @@
             // dataCartDokter[key]['paid_at'] = data['paid_at']
             dataCartDokter[key].status = 5
             $(`#modalStepPayment${key}`).modal("hide")
+            clearStepModalPayment(key)
             checkForButtonStatus()
             AlertSuccess()
           }else if(data['message']!='gagal'|| data['message']!="gagal2"){
@@ -1563,24 +1621,14 @@
           AlertError()
         },
       })
-      // if (!indexEdit) {
-      //   // add with status payment 1
-      // } else {
-      //   // edit with status payment 1
-
-      //   // dataCartDokter[key]['step_payment'][indexEdit].paid_at = paid_at
-      //   // dataCartDokter[key]['step_payment'][indexEdit].bank_name = bank_name
-      //   // dataCartDokter[key]['step_payment'][indexEdit].bank_account_name = bank_account_name
-      //   // dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
-      //   console.log({data: dataCartDokter[key]['step_payment'][indexEdit]})
-      // }
     }
 
     function EditStepPayment(id, key) {
-      var paid_at = $(`#step_paid_at${key}`).val();
-      var bank_name = $(`#step_bank_name${key}`).val();
-      var bank_account_name = $(`#step_bank_account_name${key}`).val();
-      var nominal_payment_input = $(`#nominal_step_payment_input${key}`).val();
+      var indexEdit = document.getElementById(`key_edit_step_payment${key}`).value;
+      var paid_at = $(`#step_edit_paid_at${key}`).val();
+      var bank_name = $(`#step_edit_bank_name${key}`).val();
+      var bank_account_name = $(`#step_edit_bank_account_name${key}`).val();
+      var nominal_payment_input = $(`#nominal_edit_step_payment_input${key}`).val();
       var paid_at_before = dataCartDokter[key]['paid_at']
       var paid_bank_name_before = dataCartDokter[key]['paid_bank_name']
       var paid_account_bank_name_before = dataCartDokter[key]['paid_account_bank_name']
@@ -1610,7 +1658,7 @@
       var paid_at_after = paid_at_before + "|" +paid_at
       var bank_name_after = paid_bank_name_before + "|" +bank_name
       var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
-      var nominal_after = nominal_before + "|" + nominal_payme
+      var nominal_after = nominal_before + "|" + nominal_payment_input
       var paidSplit = paid_at_before.split("|")
       var paidBankNameSplit = paid_bank_name_before.split("|")
       var paidAccountBankNameSplit = paid_account_bank_name_before.split("|")
@@ -1651,7 +1699,8 @@
             dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
             console.log(dataCartDokter[key]['step_payment'][indexEdit])
             dataCartDokter[key].status = 5
-            $(`#modalStepPayment${key}`).modal("hide")
+            $(`#modalEditStepPayment${key}`).modal("hide")
+            clearEditStepModalPayment(key)
             checkForButtonStatus()
             AlertSuccess()
           }else if(data['message']!='gagal'|| data['message']!="gagal2"){
