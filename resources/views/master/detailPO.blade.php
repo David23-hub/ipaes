@@ -303,7 +303,7 @@
             <div class="modal-body">
               <input type="hidden" class="form-control" id="id_update">
               <div class="form-group">
-                <label for="category_product_add">Category Product</label>
+                <label for="category_product_add">Category Kurir</label>
                 <div id="dropadd" name="dropadd" class="form-group">
                   <select class="form-select form-control" id="ekspedisi_select{{ $key }}">
                     @foreach($dataEkspedisi as $item)
@@ -428,14 +428,58 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Payment Form</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle">Step Payment Form</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <form id="formUpdate" role="form">
             <div class="modal-body">
-              <input type="hidden" id="key_step_payment{{ $key }}" value="">
+              {{-- <input type="hidden" id="key_step_payment{{ $key }}" value=""> --}}
+              <div>
+                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPayment({{ $key }})">Step Payment</button>
+              </div>
+              <div class="form-group">
+                <label for="paid_at">Paid at *</label>
+                <input type="date" class="form-control" id="step_paid_at{{ $key }}"  placeholder="Masukkan Tanggal Pembayaran" required>
+              </div>
+              <div class="form-group">
+                <label for="bank_name">Bank Name *</label>
+                <input type="text" class="form-control" id="step_bank_name{{ $key }}"  placeholder="Masukkan Bank Name" required>
+              </div>
+              <div class="form-group">
+                <label for="bank_account_name">Bank Account Name *</label>
+                <input type="text" class="form-control" id="step_bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name" required>
+              </div>
+              <div class="form-group" id="container_step_nominal_input{{ $key }}">
+                <label for="shipping-cost">Nominal *</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">IDR</span>
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" required>
+                </div>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalPayment({{ $key }})">Close</button>
+            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" type="submit" onclick="StepPayment({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Edit Step Payment-->
+    <div class="modal fade" id="modalEditStepPayment{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Step Payment Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
               <div>
                 <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPayment({{ $key }})">Step Payment</button>
               </div>
@@ -1155,7 +1199,7 @@
       document.getElementById(`step_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
       document.getElementById(`nominal_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal_number
       document.getElementById(`key_step_payment${key}`).value = index
-      $(`#modalStepPayment${key}`).modal("show")
+      $(`#modalEditStepPayment${key}`).modal("show")
     }
 
     function UpdateStatus(id, key) {
@@ -1421,7 +1465,118 @@
     }
 
     function StepPayment(id, key) {
-      var indexEdit = document.getElementById(`key_step_payment${key}`).value;
+      // var indexEdit = document.getElementById(`key_step_payment${key}`).value;
+      var paid_at = $(`#step_paid_at${key}`).val();
+      var bank_name = $(`#step_bank_name${key}`).val();
+      var bank_account_name = $(`#step_bank_account_name${key}`).val();
+      var nominal_payment_input = $(`#nominal_step_payment_input${key}`).val();
+      var paid_at_before = dataCartDokter[key]['paid_at']
+      var paid_bank_name_before = dataCartDokter[key]['paid_bank_name']
+      var paid_account_bank_name_before = dataCartDokter[key]['paid_account_bank_name']
+      var nominal_before = dataCartDokter[key]['nominal']
+      var paid_by_before = dataCartDokter[key]['paid_by']
+      if (!paid_at) {
+        AlertWarningWithMsg("must fill the paid at")
+        return
+      }
+
+      if (!bank_name) {
+        AlertWarningWithMsg("must fill the bank name")
+        return
+      }
+
+      if (!bank_account_name) {
+        AlertWarningWithMsg("must fill the bank account name")
+        return
+      }
+
+      if (!nominal_payment_input && status == 5) {
+        AlertWarningWithMsg("must fill the bank nominal payment")
+        return
+      }
+
+      // console.log({indexEdit})
+      var paid_at_after = paid_at_before + "|" +paid_at
+      var bank_name_after = paid_bank_name_before + "|" +bank_name
+      var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
+      var nominal_after = nominal_before + "|" + nominal_payment_input
+      var paid_by_after = paid_by_before + "|" + user.name
+      console.log({
+        dataBefore: {
+          status: 5,
+          paid_at: paid_at,
+          paid_bank_name: bank_name,
+          paid_account_bank_name: bank_account_name,
+          nominal: nominal_payment_input,
+          id:id,
+          paid_at_before: dataCartDokter[key]['paid_at'],
+          paid_bank_name_before: dataCartDokter[key]['paid_bank_name'],
+          paid_account_bank_name_before: dataCartDokter[key]['paid_account_bank_name'],
+          nominal_before: dataCartDokter[key]['nominal'],
+          paid_by_before: dataCartDokter[key]['paid_by'],
+          indexEdit,
+          paid_by: paid_by_after,
+        }
+      })
+      $.ajax({
+      type: "POST",
+        url: "{{url('/')}}"+"/stepPaymentOrder",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          status: 5,
+          paid_at: paid_at_after,
+          paid_bank_name: bank_name_after,
+          paid_account_bank_name: bank_account_name_after,
+          nominal: nominal_after,
+          paid_by: paid_by_after,
+          id:id,
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          console.log({data})
+          if(data['message']=="sukses"){
+            let obj = {
+              paid_by: user.name,
+              paid_at: paid_at,
+              paid_bank_name: bank_name,
+              paid_account_bank_name: bank_account_name,
+              nominal: nominal_payment_input
+            }
+            dataCartDokter[key]['step_payment'].push(obj)
+            // dataCartDokter[key]['paid_bank_name'] = bank_name
+            // dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
+            // dataCartDokter[key]['nominal'] = data['nominal']
+            // dataCartDokter[key]['paid_by'] = data['paid_by']
+            // dataCartDokter[key]['paid_at'] = data['paid_at']
+            dataCartDokter[key].status = 5
+            $(`#modalStepPayment${key}`).modal("hide")
+            checkForButtonStatus()
+            AlertSuccess()
+          }else if(data['message']!='gagal'|| data['message']!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      })
+      // if (!indexEdit) {
+      //   // add with status payment 1
+      // } else {
+      //   // edit with status payment 1
+
+      //   // dataCartDokter[key]['step_payment'][indexEdit].paid_at = paid_at
+      //   // dataCartDokter[key]['step_payment'][indexEdit].bank_name = bank_name
+      //   // dataCartDokter[key]['step_payment'][indexEdit].bank_account_name = bank_account_name
+      //   // dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
+      //   console.log({data: dataCartDokter[key]['step_payment'][indexEdit]})
+      // }
+    }
+
+    function EditStepPayment(id, key) {
       var paid_at = $(`#step_paid_at${key}`).val();
       var bank_name = $(`#step_bank_name${key}`).val();
       var bank_account_name = $(`#step_bank_account_name${key}`).val();
@@ -1452,144 +1607,64 @@
       }
 
       console.log({indexEdit})
-      if (!indexEdit) {
-        // add with status payment 1
-        var paid_at_after = paid_at_before + "|" +paid_at
-        var bank_name_after = paid_bank_name_before + "|" +bank_name
-        var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
-        var nominal_after = nominal_before + "|" + nominal_payment_input
-        var paid_by_after = paid_by_before + "|" + user.name
-        console.log({
-          dataBefore: {
-            status: 5,
-            paid_at: paid_at,
-            paid_bank_name: bank_name,
-            paid_account_bank_name: bank_account_name,
-            nominal: nominal_payment_input,
-            id:id,
-            paid_at_before: dataCartDokter[key]['paid_at'],
-            paid_bank_name_before: dataCartDokter[key]['paid_bank_name'],
-            paid_account_bank_name_before: dataCartDokter[key]['paid_account_bank_name'],
-            nominal_before: dataCartDokter[key]['nominal'],
-            paid_by_before: dataCartDokter[key]['paid_by'],
-            indexEdit,
-            paid_by: paid_by_after,
+      var paid_at_after = paid_at_before + "|" +paid_at
+      var bank_name_after = paid_bank_name_before + "|" +bank_name
+      var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
+      var nominal_after = nominal_before + "|" + nominal_payme
+      var paidSplit = paid_at_before.split("|")
+      var paidBankNameSplit = paid_bank_name_before.split("|")
+      var paidAccountBankNameSplit = paid_account_bank_name_before.split("|")
+      var paidNominalSplit = nominal_before.split("|")
+      var paidBySplit = paid_by_before.split("|")
+      paidSplit[indexEdit] = paid_at
+      paidBankNameSplit[indexEdit] = bank_name
+      paidAccountBankNameSplit[indexEdit] = bank_account_name
+      paidNominalSplit[indexEdit] = nominal_payment_input
+      paidBySplit[indexEdit] = user.name
+      paidSplit = paidSplit.join('|')
+      paidBankNameSplit = paidBankNameSplit.join('|')
+      paidAccountBankNameSplit = paidAccountBankNameSplit.join('|')
+      paidNominalSplit = paidNominalSplit.join('|')
+      paidBySplit = paidBySplit.join('|')
+      console.log({split: {
+        paidSplit,paidBankNameSplit,paidAccountBankNameSplit,paidNominalSplit,paidBySplit
+      }})
+      $.ajax({
+      type: "POST",
+        url: "{{url('/')}}"+"/editStepPaymentOrder",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          id:id,
+          status: 5,
+          paid_at: paidSplit,
+          paid_bank_name: paidBankNameSplit,
+          paid_account_bank_name: paidAccountBankNameSplit,
+          nominal: paidNominalSplit,
+          paid_by: paidBySplit,
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data['message']=="sukses"){
+            dataCartDokter[key]['step_payment'][indexEdit].paid_at = paid_at
+            dataCartDokter[key]['step_payment'][indexEdit].paid_bank_name = bank_name
+            dataCartDokter[key]['step_payment'][indexEdit].paid_account_bank_name = bank_account_name
+            dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
+            console.log(dataCartDokter[key]['step_payment'][indexEdit])
+            dataCartDokter[key].status = 5
+            $(`#modalStepPayment${key}`).modal("hide")
+            checkForButtonStatus()
+            AlertSuccess()
+          }else if(data['message']!='gagal'|| data['message']!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
           }
-        })
-        $.ajax({
-        type: "POST",
-          url: "{{url('/')}}"+"/stepPaymentOrder",
-          data: { "_token": "{{ csrf_token() }}", data: {
-            status: 5,
-            paid_at: paid_at_after,
-            paid_bank_name: bank_name_after,
-            paid_account_bank_name: bank_account_name_after,
-            nominal: nominal_after,
-            paid_by: paid_by_after,
-            id:id,
-          }},
-          beforeSend: $.LoadingOverlay("show"),
-          afterSend:$.LoadingOverlay("hide"),
-          success: function (data) {
-            console.log({data})
-            if(data['message']=="sukses"){
-              let obj = {
-                paid_by: user.name,
-                paid_at: paid_at,
-                paid_bank_name: bank_name,
-                paid_account_bank_name: bank_account_name,
-                nominal: nominal_payment_input
-              }
-              dataCartDokter[key]['step_payment'].push(obj)
-              // dataCartDokter[key]['paid_bank_name'] = bank_name
-              // dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
-              // dataCartDokter[key]['nominal'] = data['nominal']
-              // dataCartDokter[key]['paid_by'] = data['paid_by']
-              // dataCartDokter[key]['paid_at'] = data['paid_at']
-              dataCartDokter[key].status = 5
-              $(`#modalStepPayment${key}`).modal("hide")
-              checkForButtonStatus()
-              AlertSuccess()
-            }else if(data['message']!='gagal'|| data['message']!="gagal2"){
-              AlertWarningWithMsg(data)
-            }else{
-              AlertError()
-            }
-          },
-          error: function (result, status, err) {
-            $.LoadingOverlay("hide")
-            AlertError()
-          },
-        })
-      } else {
-        // edit with status payment 1
-
-        // dataCartDokter[key]['step_payment'][indexEdit].paid_at = paid_at
-        // dataCartDokter[key]['step_payment'][indexEdit].bank_name = bank_name
-        // dataCartDokter[key]['step_payment'][indexEdit].bank_account_name = bank_account_name
-        // dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
-        console.log({data: dataCartDokter[key]['step_payment'][indexEdit]})
-        var paidSplit = paid_at_before.split("|")
-        var paidBankNameSplit = paid_bank_name_before.split("|")
-        var paidAccountBankNameSplit = paid_account_bank_name_before.split("|")
-        var paidNominalSplit = nominal_before.split("|")
-        var paidBySplit = paid_by_before.split("|")
-        paidSplit[indexEdit] = paid_at
-        paidBankNameSplit[indexEdit] = bank_name
-        paidAccountBankNameSplit[indexEdit] = bank_account_name
-        paidNominalSplit[indexEdit] = nominal_payment_input
-        paidBySplit[indexEdit] = user.name
-        paidSplit = paidSplit.join('|')
-        paidBankNameSplit = paidBankNameSplit.join('|')
-        paidAccountBankNameSplit = paidAccountBankNameSplit.join('|')
-        paidNominalSplit = paidNominalSplit.join('|')
-        paidBySplit = paidBySplit.join('|')
-        console.log({split: {
-          paidSplit,paidBankNameSplit,paidAccountBankNameSplit,paidNominalSplit,paidBySplit
-        }})
-        $.ajax({
-        type: "POST",
-          url: "{{url('/')}}"+"/editStepPaymentOrder",
-          data: { "_token": "{{ csrf_token() }}", data: {
-            id:id,
-            status: 5,
-            paid_at: paidSplit,
-            paid_bank_name: paidBankNameSplit,
-            paid_account_bank_name: paidAccountBankNameSplit,
-            nominal: paidNominalSplit,
-            paid_by: paidBySplit,
-          }},
-          beforeSend: $.LoadingOverlay("show"),
-          afterSend:$.LoadingOverlay("hide"),
-          success: function (data) {
-            if(data['message']=="sukses"){
-              dataCartDokter[key]['step_payment'][indexEdit].paid_at = paid_at
-              dataCartDokter[key]['step_payment'][indexEdit].paid_bank_name = bank_name
-              dataCartDokter[key]['step_payment'][indexEdit].paid_account_bank_name = bank_account_name
-              dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
-              console.log(dataCartDokter[key]['step_payment'][indexEdit])
-
-              // document.querySelector(`#paid_at_${key}_${indexEdit}`).innerHTML = `<p>${paid_at}</p>`
-              // document.querySelector(`#paid_by_${key}_${indexEdit}`).innerHTML = `<p>${user.name}</p>`
-              // document.querySelector(`#paid_bank_name_${key}_${indexEdit}`).innerHTML = `<p>${bank_name}</p>`
-              // document.querySelector(`#paid_account_name_${key}_${indexEdit}`).innerHTML = `<p>${bank_account_name}</p>`
-              // document.querySelector(`#paid_nominal_${key}_${indexEdit}`).innerHTML = `<p>IDR ${nominal_payment_input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</p>`
-              dataCartDokter[key].status = 5
-              $(`#modalStepPayment${key}`).modal("hide")
-              checkForButtonStatus()
-              AlertSuccess()
-            }else if(data['message']!='gagal'|| data['message']!="gagal2"){
-              AlertWarningWithMsg(data)
-            }else{
-              AlertError()
-            }
-          },
-          error: function (result, status, err) {
-            $.LoadingOverlay("hide")
-            AlertError()
-          },
-        })
-      }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      })
     }
 
     function CancelButton(id, key) {

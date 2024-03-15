@@ -42,11 +42,17 @@ class PDFController extends Controller
     public function generatePDF()
     {
         $data = [
-            'title' => 'Welcome to ItSolutionStuff.com',
-            'date' => date('m/d/Y')
+            [
+                'quantity' => 1,
+                'product_name' => 'Elitox 100u',
+                'description' => '1 Year Subscription',
+                'discount' => '25%',
+                'price' => '129.00',
+                'total_price' => '120.00'
+            ]
         ];
           
-        $pdf = PDF::loadView('myPDF', $data);
+        $pdf = PDF::loadView('myPDF', ['data' => $data]);
     
         return $pdf->stream();
     }
