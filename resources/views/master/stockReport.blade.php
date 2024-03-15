@@ -3,7 +3,7 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Incentive Report</h1>
+    <h1 class="m-0 text-dark">Stock Report</h1>
 @stop
 
 @section('content')
@@ -33,11 +33,11 @@
           </div>
 
           <label for="dob_add">Marketing</label>
-          <p style="color: #a5a6a7">This date is a reference of the paid date.</p>
+          <p style="color: #a5a6a7">Leave product input empty to display all products data.</p>
           <div id="dropadd" name="dropadd" class="form-group">
             <select multiple class="form-select form-control" name="list_doctor" id="list_doctor"  style="width: 100%;max-width:100%">
-                @foreach($users as $dok)
-                  <option value={{$dok->email}}>{{$dok->name}}</option>
+                @foreach($items as $item)
+                  <option value={{$item->id}}>{{$item->name}}</option>
                 @endforeach
 
             </select>
@@ -55,7 +55,7 @@
               <button id="dwnld-excl" class="btn btn-success">Download To Excel</button>
           </div>
         </div>
-        <h5>Marketing: <span style="font-weight: bold" id="marketing-name"></span></h5>
+        <h5>Item Name: <span style="font-weight: bold" id="item-name"></span></h5>
         <h5>Period: <span style="font-weight: bold" id="periode"></span></h5>
       </div>
       <div class="card-body">
@@ -104,7 +104,7 @@
     cb(start, end);
     $('#list_doctor').select2( {
       closeOnSelect: false,
-      placeholder: "Select Marketing",}
+      placeholder: "Select Item",}
       ).on('select2:unselect', function (e) {
         setTimeout(function() {
             $('#list_doctor').select2('open');
@@ -129,18 +129,6 @@
             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
           }
       }, cb);
-
-    var dataTable = $("#tableList").DataTable({
-            "ordering": true,
-            "destroy": true,
-
-            //to turn off pagination
-            // paging: false,
-            // "bFilter": true,
-            //turn off info current page data index
-            // "bInfo": false,
-            // pagingType: 'full_numbers',
-        });
 
     function formatDate(dateString) {
             var parts = dateString.split(' ');
@@ -176,20 +164,18 @@
 
         $.ajax({
           type: "POST",
-          url: "{{url('/')}}"+"/incentive/getReport",
+          url: "{{url('/')}}"+"/stock/getReport",
           beforeSend: $.LoadingOverlay("show"),
           afterSend:$.LoadingOverlay("hide"),
           data: { "_token": "{{ csrf_token() }}", "startDate":startDate,"endDate":endDate,"listUser":list},
           success: function (datas) {
-            dataTable.clear();
-            dataTable.draw();
             if(datas=="KOSONG"){
               var element = document.getElementById('tbl-body-sales-report');
               element.style.display = 'none';
               AlertWarningWithMsg("DATA NOT FOUND")
             }else{
               data = datas.data
-              var marketing_name = document.getElementById('marketing-name');
+              var marketing_name = document.getElementById('item-name');
               marketing_name.innerHTML = datas.marketing
 
               var container = document.getElementById('listTbl');
@@ -234,13 +220,11 @@
 
         $.ajax({
           type: "POST",
-          url: "{{url('/')}}"+"/incentive/getReport/summary",
+          url: "{{url('/')}}"+"/stock/getReport/summary",
           beforeSend: $.LoadingOverlay("show"),
           afterSend:$.LoadingOverlay("hide"),
           data: { "_token": "{{ csrf_token() }}", "startDate":startDate,"endDate":endDate,"listUser":list},
           success: function (datas) {
-            dataTable.clear();
-            dataTable.draw();
             if(datas=="KOSONG"){
               var element = document.getElementById('tbl-body-sales-report');
               element.style.display = 'none';
@@ -248,7 +232,7 @@
             }else{
               data = datas.data
 
-              var marketing_name = document.getElementById('marketing-name');
+              var marketing_name = document.getElementById('item-name');
               marketing_name.innerHTML = datas.marketing
 
               var container = document.getElementById('listTbl');
@@ -278,16 +262,13 @@
       $('#dwnld-excl').on('click', function(e) {
         $.ajax({
           type: "POST",
-          url: "{{url('/')}}"+"/incentive/getReport/download",
+          url: "{{url('/')}}"+"/stock/getReport/download",
           beforeSend: $.LoadingOverlay("show"),
           afterSend:$.LoadingOverlay("hide"),
           data: { "_token": "{{ csrf_token() }}", "startDate":startTemp,"endDate":endTemp,"listUser":listTemp},
           success: function (datas) {
-            dataTable.draw();
             if(datas=="KOSONG"){
               AlertWarningWithMsg("DATA NOT FOUND")
-              dataTable.clear();
-
             }else{
               alert(datas.url)
               window.location.href = datas.url;

@@ -49,6 +49,7 @@ class IncentiveReportController extends Controller
             $marketing="All";
         }
 
+
         $dateParts = explode('/', str_replace('-', '/', $input["startDate"]));
 
         // Rearrange the parts to form the desired format
@@ -206,7 +207,6 @@ class IncentiveReportController extends Controller
             "periode"=>$input["startDate"]." - ".$input["endDate"],
             "marketing"=>$marketing,
         ];
-        // dd($res);
         return $res;
     }
 
@@ -671,7 +671,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
 
 
     $writer = new Xlsx($spreadsheet);
-    $filename = 'export_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $filename = 'INCENTIVE_REPORT_' . date('Y-m-d_H-i-s') . '.xlsx';
     $writer->save($filename);
 
     // Return download response
