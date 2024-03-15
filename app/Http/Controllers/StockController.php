@@ -190,6 +190,7 @@ class StockController extends Controller
             }
         }
 
+        $no++;
         $tempBody .= $this->getBodySummary($name,$tempStockIn,$tempStockOut,$tempStockIn+($tempStockOut*-1),$no);
         $tbldiv .= $this->rowDataSummary($tempBody);
 
