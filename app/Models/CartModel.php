@@ -68,6 +68,13 @@ class CartModel extends Model
         ->get();
     }
 
+    public function GetItemWithoutEmail($id){
+        return $this
+        ->where('id', '=', $id)
+        ->where('deleted_by',null)
+        ->get();
+    }
+
     public function GetItemWithEmail($email){
         return $this
         ->where('created_by', '=', $email)

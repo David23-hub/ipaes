@@ -10,6 +10,9 @@
     <div class="card">
       <div class="card-header">
         <h5 style="font-weight: 600">Dokter</h5>
+        <p style="text-align: end">
+          <a class="btn btn-primary" href="{{ route('generate.pdf.all', $dokter['id']) }}">Print All</a>
+        </p>
         <div class="row">
           <div class="col-6">
             <div class="border bg-light">
@@ -101,9 +104,9 @@
                       @endif
                     </div>
                     <div class="col" style="text-align: right">
-                      <button class="btn btn-primary">
+                      <a class="btn btn-primary" href="{{ route('generate.pdf.one', $itemDokter['id']) }}">
                         Print
-                      </button>
+                      </a>
                     </div>
                   </div>
                   <br>
@@ -149,41 +152,54 @@
                             </td>
                           </tr>
                         @endforeach
-                    </tbody>
+                      </tbody>
                     <tfoot id="t-foot{{ $key }}">
                       <div id="extra_charge_list{{ $key }}">
-                          @foreach ($itemDokter['extra_charge'] as $item)
-                              <tr>
-                                <td colspan="4">
-                                  <div class="d-flex justify-content-end">
-                                    <p class="fw-bold"> 
-                                      Extra Charge:
-                                    </p>
-                                  </div>
-                                </td>
-                                <td>
-                                  IDR {{ $item['price'] }}
-                                </td>
-                              </tr>
-                          @endforeach
-                          <tr>
-                            <td colspan="4">
-                              <div class="d-flex justify-content-end">
-                                <p class="fw-bold">
-                                  Grand Total: 
-                                </p>
-                              </div>
-                            </td>
-                            <td>
-                              <div id="grand_total{{ $key }}">
-                                IDR {{ $itemDokter['total'] }}
-                              </div>
-                            </td>
-                          </tr>
-                        </div>
+                        @foreach ($itemDokter['extra_charge'] as $item)
+                            <tr>
+                              <td colspan="4">
+                                <div class="d-flex justify-content-end">
+                                  <p class="fw-bold"> 
+                                    Extra Charge:
+                                  </p>
+                                </div>
+                              </td>
+                              <td>
+                                IDR {{ $item['price'] }}
+                              </td>
+                            </tr>
+                        @endforeach
+                        <tr>
+                          <td colspan="4">
+                            <div class="d-flex justify-content-end">
+                              <p class="fw-bold">
+                                Total Paid: 
+                              </p>
+                            </div>
+                          </td>
+                          <td id="grand-total-paid{{ $key }}">
+                            <div>
+                              - IDR {{ $itemDokter['total_paid'] }}
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="4">
+                            <div class="d-flex justify-content-end">
+                              <p class="fw-bold">
+                                Grand Total: 
+                              </p>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              IDR {{ $itemDokter['total_paid_sum'] }}
+                            </div>
+                          </td>
+                        </tr>
+                      </div>
                     </tfoot>
                   </table>  
-                  {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
                   <div class="d-flex justify-content-end">
                     <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
                       Add Extra Charges
@@ -224,15 +240,14 @@
             <div class="row">
               <div class="col-sm-4"></div>
               <div class="col-sm-8">
-                <div id="column_payment{{ $key }}">
-                </div>
+                <div id="column_payment{{ $key }}"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      </div>
     </div>
+  </div>
 
     <!-- Modal Cancel-->
     <div class="modal fade" id="modalCancel{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
@@ -546,25 +561,9 @@
                   </div>
                 </div>
                 @endforeach
-              {{-- @if ($itemDokter['extra_charge']) --}}
               <span>Extra Charge</span>
               <div id="extra-charge-edit-product{{ $key }}">
-                {{-- @foreach ($itemDokter['extra_charge'] as $keyCharge => $itemExtraCharge)
-                <div id="body-product{{ $key }}-{{ $keyCharge }}" class="input-group">
-                  <div class="d-inline-flex p-2">
-                    <div id="name-product">
-                      <span class="input-group-text">Description</span>
-                      <input type="text" class="form-control" id="extraChargeDescription-{{ $key }}-{{ $keyCharge }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemExtraCharge['description'] }}">
-                    </div>
-                    <div>
-                      <span class="input-group-text">Stok</span>
-                      <input type="number" class="form-control" id="extraChargePrice-{{ $key }}-{{ $keyCharge }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemExtraCharge['real_price'] }}" min="0">
-                    </div>
-                  </div>
-                </div>
-                @endforeach --}}
               </div>
-              {{-- @endif --}}
 
             </div>
           <div class="modal-footer">
@@ -604,177 +603,6 @@
     window.onload = function() {
       checkForButtonStatus()
     };
-
-    function RefreshTable(key) {
-      /*
-      <div class="table-responsive">
-                    <table id="tableList" class="table table-bordered" >
-                      <thead>
-                        <tr style="background-color: #E3EFFF;">
-                            <th>Product</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                            <th>TotalPrice</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @foreach ($itemDokter['products'] as $item)
-                          <tr>
-                            <td>{{ $item['name_product'] }}</td>
-                            <td>{{ $item['qty'] }}</td>
-                            <td>IDR {{ $item['price_product'] }}</td>
-                            <td><div class="badge bg-secondary">{{ $item['disc'] }}%</div></td>
-                            <td>IDR {{ $item['price'] }} <br>- IDR {{ $item['disc_price'] }}
-                            <div style="border-top: 1px solid #ccc;"></div>
-                            IDR {{ $item['total_price'] }}
-                            </td>
-                          </tr>
-                        @endforeach
-                      </div>
-                    </tbody>
-                    <tfoot id="t-foot{{ $key }}">
-                      <div id="extra_charge_list{{ $key }}">
-                        @foreach ($itemDokter['extra_charge'] as $item)
-                            <tr>
-                              <td colspan="4">
-                                <div class="d-flex justify-content-end">
-                                  <p class="fw-bold"> 
-                                    Extra Charge:
-                                  </p>
-                                </div>
-                              </td>
-                              <td>
-                                IDR {{ $item['price'] }}
-                              </td>
-                            </tr>
-                        @endforeach
-                          <tr>
-                            <td colspan="4">
-                              <div class="d-flex justify-content-end">
-                                <p class="fw-bold">
-                                  Grand Total: 
-                                </p>
-                              </div>
-                            </td>
-                            <td>
-                              <div id="grand_total{{ $key }}">
-                                IDR {{ $itemDokter['total'] }}
-                              </div>
-                            </td>
-                          </tr>
-                      </tfoot>
-                    </table>  
-                  </div>
-                  {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
-                  <div class="d-flex justify-content-end">
-                    <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
-                      Add Extra Charges
-                    </button>
-                  </div>
-                  <div class="form-group">
-                    <label for="notes_form">Note For Admin</label>
-                    <p class="text-start">{{ $itemDokter->notes }}</p>
-                  </div>
-                  <div class="form-group">
-                    <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct{{ $key }}">
-                      Edit Product
-                    </button>
-                  </div>
-      */
-
-      let productsTable = ""
-
-      for (let i = 0; i < dataCartDokter[key]['products'].length; i++) {
-        let item = dataCartDokter[key]['products'][i]
-        productsTable += `
-        <tr>
-          <td>${item['name_product']}</td>
-          <td>${item['qty']}</td>
-          <td>IDR ${item['price_product']}</td>
-          <td><div class="badge bg-secondary">${item['disc']}%</div></td>
-          <td>IDR {{ $item['price'] }} <br>- IDR ${item['disc_price']}
-          <div style="border-top: 1px solid #ccc;"></div>
-          IDR ${item['total_price']}
-          </td>
-        </tr>
-        `
-      }
-
-      let extraChargeTable = ``
-      for (let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
-        const element = dataCartDokter[key]['extra_charge'][i];
-        extraChargeTable += `
-        <tr>
-          <td colspan="4">
-            <div class="d-flex justify-content-end">
-              <p class="fw-bold"> 
-                Extra Charge:
-              </p>
-            </div>
-          </td>
-          <td>
-            IDR ${element['price']}
-          </td>
-        </tr>
-        `
-      }
-
-      console.log({extraChargeTable, productsTable})
-      // document.querySelector(`#table-product${key}`).innerHTML
-      let total = `
-      <div class="table-responsive">
-        <table id="tableList" class="table table-bordered" >
-          <thead>
-            <tr style="background-color: #E3EFFF;">
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Discount</th>
-                <th>TotalPrice</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${productsTable}
-          </div>
-        </tbody>
-        <tfoot id="t-foot${key}">
-          <div id="extra_charge_list${key}">
-            ${extraChargeTable}
-              <tr>
-                <td colspan="4">
-                  <div class="d-flex justify-content-end">
-                    <p class="fw-bold">
-                      Grand Total: 
-                    </p>
-                  </div>
-                </td>
-                <td>
-                  <div id="grand_total${key}">
-                    IDR ${dataCartDokter[key]['total']}
-                  </div>
-                </td>
-              </tr>
-          </tfoot>
-        </table>  
-      </div>
-      <div class="d-flex justify-content-end">
-        <button class="btn btn-outline-success" data-target="#modalExtraCharge${key}" data-toggle="modal">
-          Add Extra Charges
-        </button>
-      </div>
-      <div class="form-group">
-        <label for="notes_form">Note For Admin</label>
-        <p class="text-start">${dataCartDokter[key]['notes']}</p>
-      </div>
-      <div class="form-group">
-        <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct${key}">
-          Edit Product
-        </button>
-      </div>
-      `
-      // console.log({total})
-    }
 
     function OnePaymentToggle(key) {
       var x = document.getElementById(`container_nominal_input${key}`);
@@ -962,6 +790,7 @@
             Paid (Completed)
           </span>
           `
+
           document.querySelector(`#button_status_update${i}`).innerHTML = ""
           document.querySelector(`#button-status-canceled${i}`).innerHTML = ""
 
@@ -1048,6 +877,11 @@
                   <button type="button" class="btn btn-block btn-outline-success" onclick="EditPaymentButton(${i})">Edit Payment Information</button>
                 </div>
               </div>
+          `
+          document.querySelector(`#grand-total-paid${i}`).innerHTML = `
+          <div>
+              - IDR ${dataCartDokter[i]['total_paid']}
+            </div>
           `
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
         } else if (dataCartDokter[i].status == 4) {
@@ -1191,6 +1025,12 @@
               `
           }
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
+
+          document.querySelector(`#grand-total-paid${i}`).innerHTML = `
+          <div>
+              - IDR ${dataCartDokter[i]['total_paid']}
+            </div>
+          `
         }
       }
     }
@@ -1428,10 +1268,6 @@
     }
 
     function PaymentButton(id, key) {
-      /*
-      One Payment => 0
-      Step Payment => 1
-      */
       var paid_at = $(`#paid_at${key}`).val();
       var bank_name = $(`#bank_name${key}`).val();
       var bank_account_name = $(`#bank_account_name${key}`).val();
@@ -1463,6 +1299,16 @@
         return
       }
 
+      console.log({
+          status: status,
+          paid_at: paid_at,
+          paid_bank_name: bank_name,
+          paid_account_bank_name: bank_account_name,
+          nominal: nominal_payment_input,
+          total: dataCartDokter[key]['total_price'],
+          id:id,
+        })
+
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/paymentOrder",
@@ -1473,7 +1319,10 @@
           paid_account_bank_name: bank_account_name,
           nominal: nominal_payment_input,
           id:id,
-        }},
+        }, 
+        total: dataCartDokter[key]['total'],
+        nominal: nominal_payment_input,
+        },
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
@@ -1484,6 +1333,7 @@
               // dataCartDokter[key]['nominal'] = data['nominal']
               dataCartDokter[key]['paid_by'] = data['paid_by']
               dataCartDokter[key]['paid_at'] = data['paid_at']
+
             } else if(status == 5) {
               dataCartDokter[key]['paid_bank_name'] = data['paid_bank_name']
               dataCartDokter[key]['paid_account_bank_name'] = data['paid_account_bank_name']
@@ -1501,6 +1351,9 @@
                   nominal_number: nominal_payment_input
                 }
               ]
+
+              dataCartDokter[key]['total_paid'] = data['total_paid']
+              dataCartDokter[key]['total_paid_sum'] = data['total_paid_sum']
             }
             dataCartDokter[key].status = status
             console.log(dataCartDokter[key], "data cart dokter")
@@ -1856,6 +1709,7 @@
 
       // RefreshTable(key)
     }
+
 
 </script>
     
