@@ -90,7 +90,7 @@
     <div class="total">
         Grand Total: IDR {{ $item['total'] }}
     </div>
-    @endif
+    @else
     <div class="new-page">
         <h5>INVOICE NUMBER: {{ $item['po_id'] }}</h5>
         <h5>TANGGAL PO: {{ $item['created_at'] }}</h5>
@@ -159,6 +159,7 @@
     <div class="total">
         Grand Total: IDR {{ $item['total'] }}
     </div>
+    @endif
     @endforeach
     <table>
         <tr>
