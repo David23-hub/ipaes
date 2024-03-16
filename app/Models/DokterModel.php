@@ -15,6 +15,16 @@ class DokterModel extends Model
         return DokterModel::all()->where('deleted_by',null);
     }
 
+    public function GetListWhereIn($in){
+        $arr = [];
+        foreach ($in as $value) {
+            # code...
+            $check = $this->where('id', $value)->get();
+            array_push($arr, $check[0]);
+        }
+        return $arr;
+    }
+
     public function GetListActive(){
         return DokterModel::all()->where('deleted_by',null)->where('status',1);
     }

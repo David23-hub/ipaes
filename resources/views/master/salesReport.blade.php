@@ -103,7 +103,7 @@
             var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             var monthIndex = monthNames.indexOf(month) + 1;
             return day.padStart(2, '0') + '/' + monthIndex.toString().padStart(2, '0') + '/' + year;
-        }
+    }
         
         var startTemp = ""
     var endTemp = ""
