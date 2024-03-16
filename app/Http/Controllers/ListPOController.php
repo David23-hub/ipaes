@@ -84,6 +84,7 @@ class ListPOController extends Controller
             foreach ($dataCartDokter as $data) {
               $totalan = 0;
               $products = [];
+              $totalPaid = 0;
               $extraChargeOne = [];
               $stepPayment = [];
 
@@ -156,16 +157,33 @@ class ListPOController extends Controller
                   $dataPaidBankName = explode("|", $data['paid_bank_name']);
                   $dataPaidAccountBankName = explode("|", $data['paid_account_bank_name']);
                   $dataNominal = explode("|", $data['nominal']);
+                  $sum = array_sum(explode("|", $data['nominal']));
                   foreach ($dataPaidBy as $key => $value) {
                     $dataStepPayment['paid_by'] = $value;
                     $dataStepPayment['paid_at'] = $dataPaidAt[$key];
                     $dataStepPayment['paid_bank_name'] = $dataPaidBankName[$key];
                     $dataStepPayment['paid_account_bank_name'] = $dataPaidAccountBankName[$key];
                     $dataStepPayment['nominal'] = $dataNominal[$key];
+                    // $totalPaid += $dataStepPayment['nominal'];
                     array_push($stepPayment, $dataStepPayment);
                   }
 
+                  $data['total_num_paid'] = $sum;
+                  $data['total_paid'] = number_format($sum,0,',','.');
+                  $data['total_num_paid_sum'] = $data['total_price'] - $sum;
+                  $data['total_paid_sum'] = number_format($data['total_price'] - $sum,0,',','.');
                   $data['step_payment'] = $stepPayment;
+                } else if($data['status'] == 3) {
+                  $data['total_num_paid'] = $data['total_price'];
+                  $data['total_paid'] = number_format($data['total_price'],0,',','.');
+                  $data['total_num_paid_sum'] = $data['total_price'];
+                  $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
+                } else {
+                  $sum = 0;
+                  $data['total_num_paid'] = $sum;
+                  $data['total_paid'] = number_format($sum,0,',','.');
+                  $data['total_num_paid_sum'] = $data['total_price'];
+                  $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
                 }
               } 
             }
@@ -340,10 +358,18 @@ class ListPOController extends Controller
           $data['message'] = "sukses";
           if($input['data']['status'] == 3) {
             $data['nominal'] = number_format($input['data']['nominal'],0,',','.');
+          } else {
+            $data['nominal_step'] = $input['nominal'];
+            $data['total_paid'] = number_format($input['nominal'],0,',','.');
+            $data['total_num_paid_sum'] = $input['total'] - $input['nominal'];
+            $data['total_paid_sum'] = number_format($input['total'] - $input['nominal'],0,',','.');
+             
           }
           
           $data['paid_by'] = $input['data']['paid_by'];
           $data['paid_at'] = $input['data']['paid_at'];
+          $data['paid_bank_name'] = $input['data']['paid_bank_name'];
+          $data['paid_account_bank_name'] = $input['data']['paid_account_bank_name'];
           return $data;
       }catch(\Throwable $th) {
           Log::error("error di throwable");

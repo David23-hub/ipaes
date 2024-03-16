@@ -10,6 +10,9 @@
     <div class="card">
       <div class="card-header">
         <h5 style="font-weight: 600">Dokter</h5>
+        <p style="text-align: end">
+          <a class="btn btn-primary" href="{{ route('generate.pdf.all', $dokter['id']) }}">Print All</a>
+        </p>
         <div class="row">
           <div class="col-6">
             <div class="border bg-light">
@@ -101,9 +104,9 @@
                       @endif
                     </div>
                     <div class="col" style="text-align: right">
-                      <button class="btn btn-primary">
+                      <a class="btn btn-primary" href="{{ route('generate.pdf.one', $itemDokter['id']) }}">
                         Print
-                      </button>
+                      </a>
                     </div>
                   </div>
                   <br>
@@ -149,41 +152,54 @@
                             </td>
                           </tr>
                         @endforeach
-                    </tbody>
+                      </tbody>
                     <tfoot id="t-foot{{ $key }}">
                       <div id="extra_charge_list{{ $key }}">
-                          @foreach ($itemDokter['extra_charge'] as $item)
-                              <tr>
-                                <td colspan="4">
-                                  <div class="d-flex justify-content-end">
-                                    <p class="fw-bold"> 
-                                      Extra Charge:
-                                    </p>
-                                  </div>
-                                </td>
-                                <td>
-                                  IDR {{ $item['price'] }}
-                                </td>
-                              </tr>
-                          @endforeach
-                          <tr>
-                            <td colspan="4">
-                              <div class="d-flex justify-content-end">
-                                <p class="fw-bold">
-                                  Grand Total: 
-                                </p>
-                              </div>
-                            </td>
-                            <td>
-                              <div id="grand_total{{ $key }}">
-                                IDR {{ $itemDokter['total'] }}
-                              </div>
-                            </td>
-                          </tr>
-                        </div>
+                        @foreach ($itemDokter['extra_charge'] as $item)
+                            <tr>
+                              <td colspan="4">
+                                <div class="d-flex justify-content-end">
+                                  <p class="fw-bold"> 
+                                    Extra Charge:
+                                  </p>
+                                </div>
+                              </td>
+                              <td>
+                                IDR {{ $item['price'] }}
+                              </td>
+                            </tr>
+                        @endforeach
+                        <tr>
+                          <td colspan="4">
+                            <div class="d-flex justify-content-end">
+                              <p class="fw-bold">
+                                Total Paid: 
+                              </p>
+                            </div>
+                          </td>
+                          <td id="grand-total-paid{{ $key }}">
+                            <div>
+                              - IDR {{ $itemDokter['total_paid'] }}
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="4">
+                            <div class="d-flex justify-content-end">
+                              <p class="fw-bold">
+                                Grand Total: 
+                              </p>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              IDR {{ $itemDokter['total_paid_sum'] }}
+                            </div>
+                          </td>
+                        </tr>
+                      </div>
                     </tfoot>
                   </table>  
-                  {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
                   <div class="d-flex justify-content-end">
                     <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
                       Add Extra Charges
@@ -194,7 +210,8 @@
                     <p class="text-start">{{ $itemDokter->notes }}</p>
                   </div>
                   <div class="form-group">
-                    <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct{{ $key }}">
+                    <button class="btn me-3 btn-outline-success" id="edit_product" onclick="EditProductShow({{ $key }})">
+                      {{-- data-toggle="modal" data-target="#modalEditProduct{{ $key }}" --}}
                       Edit Product
                     </button>
                   </div>
@@ -223,15 +240,14 @@
             <div class="row">
               <div class="col-sm-4"></div>
               <div class="col-sm-8">
-                <div id="column_payment{{ $key }}">
-                </div>
+                <div id="column_payment{{ $key }}"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      </div>
     </div>
+  </div>
 
     <!-- Modal Cancel-->
     <div class="modal fade" id="modalCancel{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
@@ -282,7 +298,7 @@
               </div>
             </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalExtraCharge({{ $key }})">Close</button>
             <button type="button" id="extra_charge{{ $key }}" class="btn btn-primary" onclick="ExtraCharge({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
           </div>
         </form>
@@ -304,7 +320,7 @@
             <div class="modal-body">
               <input type="hidden" class="form-control" id="id_update">
               <div class="form-group">
-                <label for="category_product_add">Category Product</label>
+                <label for="category_product_add">Category Kurir</label>
                 <div id="dropadd" name="dropadd" class="form-group">
                   <select class="form-select form-control" id="ekspedisi_select{{ $key }}">
                     @foreach($dataEkspedisi as $item)
@@ -429,14 +445,14 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Payment Form</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle">Step Payment Form</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <form id="formUpdate" role="form">
             <div class="modal-body">
-              <input type="hidden" id="key_step_payment{{ $key }}" value="">
+              {{-- <input type="hidden" id="key_step_payment{{ $key }}" value=""> --}}
               <div>
                 <button type="button" id="step_payment{{ $key }}" class="btn btn-primary" onclick="StepPayment({{ $key }})">Step Payment</button>
               </div>
@@ -463,6 +479,51 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalPayment({{ $key }})">Close</button>
             <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" type="submit" onclick="StepPayment({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Edit Step Payment-->
+    <div class="modal fade" id="modalEditStepPayment{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Step Payment Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <input type="hidden" id="key_edit_step_payment{{ $key }}" value="">
+              <div>
+                <button type="button" id="step_payment{{ $key }}" class="btn btn-primary">Step Payment</button>
+              </div>
+              <div class="form-group">
+                <label for="paid_at">Paid at *</label>
+                <input type="date" class="form-control" id="step_edit_paid_at{{ $key }}"  placeholder="Masukkan Tanggal Pembayaran" required>
+              </div>
+              <div class="form-group">
+                <label for="bank_name">Bank Name *</label>
+                <input type="text" class="form-control" id="step_edit_bank_name{{ $key }}"  placeholder="Masukkan Bank Name" required>
+              </div>
+              <div class="form-group">
+                <label for="bank_account_name">Bank Account Name *</label>
+                <input type="text" class="form-control" id="step_edit_bank_account_name{{ $key }}"  placeholder="Masukkan Account Bank Name" required>
+              </div>
+              <div class="form-group" id="container_step_nominal_input{{ $key }}">
+                <label for="shipping-cost">Nominal *</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">IDR</span>
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_edit_step_payment_input{{ $key }}" required>
+                </div>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="clearModalPayment({{ $key }})">Close</button>
+            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" type="submit" onclick="EditStepPayment({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
           </div>
         </form>
         </div>
@@ -500,24 +561,9 @@
                   </div>
                 </div>
                 @endforeach
-              @if ($itemDokter['extra_charge'])
               <span>Extra Charge</span>
-                @foreach ($itemDokter['extra_charge'] as $keyCharge => $itemExtraCharge)
-                <div id="body-product{{ $key }}-{{ $keyCharge }}" class="input-group">
-                  <div class="d-inline-flex p-2">
-                    <div id="name-product">
-                      <span class="input-group-text">Description</span>
-                      {{-- <span class="input-group-text">{{ $itemExtraCharge['description'] }}</span> --}}
-                      <input type="text" class="form-control" id="extraChargeDescription-{{ $key }}-{{ $keyCharge }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemExtraCharge['description'] }}">
-                    </div>
-                    <div>
-                      <span class="input-group-text">Stok</span>
-                      <input type="number" class="form-control" id="extraChargePrice-{{ $key }}-{{ $keyCharge }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemExtraCharge['real_price'] }}" min="0">
-                    </div>
-                  </div>
-                </div>
-                @endforeach
-              @endif
+              <div id="extra-charge-edit-product{{ $key }}">
+              </div>
 
             </div>
           <div class="modal-footer">
@@ -558,177 +604,6 @@
       checkForButtonStatus()
     };
 
-    function RefreshTable(key) {
-      /*
-      <div class="table-responsive">
-                    <table id="tableList" class="table table-bordered" >
-                      <thead>
-                        <tr style="background-color: #E3EFFF;">
-                            <th>Product</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                            <th>TotalPrice</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @foreach ($itemDokter['products'] as $item)
-                          <tr>
-                            <td>{{ $item['name_product'] }}</td>
-                            <td>{{ $item['qty'] }}</td>
-                            <td>IDR {{ $item['price_product'] }}</td>
-                            <td><div class="badge bg-secondary">{{ $item['disc'] }}%</div></td>
-                            <td>IDR {{ $item['price'] }} <br>- IDR {{ $item['disc_price'] }}
-                            <div style="border-top: 1px solid #ccc;"></div>
-                            IDR {{ $item['total_price'] }}
-                            </td>
-                          </tr>
-                        @endforeach
-                      </div>
-                    </tbody>
-                    <tfoot id="t-foot{{ $key }}">
-                      <div id="extra_charge_list{{ $key }}">
-                        @foreach ($itemDokter['extra_charge'] as $item)
-                            <tr>
-                              <td colspan="4">
-                                <div class="d-flex justify-content-end">
-                                  <p class="fw-bold"> 
-                                    Extra Charge:
-                                  </p>
-                                </div>
-                              </td>
-                              <td>
-                                IDR {{ $item['price'] }}
-                              </td>
-                            </tr>
-                        @endforeach
-                          <tr>
-                            <td colspan="4">
-                              <div class="d-flex justify-content-end">
-                                <p class="fw-bold">
-                                  Grand Total: 
-                                </p>
-                              </div>
-                            </td>
-                            <td>
-                              <div id="grand_total{{ $key }}">
-                                IDR {{ $itemDokter['total'] }}
-                              </div>
-                            </td>
-                          </tr>
-                      </tfoot>
-                    </table>  
-                  </div>
-                  {{-- <p style="text-align: right; font-weight: 700;color:#AFACAC">Grand Total: Rp {{$total}}</p> --}}
-                  <div class="d-flex justify-content-end">
-                    <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
-                      Add Extra Charges
-                    </button>
-                  </div>
-                  <div class="form-group">
-                    <label for="notes_form">Note For Admin</label>
-                    <p class="text-start">{{ $itemDokter->notes }}</p>
-                  </div>
-                  <div class="form-group">
-                    <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct{{ $key }}">
-                      Edit Product
-                    </button>
-                  </div>
-      */
-
-      let productsTable = ""
-
-      for (let i = 0; i < dataCartDokter[key]['products'].length; i++) {
-        let item = dataCartDokter[key]['products'][i]
-        productsTable += `
-        <tr>
-          <td>${item['name_product']}</td>
-          <td>${item['qty']}</td>
-          <td>IDR ${item['price_product']}</td>
-          <td><div class="badge bg-secondary">${item['disc']}%</div></td>
-          <td>IDR {{ $item['price'] }} <br>- IDR ${item['disc_price']}
-          <div style="border-top: 1px solid #ccc;"></div>
-          IDR ${item['total_price']}
-          </td>
-        </tr>
-        `
-      }
-
-      let extraChargeTable = ``
-      for (let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
-        const element = dataCartDokter[key]['extra_charge'][i];
-        extraChargeTable += `
-        <tr>
-          <td colspan="4">
-            <div class="d-flex justify-content-end">
-              <p class="fw-bold"> 
-                Extra Charge:
-              </p>
-            </div>
-          </td>
-          <td>
-            IDR ${element['price']}
-          </td>
-        </tr>
-        `
-      }
-
-      console.log({extraChargeTable, productsTable})
-      // document.querySelector(`#table-product${key}`).innerHTML
-      let total = `
-      <div class="table-responsive">
-        <table id="tableList" class="table table-bordered" >
-          <thead>
-            <tr style="background-color: #E3EFFF;">
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Discount</th>
-                <th>TotalPrice</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${productsTable}
-          </div>
-        </tbody>
-        <tfoot id="t-foot${key}">
-          <div id="extra_charge_list${key}">
-            ${extraChargeTable}
-              <tr>
-                <td colspan="4">
-                  <div class="d-flex justify-content-end">
-                    <p class="fw-bold">
-                      Grand Total: 
-                    </p>
-                  </div>
-                </td>
-                <td>
-                  <div id="grand_total${key}">
-                    IDR ${dataCartDokter[key]['total']}
-                  </div>
-                </td>
-              </tr>
-          </tfoot>
-        </table>  
-      </div>
-      <div class="d-flex justify-content-end">
-        <button class="btn btn-outline-success" data-target="#modalExtraCharge${key}" data-toggle="modal">
-          Add Extra Charges
-        </button>
-      </div>
-      <div class="form-group">
-        <label for="notes_form">Note For Admin</label>
-        <p class="text-start">${dataCartDokter[key]['notes']}</p>
-      </div>
-      <div class="form-group">
-        <button class="btn me-3 btn-outline-success" id="edit_product" data-toggle="modal" data-target="#modalEditProduct${key}">
-          Edit Product
-        </button>
-      </div>
-      `
-      // console.log({total})
-    }
-
     function OnePaymentToggle(key) {
       var x = document.getElementById(`container_nominal_input${key}`);
       x.style.display = "none"
@@ -739,6 +614,20 @@
       document.getElementById(`bank_name${key}`).value = '';
       document.getElementById(`bank_account_name${key}`).value = '';
       document.getElementById(`nominal_payment_input${key}`).value = '';
+    }
+
+    function clearStepModalPayment(key) {
+      document.getElementById(`step_paid_at${key}`).value = '';
+      document.getElementById(`step_bank_name${key}`).value = '';
+      document.getElementById(`step_bank_account_name${key}`).value = '';
+      document.getElementById(`nominal_step_payment_input${key}`).value = '';
+    }
+
+    function clearEditStepModalPayment(key) {
+      document.getElementById(`step_edit_paid_at${key}`).value = '';
+      document.getElementById(`step_edit_bank_name${key}`).value = '';
+      document.getElementById(`step_edit_bank_account_name${key}`).value = '';
+      document.getElementById(`nominal_edit_step_payment_input${key}`).value = '';
     }
 
     function StepPaymentToggle(key) {
@@ -901,6 +790,7 @@
             Paid (Completed)
           </span>
           `
+
           document.querySelector(`#button_status_update${i}`).innerHTML = ""
           document.querySelector(`#button-status-canceled${i}`).innerHTML = ""
 
@@ -987,6 +877,11 @@
                   <button type="button" class="btn btn-block btn-outline-success" onclick="EditPaymentButton(${i})">Edit Payment Information</button>
                 </div>
               </div>
+          `
+          document.querySelector(`#grand-total-paid${i}`).innerHTML = `
+          <div>
+              - IDR ${dataCartDokter[i]['total_paid']}
+            </div>
           `
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
         } else if (dataCartDokter[i].status == 4) {
@@ -1130,6 +1025,12 @@
               `
           }
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
+
+          document.querySelector(`#grand-total-paid${i}`).innerHTML = `
+          <div>
+              - IDR ${dataCartDokter[i]['total_paid']}
+            </div>
+          `
         }
       }
     }
@@ -1151,12 +1052,37 @@
 
     function EditStepPaymentButton(key, index) {
       console.log({key, index})
-      document.getElementById(`step_paid_at${key}`).value = dataCartDokter[key]['step_payment'][index].paid_at
-      document.getElementById(`step_bank_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_bank_name
-      document.getElementById(`step_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
-      document.getElementById(`nominal_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal_number
-      document.getElementById(`key_step_payment${key}`).value = index
-      $(`#modalStepPayment${key}`).modal("show")
+      document.getElementById(`step_edit_paid_at${key}`).value = dataCartDokter[key]['step_payment'][index].paid_at
+      document.getElementById(`step_edit_bank_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_bank_name
+      document.getElementById(`step_edit_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
+      document.getElementById(`nominal_edit_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal
+      document.getElementById(`key_edit_step_payment${key}`).value = index
+      $(`#modalEditStepPayment${key}`).modal("show")
+    }
+
+    function EditProductShow(key) {
+      let htmlExtraCharge = ``
+      for (let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
+        const element = dataCartDokter[key]['extra_charge'][i];
+        htmlExtraCharge += `      
+        <div id="body-product${key}-${i}" class="input-group">
+            <div class="d-inline-flex p-2">
+              <div id="name-product">
+                <span class="input-group-text">Description</span>
+                {{-- <span class="input-group-text">{{ ${element['description']} }}</span> --}}
+                <input type="text" class="form-control" id="extraChargeDescription-${key}-${i}"  aria-describedby="inputGroupPrepend2" required value="${element['description']}">
+              </div>
+              <div>
+                <span class="input-group-text">Price</span>
+                <input type="number" class="form-control" id="extraChargePrice-${key}-${i}"  aria-describedby="inputGroupPrepend2" required value="${element['price']}" min="0">
+              </div>
+            </div>
+          </div>
+          `
+      }
+      console.log(htmlExtraCharge, "html extra charge")
+      document.querySelector(`#extra-charge-edit-product${key}`).innerHTML = htmlExtraCharge
+      $(`#modalEditProduct${key}`).modal("show")
     }
 
     function UpdateStatus(id, key) {
@@ -1212,6 +1138,11 @@
       })
     }
 
+    function clearModalExtraCharge(key) {
+      document.getElementById(`extra_charge_desc${key}`).value = ""
+      document.getElementById(`extra_charge_price${key}`).value = ""
+    }
+
     function ExtraCharge(id, key) {
       var desc = $(`#extra_charge_desc${key}`).val()
       var price = $(`#extra_charge_price${key}`).val()
@@ -1229,6 +1160,7 @@
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           if(data.message=="sukses"){
+            clearModalExtraCharge(key)
             $(`#modalExtraCharge${key}`).modal("hide")
             dataCartDokter[key]['extra_charge'].push({
               transaction_id: id,
@@ -1236,6 +1168,7 @@
               price: price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
             })
             refreshTableExtraCharge(key, dataCartDokter[key]['total_price'], price)
+
             AlertSuccess()
           }else if(data!='gagal'|| data!="gagal2"){
             AlertWarningWithMsg(data)
@@ -1335,10 +1268,6 @@
     }
 
     function PaymentButton(id, key) {
-      /*
-      One Payment => 0
-      Step Payment => 1
-      */
       var paid_at = $(`#paid_at${key}`).val();
       var bank_name = $(`#bank_name${key}`).val();
       var bank_account_name = $(`#bank_account_name${key}`).val();
@@ -1370,6 +1299,16 @@
         return
       }
 
+      console.log({
+          status: status,
+          paid_at: paid_at,
+          paid_bank_name: bank_name,
+          paid_account_bank_name: bank_account_name,
+          nominal: nominal_payment_input,
+          total: dataCartDokter[key]['total_price'],
+          id:id,
+        })
+
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/paymentOrder",
@@ -1380,7 +1319,10 @@
           paid_account_bank_name: bank_account_name,
           nominal: nominal_payment_input,
           id:id,
-        }},
+        }, 
+        total: dataCartDokter[key]['total'],
+        nominal: nominal_payment_input,
+        },
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
@@ -1388,10 +1330,16 @@
             if(status == 3) {
               dataCartDokter[key]['paid_bank_name'] = bank_name
               dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
-              dataCartDokter[key]['nominal'] = data['nominal']
+              // dataCartDokter[key]['nominal'] = data['nominal']
               dataCartDokter[key]['paid_by'] = data['paid_by']
               dataCartDokter[key]['paid_at'] = data['paid_at']
+
             } else if(status == 5) {
+              dataCartDokter[key]['paid_bank_name'] = data['paid_bank_name']
+              dataCartDokter[key]['paid_account_bank_name'] = data['paid_account_bank_name']
+              dataCartDokter[key]['nominal'] = data['nominal_step']
+              dataCartDokter[key]['paid_by'] = data['paid_by']
+              dataCartDokter[key]['paid_at'] = data['paid_at']
               var paid_at = data['paid_at'].split('|')[0]
               dataCartDokter[key]['step_payment'] = [
                 {
@@ -1403,9 +1351,14 @@
                   nominal_number: nominal_payment_input
                 }
               ]
+
+              dataCartDokter[key]['total_paid'] = data['total_paid']
+              dataCartDokter[key]['total_paid_sum'] = data['total_paid_sum']
             }
             dataCartDokter[key].status = status
+            console.log(dataCartDokter[key], "data cart dokter")
             $(`#modalPayment${key}`).modal("hide")
+            clearModalPayment(key)
             checkForButtonStatus()
             AlertSuccess()
           }else if(data['message']!='gagal'|| data['message']!="gagal2"){
@@ -1422,7 +1375,7 @@
     }
 
     function StepPayment(id, key) {
-      var indexEdit = document.getElementById(`key_step_payment${key}`).value;
+      // var indexEdit = document.getElementById(`key_step_payment${key}`).value;
       var paid_at = $(`#step_paid_at${key}`).val();
       var bank_name = $(`#step_bank_name${key}`).val();
       var bank_account_name = $(`#step_bank_account_name${key}`).val();
@@ -1452,146 +1405,168 @@
         return
       }
 
-      console.log({indexEdit})
-      if (!indexEdit) {
-        // add with status payment 1
-        var paid_at_after = paid_at_before + "|" +paid_at
-        var bank_name_after = paid_bank_name_before + "|" +bank_name
-        var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
-        var nominal_after = nominal_before + "|" + nominal_payment_input
-        var paid_by_after = paid_by_before + "|" + user.name
-        console.log({
-          dataBefore: {
-            status: 5,
-            paid_at: paid_at,
-            paid_bank_name: bank_name,
-            paid_account_bank_name: bank_account_name,
-            nominal: nominal_payment_input,
-            id:id,
-            paid_at_before: dataCartDokter[key]['paid_at'],
-            paid_bank_name_before: dataCartDokter[key]['paid_bank_name'],
-            paid_account_bank_name_before: dataCartDokter[key]['paid_account_bank_name'],
-            nominal_before: dataCartDokter[key]['nominal'],
-            paid_by_before: dataCartDokter[key]['paid_by'],
-            indexEdit,
-            paid_by: paid_by_after,
+      // console.log({indexEdit})
+      var paid_at_after = paid_at_before +paid_at + "|"
+      var bank_name_after = paid_bank_name_before  +bank_name + "|"
+      var bank_account_name_after = paid_account_bank_name_before  +bank_account_name + "|"
+      var nominal_after = nominal_before  + nominal_payment_input + "|"
+      var paid_by_after = paid_by_before  + user.name + "|"
+      console.log({
+        dataBefore: {
+          status: 5,
+          paid_at: paid_at,
+          paid_bank_name: bank_name,
+          paid_account_bank_name: bank_account_name,
+          nominal: nominal_payment_input,
+          id:id,
+          paid_at_before: dataCartDokter[key]['paid_at'],
+          paid_bank_name_before: dataCartDokter[key]['paid_bank_name'],
+          paid_account_bank_name_before: dataCartDokter[key]['paid_account_bank_name'],
+          nominal_before: dataCartDokter[key]['nominal'],
+          paid_by_before: dataCartDokter[key]['paid_by'],
+          // indexEdit,
+          paid_by: paid_by_after,
+        }
+      })
+      $.ajax({
+      type: "POST",
+        url: "{{url('/')}}"+"/stepPaymentOrder",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          status: 5,
+          paid_at: paid_at_after,
+          paid_bank_name: bank_name_after,
+          paid_account_bank_name: bank_account_name_after,
+          nominal: nominal_after,
+          paid_by: paid_by_after,
+          id:id,
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          console.log({data})
+          if(data['message']=="sukses"){
+            let obj = {
+              paid_by: user.name,
+              paid_at: paid_at,
+              paid_bank_name: bank_name,
+              paid_account_bank_name: bank_account_name,
+              nominal: nominal_payment_input
+            }
+            dataCartDokter[key]['step_payment'].push(obj)
+            // dataCartDokter[key]['paid_bank_name'] = bank_name
+            // dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
+            // dataCartDokter[key]['nominal'] = data['nominal']
+            // dataCartDokter[key]['paid_by'] = data['paid_by']
+            // dataCartDokter[key]['paid_at'] = data['paid_at']
+            dataCartDokter[key].status = 5
+            $(`#modalStepPayment${key}`).modal("hide")
+            clearStepModalPayment(key)
+            checkForButtonStatus()
+            AlertSuccess()
+          }else if(data['message']!='gagal'|| data['message']!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
           }
-        })
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      })
+    }
 
-        $.ajax({
-        type: "POST",
-          url: "{{url('/')}}"+"/stepPaymentOrder",
-          data: { "_token": "{{ csrf_token() }}", data: {
-            status: 5,
-            paid_at: paid_at_after,
-            paid_bank_name: bank_name_after,
-            paid_account_bank_name: bank_account_name_after,
-            nominal: nominal_after,
-            paid_by: paid_by_after,
-            id:id,
-          }},
-          beforeSend: $.LoadingOverlay("show"),
-          afterSend:$.LoadingOverlay("hide"),
-          success: function (data) {
-            console.log({data})
-            if(data['message']=="sukses"){
-              let obj = {
-                paid_by: user.name,
-                paid_at: paid_at,
-                paid_bank_name: bank_name,
-                paid_account_bank_name: bank_account_name,
-                nominal: nominal_payment_input
-              }
-              dataCartDokter[key]['step_payment'].push(obj)
-              // dataCartDokter[key]['paid_bank_name'] = bank_name
-              // dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
-              // dataCartDokter[key]['nominal'] = data['nominal']
-              // dataCartDokter[key]['paid_by'] = data['paid_by']
-              // dataCartDokter[key]['paid_at'] = data['paid_at']
-              dataCartDokter[key].status = 5
-              $(`#modalStepPayment${key}`).modal("hide")
-              checkForButtonStatus()
-              AlertSuccess()
-            }else if(data['message']!='gagal'|| data['message']!="gagal2"){
-              AlertWarningWithMsg(data)
-            }else{
-              AlertError()
-            }
-          },
-          error: function (result, status, err) {
-            $.LoadingOverlay("hide")
-            AlertError()
-          },
-        })
-      } else {
-        // edit with status payment 1
-
-        // dataCartDokter[key]['step_payment'][indexEdit].paid_at = paid_at
-        // dataCartDokter[key]['step_payment'][indexEdit].bank_name = bank_name
-        // dataCartDokter[key]['step_payment'][indexEdit].bank_account_name = bank_account_name
-        // dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
-        console.log({data: dataCartDokter[key]['step_payment'][indexEdit]})
-        var paidSplit = paid_at_before.split("|")
-        var paidBankNameSplit = paid_bank_name_before.split("|")
-        var paidAccountBankNameSplit = paid_account_bank_name_before.split("|")
-        var paidNominalSplit = nominal_before.split("|")
-        var paidBySplit = paid_by_before.split("|")
-        paidSplit[indexEdit] = paid_at
-        paidBankNameSplit[indexEdit] = bank_name
-        paidAccountBankNameSplit[indexEdit] = bank_account_name
-        paidNominalSplit[indexEdit] = nominal_payment_input
-        paidBySplit[indexEdit] = user.name
-        paidSplit = paidSplit.join('|')
-        paidBankNameSplit = paidBankNameSplit.join('|')
-        paidAccountBankNameSplit = paidAccountBankNameSplit.join('|')
-        paidNominalSplit = paidNominalSplit.join('|')
-        paidBySplit = paidBySplit.join('|')
-        console.log({split: {
-          paidSplit,paidBankNameSplit,paidAccountBankNameSplit,paidNominalSplit,paidBySplit
-        }})
-        $.ajax({
-        type: "POST",
-          url: "{{url('/')}}"+"/editStepPaymentOrder",
-          data: { "_token": "{{ csrf_token() }}", data: {
-            id:id,
-            status: 5,
-            paid_at: paidSplit,
-            paid_bank_name: paidBankNameSplit,
-            paid_account_bank_name: paidAccountBankNameSplit,
-            nominal: paidNominalSplit,
-            paid_by: paidBySplit,
-          }},
-          beforeSend: $.LoadingOverlay("show"),
-          afterSend:$.LoadingOverlay("hide"),
-          success: function (data) {
-            if(data['message']=="sukses"){
-              dataCartDokter[key]['step_payment'][indexEdit].paid_at = paid_at
-              dataCartDokter[key]['step_payment'][indexEdit].paid_bank_name = bank_name
-              dataCartDokter[key]['step_payment'][indexEdit].paid_account_bank_name = bank_account_name
-              dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
-              console.log(dataCartDokter[key]['step_payment'][indexEdit])
-
-              // document.querySelector(`#paid_at_${key}_${indexEdit}`).innerHTML = `<p>${paid_at}</p>`
-              // document.querySelector(`#paid_by_${key}_${indexEdit}`).innerHTML = `<p>${user.name}</p>`
-              // document.querySelector(`#paid_bank_name_${key}_${indexEdit}`).innerHTML = `<p>${bank_name}</p>`
-              // document.querySelector(`#paid_account_name_${key}_${indexEdit}`).innerHTML = `<p>${bank_account_name}</p>`
-              // document.querySelector(`#paid_nominal_${key}_${indexEdit}`).innerHTML = `<p>IDR ${nominal_payment_input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</p>`
-              dataCartDokter[key].status = 5
-              $(`#modalStepPayment${key}`).modal("hide")
-              checkForButtonStatus()
-              AlertSuccess()
-            }else if(data['message']!='gagal'|| data['message']!="gagal2"){
-              AlertWarningWithMsg(data)
-            }else{
-              AlertError()
-            }
-          },
-          error: function (result, status, err) {
-            $.LoadingOverlay("hide")
-            AlertError()
-          },
-        })
+    function EditStepPayment(id, key) {
+      var indexEdit = document.getElementById(`key_edit_step_payment${key}`).value;
+      var paid_at = $(`#step_edit_paid_at${key}`).val();
+      var bank_name = $(`#step_edit_bank_name${key}`).val();
+      var bank_account_name = $(`#step_edit_bank_account_name${key}`).val();
+      var nominal_payment_input = $(`#nominal_edit_step_payment_input${key}`).val();
+      var paid_at_before = dataCartDokter[key]['paid_at']
+      var paid_bank_name_before = dataCartDokter[key]['paid_bank_name']
+      var paid_account_bank_name_before = dataCartDokter[key]['paid_account_bank_name']
+      var nominal_before = dataCartDokter[key]['nominal']
+      var paid_by_before = dataCartDokter[key]['paid_by']
+      if (!paid_at) {
+        AlertWarningWithMsg("must fill the paid at")
+        return
       }
+
+      if (!bank_name) {
+        AlertWarningWithMsg("must fill the bank name")
+        return
+      }
+
+      if (!bank_account_name) {
+        AlertWarningWithMsg("must fill the bank account name")
+        return
+      }
+
+      if (!nominal_payment_input && status == 5) {
+        AlertWarningWithMsg("must fill the bank nominal payment")
+        return
+      }
+
+      console.log({indexEdit})
+      var paid_at_after = paid_at_before + "|" +paid_at
+      var bank_name_after = paid_bank_name_before + "|" +bank_name
+      var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
+      var nominal_after = nominal_before + "|" + nominal_payment_input
+      var paidSplit = paid_at_before.split("|")
+      var paidBankNameSplit = paid_bank_name_before.split("|")
+      var paidAccountBankNameSplit = paid_account_bank_name_before.split("|")
+      var paidNominalSplit = nominal_before.split("|")
+      var paidBySplit = paid_by_before.split("|")
+      paidSplit[indexEdit] = paid_at
+      paidBankNameSplit[indexEdit] = bank_name
+      paidAccountBankNameSplit[indexEdit] = bank_account_name
+      paidNominalSplit[indexEdit] = nominal_payment_input
+      paidBySplit[indexEdit] = user.name
+      paidSplit = paidSplit.join('|')
+      paidBankNameSplit = paidBankNameSplit.join('|')
+      paidAccountBankNameSplit = paidAccountBankNameSplit.join('|')
+      paidNominalSplit = paidNominalSplit.join('|')
+      paidBySplit = paidBySplit.join('|')
+      console.log({split: {
+        paidSplit,paidBankNameSplit,paidAccountBankNameSplit,paidNominalSplit,paidBySplit
+      }})
+      $.ajax({
+      type: "POST",
+        url: "{{url('/')}}"+"/editStepPaymentOrder",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          id:id,
+          status: 5,
+          paid_at: paidSplit,
+          paid_bank_name: paidBankNameSplit,
+          paid_account_bank_name: paidAccountBankNameSplit,
+          nominal: paidNominalSplit,
+          paid_by: paidBySplit,
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data['message']=="sukses"){
+            dataCartDokter[key]['step_payment'][indexEdit].paid_at = paid_at
+            dataCartDokter[key]['step_payment'][indexEdit].paid_bank_name = bank_name
+            dataCartDokter[key]['step_payment'][indexEdit].paid_account_bank_name = bank_account_name
+            dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
+            console.log(dataCartDokter[key]['step_payment'][indexEdit])
+            dataCartDokter[key].status = 5
+            $(`#modalEditStepPayment${key}`).modal("hide")
+            clearEditStepModalPayment(key)
+            checkForButtonStatus()
+            AlertSuccess()
+          }else if(data['message']!='gagal'|| data['message']!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      })
     }
 
     function CancelButton(id, key) {
@@ -1734,6 +1709,7 @@
 
       // RefreshTable(key)
     }
+
 
 </script>
     
