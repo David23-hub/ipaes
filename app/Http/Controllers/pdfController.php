@@ -172,7 +172,7 @@ class PDFController extends Controller
         }
         $pdf = PDF::loadView('printOne', ['data' => $cart]);
     
-        return $pdf->stream();
+        return $pdf->download($cart['po_id'] . '.pdf');
     }
 
     public function generatePDFAllTransaction(string $id)
@@ -307,6 +307,6 @@ class PDFController extends Controller
         $datas['data'] = $dataCartDokter;
         $pdf = PDF::loadView('printAll', ['data' => $datas]);
     
-        return $pdf->stream();
+        return $pdf->download($datas['dokter']['name'] . " all transaksi" . ".pdf");
     }
 }
