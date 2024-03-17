@@ -55,20 +55,45 @@ class ListPOController extends Controller
         return view('master.listPO')->with('data', $dataDokter);
     }
 
-    public function getAll()
+    public function getAll(Request $request)
     {
-        $dataDokter = $this->doctorModel->GetList();
-        $dataTransaction = $this->cart->GetListAll();
-        foreach ($dataDokter as $valueDokter) {
-          $total = 0;
-          foreach ($dataTransaction as $valueTransaction) {
-            if($valueDokter['id'] == $valueTransaction['doctor_id']) {
-              $total++;
-            }
-          }
-          $valueDokter['total_transaction'] = $total;
+      $input = $request->all();
+      Log::info("input", $input);
+      $dateParts = explode('/', str_replace('-', '/', $input["startDate"]));
+
+      // Rearrange the parts to form the desired format
+      $formattedDateStart = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+  
+      $dateParts = explode('/', str_replace('-', '/', $input["endDate"]));
+  
+      // Rearrange the parts to form the desired format
+      $formattedDateEnd = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+
+      $dataTransaction = $this->cart->GetListJoinDoctorAndDateAndStatus($formattedDateStart, $formattedDateEnd, $input['status']);
+      $arrayDokter = [];
+
+      foreach ($dataTransaction as $valueTransaction) {
+        // Log::info("bool", ['bolean' => !in_array($valueTransaction['doctor_id'], $arrayDokter, true)]);
+        if(!in_array($valueTransaction['doctor_id'], $arrayDokter, true)) {
+          array_push($arrayDokter, $valueTransaction['doctor_id']);
         }
-        return $dataDokter;
+      }
+
+      // Log::info("array dokter", ["array" => $arrayDokter]);
+      $dataDokterFilter = $this->doctorModel->GetListWhereIn($arrayDokter);
+      foreach ($dataDokterFilter as $value) {
+        $total = 0;
+        foreach ($dataTransaction as $valueTransaction) {
+          if($value['id'] == $valueTransaction['doctor_id']) {
+            $total++;
+          }
+        }
+        $value['total_transaction'] = $total;
+      }
+
+      Log::info("array dokter", ['dokter' => $dataDokterFilter]);
+      // $dataDokter['sub_doctor'] = $dataDokterFilter;
+      return $dataDokterFilter;
     }
 
     public function detailPOIndex(string $id) {

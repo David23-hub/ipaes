@@ -92,7 +92,7 @@ class SalesReportController extends Controller
                         if($valueBundle["id"]==$items[0]){
                             $items[0]=$valueBundle["name"];
                             $tempPrice = $valueBundle["price"];
-                            $tempCommisionRate=$valueProd["commision_rate"];
+                            $tempCommisionRate=$valueBundle["commision_rate"];
                             break;
                         }
                     }
@@ -304,7 +304,7 @@ class SalesReportController extends Controller
                         if($valueBundle["id"]==$items[0]){
                             $items[0]=$valueBundle["name"];
                             $tempPrice = $valueBundle["price"];
-                            $tempCommisionRate=$valueProd["commision_rate"];
+                            $tempCommisionRate=$valueBundle["commision_rate"];
                             break;
                         }
                     }

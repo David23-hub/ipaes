@@ -32,6 +32,23 @@ class CartModel extends Model
         ->get();
     }
 
+    public function GetListJoinDoctorAndDateAndStatus($start,$end,$status) {
+        if($status == 7) {
+            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
+            ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+            ->where('cart.deleted_by',null)
+            ->get();
+        } else {
+            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
+            ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+            ->where('cart.status', $status)
+            ->where('cart.deleted_by',null)
+            ->get();
+        }
+    }
+
     public function GetListJoinDoctorAndDateWithUser($start,$end,$listUser) {
         if($listUser!="all"){
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
