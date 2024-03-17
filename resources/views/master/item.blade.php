@@ -68,7 +68,7 @@
           </div>
           <div class="form-group">
             <label for="qty_add">Stock *</label>
-            <input type="qty_add" class="form-control" id="qty_add"  placeholder="Masukkan Stock (Numeric Only)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+            <input type="qty_add" class="form-control" id="qty_add"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);">
           </div>
           <div class="form-group">
             <label for="price_add">Price *</label>
@@ -76,7 +76,7 @@
               <div class="input-group-prepend">
                 <div class="input-group-text">Rp</div>
               </div>
-              <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product (ex: 100000)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+              <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product (ex: 100000)"  oninput="addDotPrice(this);">
             </div>
           </div>
           <div class="form-group">
@@ -155,7 +155,7 @@
             </div>
             <div class="form-group">
               <label for="qty_update">Stock *</label>
-              <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Stock (Numeric Only)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+              <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);">
             </div>
             <div class="form-group">
               <label for="price_update">Price *</label>
@@ -163,7 +163,7 @@
                 <div class="input-group-prepend">
                   <div class="input-group-text">Rp</div>
                 </div>
-                <input type="price_update" class="form-control" id="price_update"  placeholder="Masukkan Harga Product (ex: 100000)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                <input type="price_update" class="form-control" id="price_update"  placeholder="Masukkan Harga Product (ex: 100000)" oninput="addDotPrice(this);">
               </div>
             </div>
             <div class="form-group">
@@ -287,6 +287,15 @@
   window.onload = function() {
     getAllData()
   };
+  function addDotPrice(input) {
+      
+    input.value = input.value.replace(/[^0-9]/g, '')
+    
+    if (input.value > 3) {
+          input.value = input.value.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+        }
+      
+  }
   $('#status_add').change(function() {
         // If checkbox is checked, set its value to "1"; otherwise, set it to "0"
         if ($(this).is(':checked')) {
@@ -350,6 +359,7 @@
       document.getElementById('nama_add').value = '';
       document.getElementById('qty_add').value = '';
       document.getElementById('status_add').value = '0';
+      document.getElementById('status_update').value = '0';
     }
 
     function getAllData(){
@@ -504,8 +514,12 @@
         success: function (data) {
 
           path = "images/"+data.img
+
           if(data.img!=""){
             $('#preview_update').attr('src', path);
+          }else{
+            $('#preview_update').attr('src', "");
+
           }
 
           $('#id_update').val(data.id)
@@ -514,6 +528,10 @@
           // $('#status_update').val(data.status)
           if (data.status==1){
             $('#status_update').prop('checked', true);
+            $('#status_update').val("1");
+          }else{
+            $('#status_update').prop('checked', false);
+            $('#status_update').val("0");
           }
 
           $("#unit_update").val(data.unit)

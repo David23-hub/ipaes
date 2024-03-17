@@ -38,6 +38,8 @@ class ItemController extends Controller
         $input = $request->all();
 
         $index = $this->model->GetItem($input['id']);
+        $index[0]["price"] = number_format($index[0]["price"],0,',','.');
+        $index[0]["qty"] = number_format($index[0]["qty"],0,',','.');
 
         return $index[0];
     }
@@ -45,25 +47,26 @@ class ItemController extends Controller
     public function addItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+        if ($input["name"]=="" || trim($input['name']=="")) {
             return "Nama Category Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["qty"])) {
+        }else if ($input["qty"]=="" || trim($input['qty']=="")) {
             return "Jumlah Barang Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["price"])) {
+        }else if ($input["price"]=="" || trim($input['price']=="")) {
             return "Harga Barang Harus Diisi!";
         }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["unit"])) {
             return "Unit Barang Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["presentation"])) {
+        }else if ($input["presentation"]=="" || trim($input['presentation']=="") ) {
             return "Presentasi Harus Diisi!";
         }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
             return "Rate Komisi Harus Diisi!";
-        }else if ($input["mini_desc"]=="") {
+        }else if ($input["mini_desc"]=="" || trim($input['mini_desc']=="")) {
             return "Mini Deskripsi Harus Diisi!";
-        }else if ($input["desc"]=="") {
+        }else if ($input["desc"]=="" || trim($input['desc']=="") ) {
             return "Deskripsi Harus Diisi!";
         }
-        
 
+        $input["qty"] = str_replace('.', '', $input["qty"]);
+        $input["price"] = str_replace('.', '', $input["price"]);
 
         if ($request->hasFile('img')) {
             // Image is uploaded
@@ -111,23 +114,26 @@ class ItemController extends Controller
     public function updateItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+        if ($input["name"]=="" || trim($input['name']=="")) {
             return "Nama Category Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["qty"])) {
+        }else if ($input["qty"]=="" || trim($input['qty']=="")) {
             return "Jumlah Barang Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["price"])) {
+        }else if ($input["price"]=="" || trim($input['price']=="")) {
             return "Harga Barang Harus Diisi!";
         }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["unit"])) {
             return "Unit Barang Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["presentation"])) {
+        }else if ($input["presentation"]=="" || trim($input['presentation']=="") ) {
             return "Presentasi Harus Diisi!";
         }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
             return "Rate Komisi Harus Diisi!";
-        }else if ($input["mini_desc"]=="") {
+        }else if ($input["mini_desc"]=="" || trim($input['mini_desc']=="")) {
             return "Mini Deskripsi Harus Diisi!";
-        }else if ($input["desc"]=="") {
+        }else if ($input["desc"]=="" || trim($input['desc']=="") ) {
             return "Deskripsi Harus Diisi!";
         }
+        
+        $input["qty"] = str_replace('.', '', $input["qty"]);
+        $input["price"] = str_replace('.', '', $input["price"]);
 
         if ($request->hasFile('img')) {
             // Image is uploaded

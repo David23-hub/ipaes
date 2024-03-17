@@ -37,15 +37,17 @@ class DokterController extends Controller
     public function addItem(Request $request){
         $input = $request->all();
         
-        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+        if ($input["name"]=="" || trim($input['name']=="")) {
             return "Nama Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["address"])) {
+        }else if ($input["address"]=="" || trim($input['address']=="")) {
             return "Alamat Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["clinic"])) {
+        }else if ($input["clinic"]=="" || trim($input['clinic']=="")) {
             return "Klinik Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["no_hp"])) {
+        }else if ($input["no_hp"]=="" || trim($input['no_hp']=="")) {
             return "Nomor Hp Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["billing_no_hp"])) {
+        }else if($input["dob"]=="" || trim($input['dob']=="") || $input["dob"]==null){
+            return "Tanggal Lahir Harus Diisi!";
+        }else if ($input["billing_no_hp"]=="" || trim($input['billing_no_hp']=="")) {
             return "Billing Nomor Hp Harus Diisi!";
         }
 
@@ -83,19 +85,17 @@ class DokterController extends Controller
     public function updateItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+        if ($input["name"]=="" || trim($input['name']=="")) {
             return "Nama Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["address"])) {
+        }else if ($input["address"]=="" || trim($input['address']=="")) {
             return "Alamat Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["clinic"])) {
+        }else if ($input["clinic"]=="" || trim($input['clinic']=="")) {
             return "Klinik Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["no_hp"])) {
+        }else if ($input["no_hp"]=="" || trim($input['no_hp']=="")) {
             return "Nomor Hp Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["information"])) {
-            return "Informasi Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["dob"])) {
+        }else if($input["dob"]=="" || trim($input['dob']=="") || $input["dob"]==null){
             return "Tanggal Lahir Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["billing_no_hp"])) {
+        }else if ($input["billing_no_hp"]=="" || trim($input['billing_no_hp']=="")) {
             return "Billing Nomor Hp Harus Diisi!";
         }
 

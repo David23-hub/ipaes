@@ -41,7 +41,7 @@ class EkspedisiController extends Controller
     public function addItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+        if ($input["name"]=="" || trim($input['name']=="")) {
             return "Nama Ekspedisi Harus Diisi!";
         }
 
@@ -71,7 +71,7 @@ class EkspedisiController extends Controller
     public function updateItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+        if ($input["name"]=="" || trim($input['name']=="")) {
             return "Nama Ekspedisi Harus Diisi!";
         }
 

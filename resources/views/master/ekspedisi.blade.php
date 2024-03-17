@@ -286,6 +286,10 @@
           $('#nama_update').val(data.name)
           if (data.status==1){
             $('#status_update').prop('checked', true);
+            $('#status_update').val("1");
+          }else{
+            $('#status_update').prop('checked', false);
+            $('#status_update').val("0");
           }
 
           // $('#status_update').val(data.status)

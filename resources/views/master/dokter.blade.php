@@ -255,6 +255,7 @@
     function resetModalInput() {
       document.getElementById('nama_add').value = '';
       document.getElementById('status_add').value = '0';
+      document.getElementById('status_update').value = '0';
     }
 
     function getAllData(){
@@ -383,6 +384,10 @@
           $('#nama_update').val(data.name)
           if (data.status==1){
             $('#status_update').prop('checked', true);
+            $('#status_update').val("1");
+          }else{
+            $('#status_update').prop('checked', false);
+            $('#status_update').val("0");
           }
           
           $('#alamat_update').val(data.address)
@@ -410,6 +415,7 @@
       information = $("#information_update").val()
       dob = $("#dob_update").val()
       billing_no_hp = $("#billing_no_hp_update").val()
+      
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/updateDokter",
