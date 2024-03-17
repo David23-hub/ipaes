@@ -44,6 +44,8 @@ class ListProductController extends Controller
         $resProduct = [];
         $resProductBundle = [];
         $bool = false;
+
+        //if no item on cart
         if (count($cartsUser)==0){
             foreach ($product as  $productVal) {
                 $productVal['qty_cart'] = '';
@@ -57,6 +59,7 @@ class ListProductController extends Controller
             }
             return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);
         }
+
         $cartUser = $cartsUser[0];
 
         //add list item for each product
@@ -77,6 +80,7 @@ class ListProductController extends Controller
                     $productVal['qty_cart'] = '';
                     $productVal['disc_cart'] = '';
                 }
+                $productVal['price']=number_format($productVal["price"],0,',','.');
                 array_push($resProduct,$productVal);
         }
 
@@ -99,6 +103,7 @@ class ListProductController extends Controller
                     $productVal['disc_cart'] = '';
                 }
                 $productVal['unit'] = "Package";
+                $productVal['price']=number_format($productVal["price"],0,',','.');
                 array_push($resProductBundle,$productVal);
         }
 
@@ -133,9 +138,9 @@ class ListProductController extends Controller
                     $items = explode(",", $cartTemp->cart);
                     foreach ($items as $item) {
                         $temp = explode("|", $item);
-                        if($temp[0]==$input["id"]){
+                        if($temp[0]==$input["id"]&& $temp[1]==$input['category']){
                             if($temp[2]!=$input['qty']){
-                                $temp[2] = $temp[2]+$input['qty'];
+                                $temp[2] = $input['qty'];
                             }
                             $temp[3] = $input['disc'];
                             $flag=true;
@@ -165,7 +170,7 @@ class ListProductController extends Controller
                             continue;
                         }
                         if($temp[0]==$input["id"]){
-                            $temp[2] = $temp[2]+$input['qty'];
+                            $temp[2] = $input['qty'];
                             $temp[3] = $input['disc'];
                             $flag=true;
                         }
@@ -209,6 +214,26 @@ class ListProductController extends Controller
         return $result;
     }
 
+    public function update(Request $request){
+        $input = $request->all();
+
+        $tempProd = "";
+
+        $products = explode(',',$input["data"]);
+        foreach ($products as $value) {
+            $temp = explode('|', $value);
+            if($temp[2]<=0){
+                continue;
+            }
+            $tempProd.=$value.",";
+        }
+        
+
+
+        $res = $this->updateCart($input["id"], substr($tempProd,0,strlen($tempProd)-1));
+        return $res;
+    }
+
     public function updateCart($id, $cart){
         $data = [
             'cart'=>$cart,
@@ -223,7 +248,7 @@ class ListProductController extends Controller
         try {
             $temp = $this->cartDetail->UpdateItem($id,$data);
             if($temp){
-                $result="sukses_update";
+                $result="sukses";
             }else{
                 $result="gagal";
             }
@@ -250,7 +275,7 @@ class ListProductController extends Controller
         try {
             $temp = $this->cartDetail->UpdateItem($id,$data);
             if($temp){
-                $result="sukses_update";
+                $result="sukses";
             }else{
                 $result="gagal";
             }

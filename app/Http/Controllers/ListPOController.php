@@ -215,7 +215,6 @@ class ListPOController extends Controller
             return view('master.detailPO')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
             // return $dataCart;
         }catch(\Throwable $th) {
-          dd($th);
             Log::error("error di throwable");
             Log::error($th);
         }

@@ -33,7 +33,7 @@ class PackageModel extends Model
         $d = new PackageModel;
         $d->name = $data['name'];
         $d->product = $data['product'];
-        $d->category_product = $data['category_product'];
+        // $d->category_product = $data['category_product'];
         $d->price = $data['price'];
         $d->commision_rate = $data['commision_rate'];
         $d->desc = $data['desc'];

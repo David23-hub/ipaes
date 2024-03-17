@@ -60,7 +60,11 @@
                   <option value="30">30 Days</option>
                 </select> 
               </div>
-
+              <div style="text-align: right;margin-bottom:10px">
+                <button class="btn me-3 btn-outline-success" data-toggle="modal" data-target="#modalEditProduct" id="edit_product" >
+                  Edit Product
+                </button>
+              </div>
             <div class="table-responsive">
               <table id="tableList" class="table table-bordered" >
                 <thead>
@@ -97,6 +101,48 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal Edit Product-->
+    <div class="modal fade" id="modalEditProduct" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Product Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <span>Product</span>
+              @foreach ($cart as $keyProduct => $itemProduct)
+                <div id="body-product" class="input-group">
+                  <div class="d-inline-flex p-2">
+                    <div id="name-product">
+                      <span class="input-group-text">Name</span>
+                      <span class="input-group-text">{{ $itemProduct['name_product'] }}</span>
+                    </div>
+                    <div>
+                      <span class="input-group-text">Stok</span>
+                      <input type="number" class="form-control" id="productQty{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0" >
+                    </div>
+                    <div>
+                      <span class="input-group-text">Discount</span>
+                      <input type="number" class="form-control" id="productDiscount{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0" oninput="removeLeadingZero(this);">
+                    </div>
+                  </div>
+                </div>
+                @endforeach
+              </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="payment_btn" class="btn btn-primary" onclick="EditProduct()">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
     <style>
       .select2-container .select2-selection--single {
           height: calc(1.5em + 0.75rem + 2px); /* Match Bootstrap input height */
@@ -115,6 +161,11 @@
 
 @push('js')
 <script>
+function removeLeadingZero(input) {
+    if (input.value.charAt(0) === '0' && input.value.length !=1) {
+      input.value = input.value.slice(1);
+    }
+}
 
   dokter = @json($dokter);
   cart = @json($cart);
@@ -176,7 +227,7 @@
           dataTable.row.add([
               item['name_product'],
               item['qty'],
-              item['price_product'],
+              `Rp `+item['price_product'],
               `<div class="badge bg-secondary">`+item['disc']+` %</div>`,
               price,
           ])
@@ -241,6 +292,55 @@
         },
       });
     });
+
+    function EditProduct(){
+      let productJoin = ""
+      for(let i = 0; i < cart.length; i++) {
+        let el = cart[i]
+        var quantity = $(`#productQty${i}`).val()
+        var discount = $(`#productDiscount${i}`).val()
+        if(quantity==""){
+          quantity = 0;
+        }
+        if(discount==""){
+          discount=0;
+        }
+        cart[i]['qty'] = quantity
+        cart[i]['disc'] = discount
+        if(cart.length -1 == i) {
+          productJoin += `${el['prod_id']}|${el['type']}|${quantity}|${discount}`
+        } else {
+          productJoin += `${el['prod_id']}|${el['type']}|${quantity}|${discount},`
+        }
+      }
+
+      console.log({productJoin})
+
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/updateCart",
+        data: { "_token": "{{ csrf_token() }}", "id":idCart, "data":productJoin},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data=="sukses"){
+            $(`#modalEditProduct`).modal("hide")
+            $(document).ajaxStop(function(){
+              window.location.reload();
+            });
+          }else if(data!='gagal'|| data!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      });
+
+    }
 
    
 

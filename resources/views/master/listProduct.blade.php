@@ -10,7 +10,7 @@
     <div class="card">
       <div class="card-body">
         <div class="row">
-          <div class="col">
+          <div class="col-md-at">
             <p style="color: #95948E;">Category</p>
             <select class="custom-select" id="category_select" onchange="getAllDataByCategory(this.value)">
               <option value="all" selected>All</option>
@@ -27,6 +27,9 @@
                 <div class="input-group-text"><i class="fas fa-search"></i></div>
               </div>
             </div>
+          </div>
+          <div class="col-md-auto d-flex align-items-center" >
+            <a href="{{route('viewCart')}}" class="btn btn-info">Go to Cart</a>
           </div>
         </div>
       </div>
@@ -154,6 +157,11 @@ document.getElementById('search_product').addEventListener('input', function(eve
         timeoutId = null; // Reset timeoutId after alert
     }, 50); // Delay of 1 second (1000 milliseconds)
 });
+function removeLeadingZero(input) {
+    if (input.value.charAt(0) === '0') {
+        input.value = input.value.slice(1);
+    }
+}
 
   data = @json($product);
   dataBundle = @json($bundle);
@@ -206,7 +214,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                 <div class="form-group">
                   <div class="input-group">
-                    <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                    <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" >
                     <div class="input-group-prepend">
                       <div class="input-group-text">`+item.unit+`</div>
                     </div>
@@ -218,7 +226,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                 <div class="form-group">
                   <div class="input-group">
-                    <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                    <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100 oninput="removeLeadingZero(this);">
                     <div class="input-group-prepend">
                       <div class="input-group-text">%</div>
                     </div>
@@ -267,7 +275,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                 <div class="form-group">
                   <div class="input-group">
-                    <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                    <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" >
                     <div class="input-group-prepend">
                       <div class="input-group-text">Package</div>
                     </div>
@@ -279,7 +287,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                 <div class="form-group">
                   <div class="input-group">
-                    <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                    <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100 oninput="removeLeadingZero(this);">
                     <div class="input-group-prepend">
                       <div class="input-group-text">%</div>
                     </div>
@@ -347,7 +355,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                   <div class="form-group">
                     <div class="input-group">
-                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" >
                       <div class="input-group-prepend">
                         <div class="input-group-text">Package</div>
                       </div>
@@ -359,7 +367,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                   <div class="form-group">
                     <div class="input-group">
-                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100 oninput="removeLeadingZero(this);">
                       <div class="input-group-prepend">
                         <div class="input-group-text">%</div>
                       </div>
@@ -414,7 +422,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                   <div class="form-group">
                     <div class="input-group">
-                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" >
                       <div class="input-group-prepend">
                         <div class="input-group-text">`+item.unit+`</div>
                       </div>
@@ -426,7 +434,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                   <div class="form-group">
                     <div class="input-group">
-                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100 oninput="removeLeadingZero(this);">
                       <div class="input-group-prepend">
                         <div class="input-group-text">%</div>
                       </div>
@@ -484,7 +492,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                   <div class="form-group">
                     <div class="input-group">
-                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" >
                       <div class="input-group-prepend">
                         <div class="input-group-text">`+item.unit+`</div>
                       </div>
@@ -496,7 +504,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                   <div class="form-group">
                     <div class="input-group">
-                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100 oninput="removeLeadingZero(this);">
                       <div class="input-group-prepend">
                         <div class="input-group-text">%</div>
                       </div>
@@ -547,7 +555,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                   <div class="form-group">
                     <div class="input-group">
-                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="qty_`+item.name+`" value="`+item.qty_cart+`"  placeholder="Qty" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" >
                       <div class="input-group-prepend">
                         <div class="input-group-text">Package</div>
                       </div>
@@ -559,7 +567,7 @@ document.getElementById('search_product').addEventListener('input', function(eve
 
                   <div class="form-group">
                     <div class="input-group">
-                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100>
+                      <input style="max-width:75px;min-width:50px" class="form-control" id="disc_`+item.name+`" value="`+item.disc_cart+`" placeholder="Disc" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" max=100 oninput="removeLeadingZero(this);">
                       <div class="input-group-prepend">
                         <div class="input-group-text">%</div>
                       </div>

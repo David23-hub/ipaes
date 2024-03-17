@@ -64,9 +64,10 @@ Route::post('/deleteCategoryProduct', [App\Http\Controllers\CategoryProductContr
 // List Product
 Route::get('/listProduct', [App\Http\Controllers\ListProductController::class, 'index'])->middleware('auth');
 Route::post('/addCart', [App\Http\Controllers\ListProductController::class, 'addCartDetail'])->middleware('auth');
+Route::post('/updateCart', [App\Http\Controllers\ListProductController::class, 'update'])->middleware('auth');
 
 // List Product
-Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index'])->middleware('auth');
+Route::get('/viewCart', [App\Http\Controllers\CartController::class, 'index'])->name('viewCart')->middleware('auth');
 Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO'])->middleware('auth');
 
 Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index'])->middleware('auth');

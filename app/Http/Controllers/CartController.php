@@ -77,10 +77,13 @@ class CartController extends Controller
                     $cart["disc"]=$temp[3];
                     $price = $cart["price_product"]*$temp[2];
                     $disc = $price*($temp[3]/100);
-                    $cart["price"]=$price;
-                    $cart["disc_price"]=$disc;
-                    $cart["total_price"]=$price-$disc;
-                    $total+=$cart["total_price"];
+                    $cart["price"]=number_format($price,0,',','.');
+                    $cart["disc_price"]=number_format($disc,0,',','.');;
+                    $cart["total_price"]=number_format($price-$disc,0,',','.');
+                    $cart["prod_id"]=$temp[0];
+                    $cart["type"]="product";
+                    $cart["price_product"]=number_format($cart["price_product"],0,',','.');
+                    $total+=$price-$disc;
                     array_push($resCart, $cart);
                 }else if ($temp[1]=="paket"){
                     foreach ($itemsBundle as $item) {
@@ -95,18 +98,21 @@ class CartController extends Controller
                     $cart["disc"]=$temp[3];
                     $price = $cart["price_product"]*$temp[2];
                     $disc = $price*($temp[3]/100);
-                    $cart["price"]=$price;
+                    $cart["price"]=number_format($price,0,',','.');
                     $cart["disc_price"]=$disc;
-                    $cart["total_price"]=$price-$disc;
-                    $total+=$cart["total_price"];
+                    $cart["prod_id"]=$temp[0];
+                    $cart["total_price"]=number_format($price-$disc,0,',','.');
+                    $cart["type"]="paket";
+                    $cart["price_product"]=number_format($cart["price_product"],0,',','.');
+
+                    $total+=$price-$disc;
                     array_push($resCart, $cart);
                 }
 
             }
             
         }
-
-        return view('master.cart')->with('idCart', $cartUser["id"])->with('category', $category)->with('dokter', $dokter)->with('cart', $resCart)->with('total', $total)->with('user', $user);
+        return view('master.cart')->with('idCart', $cartUser["id"])->with('category', $category)->with('dokter', $dokter)->with('cart', $resCart)->with('total', number_format($total,0,',','.'))->with('user', $user);
     }
 
     public function addPO(Request $request){
