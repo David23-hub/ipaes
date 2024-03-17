@@ -15,7 +15,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="exampleInputName">Nama</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror" id="exampleInputName" placeholder="Nama lengkap" name="name" value="{{$user->name ?? old('name')}}">
                         @error('name') <span class="text-danger">{{$message}}</span> @enderror
@@ -25,7 +25,8 @@
                         <label for="exampleInputEmail">Email address</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" id="exampleInputEmail" placeholder="Masukkan Email" name="email" value="{{$user->email ?? old('email')}}">
                         @error('email') <span class="text-danger">{{$message}}</span> @enderror
-                    </div>
+                    </div> --}}
+                    @if(auth()->user()->id != $user->id)
                     <div class="form-group">
                         <label for="exampleInputRole">Role</label>
                         <select  class="form-select form-control" value="{{$user->role}}" name="role" id="role" style="width: 100%;max-width:100%">
@@ -41,6 +42,7 @@
 
                         @error('role') <span class="text-danger">{{$message}}</span> @enderror
                     </div>
+                    @endif
 
                     <div class="form-group">
                         <label for="exampleInputPassword">Password</label>

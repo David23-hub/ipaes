@@ -24,7 +24,8 @@ class UserController extends Controller
 
     public function index(){
         if(!$this->isAdmin()){
-            return redirect(RouteServiceProvider::HOME);
+            return $this->edit(Auth::user()->id);
+
         }
 
         $users = User::all();
@@ -64,9 +65,9 @@ class UserController extends Controller
 
     public function edit($id)
     {
-        if(!$this->isAdmin()){
-            return redirect(RouteServiceProvider::HOME);
-        }
+        // if(!$this->isAdmin()){
+        //     return redirect(RouteServiceProvider::HOME);
+        // }
 
         $user = User::find($id);
         if (!$user) return redirect()->route('users.index')
@@ -80,19 +81,21 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        if(!$this->isAdmin()){
-            return redirect(RouteServiceProvider::HOME);
-        }
+        // if(!$this->isAdmin()){
+        //     return redirect(RouteServiceProvider::HOME);
+        // }
 
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
+            // 'name' => 'required',
+            // 'email' => 'required|email|unique:users,email,'.$id,
+            'role' => 'required',
             'password' => 'sometimes|nullable|confirmed'
         ]);
 
         $user = User::find($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
+        // $user->name = $request->name;
+        // $user->email = $request->email;
+        $user->role = $request->role;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->save();
 

@@ -376,11 +376,11 @@ return [
                     'icon_color' => 'red',
                     'url' => "listDokter",
                 ],
-                [
-                    'text' => "Category Product",
-                    'icon_color' => 'red',
-                    'url' => "listCategoryProduct",
-                ],
+                // [
+                //     'text' => "Category Product",
+                //     'icon_color' => 'red',
+                //     'url' => "listCategoryProduct",
+                // ],
                 [
                     'text' => "Product Bundle",
                     'icon_color' => 'red',

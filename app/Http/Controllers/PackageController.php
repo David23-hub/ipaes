@@ -111,8 +111,6 @@ class PackageController extends Controller
             return "Harga Paket Harus Diisi!";
         }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
             return "Rate Komisi Harus Diisi!";
-        }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["product"])) {
-            return "Produk Harus Diisi!";
         }
 
         $imageName = "";
@@ -126,12 +124,11 @@ class PackageController extends Controller
         $data = [
             'name' => $input['name'],
             'product' => $input['product'],
-            'category_product' => $input['category_product'],
+            // 'category_product' => $input['category_product'],
             'price' => $input['price'],
             'commision_rate' => $input['commision_rate'],
             'desc' => $input['desc'],
             'img' => $imageName,
-
             'created_by' => Auth::user()->email,
             'created_at' => date('Y-m-d H:i:s')
         ];
@@ -146,6 +143,7 @@ class PackageController extends Controller
             }
         } catch (\Throwable $th) {
             Log::error($th);
+            dd($th);
             $result="gagal2";
         }        
 

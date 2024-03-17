@@ -1642,8 +1642,6 @@
     }
 
     function EditProduct(id, key) {
-      console.log({id, key})
-      
       let productJoin = ""
       for(let i = 0; i < dataCartDokter[key]['products'].length; i++) {
         let el = dataCartDokter[key]['products'][i]
