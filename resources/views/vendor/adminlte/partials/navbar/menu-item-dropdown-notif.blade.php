@@ -16,11 +16,12 @@
 <li class="nav-item dropdown user-menu">
 
     {{-- User menu toggler --}}
-    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+    {{-- LOGO NOTIF --}}
+    {{-- <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
         <span @if(config('adminlte.usermenu_image')) class="d-none d-md-inline" @endif>
             <i class="fas fa-bell"></i> <span id="notif-count" class="circle">-1</span>
         </span>
-    </a>
+    </a> --}}
 
     {{-- User menu dropdown --}}
     <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">

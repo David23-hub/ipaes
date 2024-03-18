@@ -25,7 +25,6 @@ class UserController extends Controller
     public function index(){
         if(!$this->isAdmin()){
             return $this->edit(Auth::user()->id);
-
         }
 
         $users = User::all();

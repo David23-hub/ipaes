@@ -238,7 +238,7 @@ function removeLeadingZero(input) {
               </div>
             </div>
 
-          <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+          <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product',`+item.priceNum+`)">Add To Cart</a></div>
         </div></div></div></div>
         `
     });
@@ -299,7 +299,7 @@ function removeLeadingZero(input) {
               </div>
             </div>
 
-          <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+          <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket',`+item.priceNum+`)">Add To Cart</a></div>
         </div></div></div></div>
         `
     });
@@ -315,7 +315,6 @@ function removeLeadingZero(input) {
 
     var container = document.getElementById('content_field');
     container.innerHTML= "";
-    console.log(cat,name)
     
     // template = `<div class="row">`
     isi = `<div class="container"><div class="row">`
@@ -323,7 +322,7 @@ function removeLeadingZero(input) {
     if(cat=="paket"){
       Object.keys(dataBundle).forEach(function(key) {
         let item = dataBundle[key];
-        console.log(item)
+
         if(item.name!= "" && !item.name.toLowerCase().includes(name.toLowerCase())){
           return;
         }
@@ -379,7 +378,7 @@ function removeLeadingZero(input) {
                 </div>
               </div>
 
-            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket',`+item.priceNum+`)">Add To Cart</a></div>
           </div></div></div></div>
           `
       });
@@ -446,7 +445,7 @@ function removeLeadingZero(input) {
                 </div>
               </div>
 
-            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product',`+item.priceNum+`)">Add To Cart</a></div>
           </div></div></div></div>
           `
       });
@@ -516,7 +515,7 @@ function removeLeadingZero(input) {
                 </div>
               </div>
 
-            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product')">Add To Cart</a></div>
+            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','product',`+item.priceNum+`)">Add To Cart</a></div>
           </div></div></div></div>
           `
       });
@@ -575,11 +574,11 @@ function removeLeadingZero(input) {
                   </div>
 
                 </div>
-
+                
                 </div>
               </div>
 
-            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket')">Add To Cart</a></div>
+            <div ><a class="btn btn-success" onclick="addtoCart(`+item.id+`,'`+item.name+`','paket',`+item.priceNum+`)">Add To Cart</a></div>
           </div></div></div></div>
           `
       });
@@ -589,13 +588,13 @@ function removeLeadingZero(input) {
     container.innerHTML+=isi;
   }
 
-  function addtoCart(id, name, category){
+  function addtoCart(id, name, category, price){
   var qty = document.getElementById("qty_"+name).value;
   var disc = document.getElementById("disc_"+name).value;
   $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/addCart",
-        data: { "_token": "{{ csrf_token() }}","id":id,"qty":qty, "category":category, "disc":disc},
+        data: { "_token": "{{ csrf_token() }}","id":id,"qty":qty, "category":category, "disc":disc, "price":price},
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {

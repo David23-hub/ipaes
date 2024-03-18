@@ -28,6 +28,23 @@ class StockController extends Controller
         return view('master.stockReport')->with('items',$items);
     }
 
+    public function insert($data){
+
+
+        try {
+            $temp = $this->model->AddItems($data);
+
+            if($temp){
+                return "sukses";
+            }else{
+                return "Gagal mengurangi stock!! Tolong di cek lagi bagian stock!";
+            }
+        } catch (\Throwable $th) {
+            dd($th);
+            return "Gagal mengurangi stock! Tolong di cek lagi bagian stock!";
+        }
+    }
+
     public function getAll(Request $request){
 
         $tempMarketing = [];

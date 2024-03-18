@@ -127,8 +127,12 @@
                       <input type="number" class="form-control" id="productQty{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0" >
                     </div>
                     <div>
+                      <span class="input-group-text">Price</span>
+                      <input type="text" class="form-control" id="productPrice{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['price_product'] }}" min="0" oninput="removeLeadingZero(this);">
+                    </div>
+                    <div>
                       <span class="input-group-text">Discount</span>
-                      <input type="number" class="form-control" id="productDiscount{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0" oninput="removeLeadingZero(this);">
+                      <input type="number" class="form-control" id="productDiscount{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0" >
                     </div>
                   </div>
                 </div>
@@ -161,11 +165,19 @@
 
 @push('js')
 <script>
+
 function removeLeadingZero(input) {
-    if (input.value.charAt(0) === '0' && input.value.length !=1) {
+      
+  input.value = input.value.replace(/[^0-9]/g, '')
+  if (input.value.charAt(0) === '0' && input.value.length !=1) {
       input.value = input.value.slice(1);
     }
+  if (input.value > 3) {
+        input.value = input.value.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+      }
+    
 }
+
 
   dokter = @json($dokter);
   cart = @json($cart);
@@ -299,18 +311,22 @@ function removeLeadingZero(input) {
         let el = cart[i]
         var quantity = $(`#productQty${i}`).val()
         var discount = $(`#productDiscount${i}`).val()
+        var price = $(`#productPrice${i}`).val()
         if(quantity==""){
           quantity = 0;
         }
         if(discount==""){
           discount=0;
         }
-        cart[i]['qty'] = quantity
-        cart[i]['disc'] = discount
+        if(price==""){
+          price=0;
+        }
+        
+
         if(cart.length -1 == i) {
-          productJoin += `${el['prod_id']}|${el['type']}|${quantity}|${discount}`
+          productJoin += `${el['prod_id']}|${el['type']}|${quantity}|${discount}|${price.replace(/\./g, "")}`
         } else {
-          productJoin += `${el['prod_id']}|${el['type']}|${quantity}|${discount},`
+          productJoin += `${el['prod_id']}|${el['type']}|${quantity}|${discount}|${price.replace(/\./g, "")},`
         }
       }
 

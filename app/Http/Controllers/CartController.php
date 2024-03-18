@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 class CartController extends Controller
 {
     private $model;
+    private $bundle;
 
     private $itemPackage;
 
@@ -23,11 +24,14 @@ class CartController extends Controller
 
     private $notif;
 
+    private $stockController;
+
     
     public function __construct()
     {
         $this->middleware('auth');
         $this->model = new ItemModel;
+        $this->bundle = new PackageModel;
 
         $this->itemPackage = new PackageModel;
 
@@ -38,6 +42,7 @@ class CartController extends Controller
         $this->doctorModel = new DokterModel;
         $this->notif = new NotifModel;
 
+        $this->stockController = new StockController;
         
     }
 
@@ -68,7 +73,7 @@ class CartController extends Controller
                     foreach ($items as $item) {
                         if($temp[0]==$item["id"]){
                             $cart["name_product"]=$item["name"];
-                            $cart["price_product"]=$item["price"];
+                            $cart["price_product"]=$temp[4];
                             break;
                         }
                     }
@@ -89,7 +94,7 @@ class CartController extends Controller
                     foreach ($itemsBundle as $item) {
                         if($temp[0]==$item["id"]){
                             $cart["name_product"]=$item["name"];
-                            $cart["price_product"]=$item["price"];
+                            $cart["price_product"]=$temp[4];
                             break;
                         }
                     }
@@ -99,7 +104,7 @@ class CartController extends Controller
                     $price = $cart["price_product"]*$temp[2];
                     $disc = $price*($temp[3]/100);
                     $cart["price"]=number_format($price,0,',','.');
-                    $cart["disc_price"]=$disc;
+                    $cart["disc_price"]=number_format($disc,0,',','.');;
                     $cart["prod_id"]=$temp[0];
                     $cart["total_price"]=number_format($price-$disc,0,',','.');
                     $cart["type"]="paket";
@@ -117,6 +122,8 @@ class CartController extends Controller
 
     public function addPO(Request $request){
         $input = $request->all();
+
+        
 
         if($input["id_cart"]==0 || $input["id_cart"]==""){
             return "Empty Cart!";
@@ -158,18 +165,50 @@ class CartController extends Controller
                 $result="sukses";
             }else{
                 $result="gagal";
+                return $result;
             }
+            
+            $products = [];
+            $carts = $this->cart->GetItemWithoutEmail($input['id_cart']);
+            $cart = explode(",",$carts[0]["cart"]);
+            foreach ($cart as $value) {
+                $temp = explode("|",$value);
+                if($temp[1]=="product"){
+                    $obj = [];
+                    $obj["id_product"] = $temp[0];
+                    $obj['stock_in'] = $temp[2];
+                    $obj['desc'] = "Dari Pesanan PO ".$po_id;
+                    $obj['created_at'] = date('Y-m-d H:i:s');
+                    array_push($products, $obj);
+                }else if($temp[1]=="paket"){
+                    $listProd = $this->bundle->GetItem($value[0]);
+                    $tempProd = explode(",",$listProd[0]["product"]);
+                    foreach ($tempProd as $valuePackage) {
+                        $temp = explode("|",$valuePackage);
+                        $obj = [];
+                        $obj["id_product"] = $temp[0];
+                        $obj['stock_in'] = $temp[1];
+                        $obj['desc'] = "Dari PAKET ".$listProd[0]["name"]." Pesanan PO ".$po_id;
+                        $obj['created_at'] = date('Y-m-d H:i:s');
+                        array_push($products, $obj);
+                    }
+                }
+            }
+        
+            return $this->stockController->insert($products);
+
         } catch (\Throwable $th) {
             $result="gagal";
-        }        
-        
+        }
 
-        $notif = [
-            'msg'=>$po_id." Has Been Create By ".Auth::user()->name,
-            'created_by' => Auth::user()->email,
-            'created_at' => date('Y-m-d H:i:s')
-        ];
-        $this->notif->AddItem($notif);
+
+        // ADD NOTIF DATA
+        // $notif = [
+        //     'msg'=>$po_id." Has Been Create By ".Auth::user()->name,
+        //     'created_by' => Auth::user()->email,
+        //     'created_at' => date('Y-m-d H:i:s')
+        // ];
+        // $this->notif->AddItem($notif);
 
         return $result;
 

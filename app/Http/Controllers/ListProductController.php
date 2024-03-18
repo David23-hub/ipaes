@@ -50,11 +50,13 @@ class ListProductController extends Controller
             foreach ($product as  $productVal) {
                 $productVal['qty_cart'] = '';
                 $productVal['disc_cart'] = '';
+                $productVal['priceNum'] = $productVal['price'];
                 array_push($resProduct,$productVal);
             }
             foreach ($productBundle as  $value) {
                 $value['qty_cart'] = '';
                 $value['disc_cart'] = '';
+                $resProductBundle['priceNum'] = $value['price'];
                 array_push($resProductBundle,$value);
             }
             return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);
@@ -80,6 +82,7 @@ class ListProductController extends Controller
                     $productVal['qty_cart'] = '';
                     $productVal['disc_cart'] = '';
                 }
+                $productVal['priceNum']=$productVal["price"];
                 $productVal['price']=number_format($productVal["price"],0,',','.');
                 array_push($resProduct,$productVal);
         }
@@ -103,6 +106,7 @@ class ListProductController extends Controller
                     $productVal['disc_cart'] = '';
                 }
                 $productVal['unit'] = "Package";
+                $productVal['priceNum']=$productVal["price"];
                 $productVal['price']=number_format($productVal["price"],0,',','.');
                 array_push($resProductBundle,$productVal);
         }
@@ -145,16 +149,16 @@ class ListProductController extends Controller
                             $temp[3] = $input['disc'];
                             $flag=true;
                         }
-                        $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3] . ",";
+                        $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3]."|".$temp[4] . ",";
                     }
                     $len = strlen($res) - 1; 
                     $res = substr($res, 0, $len);
                 }
 
                 if(!$flag && $res!=""){
-                    $res = $res."," . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"];
+                    $res = $res."," . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"]."|".$input['price'];
                 }else if(!$flag){
-                    $res = $res . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"];
+                    $res = $res . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"]."|".$input['price'];
                 }
                 return $this->updateCart($cartTemp["id"],$res);
 
@@ -174,7 +178,7 @@ class ListProductController extends Controller
                             $temp[3] = $input['disc'];
                             $flag=true;
                         }
-                        $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3] . ",";
+                        $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3]."|".$temp[4] . ",";
                     }
                     $len = strlen($res) - 1; 
                     $res = substr($res, 0, $len);
@@ -186,11 +190,10 @@ class ListProductController extends Controller
 
                 return $this->updateCart($cartTemp["id"],$res);
             }
-
         }
 
         
-        $res = $res . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"];
+        $res = $res . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"]."|".$input["price"];
         $data = [
             'cart'=>$res,
             
