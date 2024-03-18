@@ -130,68 +130,70 @@
     @endif
 
     <script>
-        $(document).ready(function() {
-            function beep() {
-                var sound = new Audio('/sounds/notification.mp3');  
-                sound.play()
-                    .then(() => {
-                    })
-                    .catch(error => {
-                        // Handle error
-                        console.log('Failed to play audio:', error);
-                    });
-            }
 
-            function getNotif(){
-                    $.ajax({
-                        type: "POST",
-                        url: "{{url('/')}}"+"/getNotif",
-                        data: { "_token": "{{ csrf_token() }}"},
-                        success: function (data) {
-                            if(data.length!=0){
-                                var counting = document.getElementById('notif-body');
-                                var count = document.getElementById('notif-count').innerHTML
-                                if (count==-1 || count > data.length){
-                                    document.getElementById('notif-count').innerHTML=data.length;
-                                }else if(count<data.length){
-                                    document.getElementById('notif-count').innerHTML=data.length;
-                                    beep();
-                                }
+        //NOTIF
+        // $(document).ready(function() {
+        //     function beep() {
+        //         var sound = new Audio('/sounds/notification.mp3');  
+        //         sound.play()
+        //             .then(() => {
+        //             })
+        //             .catch(error => {
+        //                 // Handle error
+        //                 console.log('Failed to play audio:', error);
+        //             });
+        //     }
+
+        //     function getNotif(){
+        //             $.ajax({
+        //                 type: "POST",
+        //                 url: "{{url('/')}}"+"/getNotif",
+        //                 data: { "_token": "{{ csrf_token() }}"},
+        //                 success: function (data) {
+        //                     if(data.length!=0){
+        //                         var counting = document.getElementById('notif-body');
+        //                         var count = document.getElementById('notif-count').innerHTML
+        //                         if (count==-1 || count > data.length){
+        //                             document.getElementById('notif-count').innerHTML=data.length;
+        //                         }else if(count<data.length){
+        //                             document.getElementById('notif-count').innerHTML=data.length;
+        //                             beep();
+        //                         }
 
 
-                                counting.innerHTML=""
-                                isi=""
-                                data.forEach(item => {
-                                    if(item.deleted_by==null){
-                                        isi+=`<a class="btn btn-primary btn-flat float-right btn-block
-                                        href="#"><li class="fas fa-fw fa-exclamation-circle"></li>`+
-                                        item.msg
-                                        +`</a>`
-                                    }else{
-                                        isi+=`<a class="btn btn-default btn-flat float-right btn-block
-                                        href="#"><li class="fas fa-fw fa-exclamation-circle"></li>`+
-                                        item.msg
-                                        +`</a>`
-                                    }
+        //                         counting.innerHTML=""
+        //                         isi=""
+        //                         data.forEach(item => {
+        //                             if(item.deleted_by==null){
+        //                                 isi+=`<a class="btn btn-primary btn-flat float-right btn-block
+        //                                 href="#"><li class="fas fa-fw fa-exclamation-circle"></li>`+
+        //                                 item.msg
+        //                                 +`</a>`
+        //                             }else{
+        //                                 isi+=`<a class="btn btn-default btn-flat float-right btn-block
+        //                                 href="#"><li class="fas fa-fw fa-exclamation-circle"></li>`+
+        //                                 item.msg
+        //                                 +`</a>`
+        //                             }
                                     
-                                });
-                                counting.innerHTML+=isi;
-                            }else{
-                                 document.getElementById('notif-count').innerHTML=0
-                            }
-                        },
-                        error: function (result, status, err) {
-                            alert(err)
-                            AlertErrorWithMessage("Please Refresh The Page!")
-                        }
-                    });
-                    setTimeout(function() {
-                        getNotif()
-                    }, 5000);
-            }
+        //                         });
+        //                         counting.innerHTML+=isi;
+        //                     }else{
+        //                          document.getElementById('notif-count').innerHTML=0
+        //                     }
+        //                 },
+        //                 error: function (result, status, err) {
+        //                     alert(err)
+        //                     AlertErrorWithMessage("Please Refresh The Page!")
+        //                 }
+        //             });
+        //             setTimeout(function() {
+        //                 getNotif()
+        //             }, 5000);
+        //     }
 
-            getNotif()
-        });
+        //     getNotif()
+        // });
 
     
     

@@ -39,4 +39,8 @@ class StockModel extends Model
         $d->created_at = $data['created_at'];
         return $d->save();
     }
+
+    public function AddItems($data){
+        return StockModel::insert($data);        
+    }
 }
