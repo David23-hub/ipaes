@@ -331,7 +331,6 @@ return [
             'text' => 'Dashboard',
             'url'  => 'dashboard',
             'icon' => 'fas fa-fw fa-user',
-            // 'icon_color' => 'red',
         ],
         [
             'text' => 'Sales',
