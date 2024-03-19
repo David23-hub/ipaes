@@ -25,7 +25,6 @@ class AppServiceProvider extends ServiceProvider
     // public function boot(Dispatcher $events)
     public function boot()
     {
-        //
         // $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
 
             // if (Auth::user()->role=="admin"){

@@ -16,7 +16,7 @@ class UserController extends Controller
     }
 
     private function isAdmin(){
-        if(Auth::user()->role=="admin"){
+        if(Auth::user()->role=="superuser"){
             return true;
         }
         return false;
@@ -48,7 +48,7 @@ class UserController extends Controller
         }
 
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:users,name',
             'email' => 'required|email|unique:users,email',
             'role' => 'required',
             'password' => 'required|confirmed'

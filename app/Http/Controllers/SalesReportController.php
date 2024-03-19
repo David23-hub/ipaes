@@ -82,7 +82,7 @@ class SalesReportController extends Controller
                     foreach ($products as $valueProd) {
                         if($valueProd["id"]==$items[0]){
                             $items[0]=$valueProd["name"];
-                            $tempPrice = $valueProd["price"];
+                            $tempPrice = $items[4];
                             $tempCommisionRate=$valueProd["commision_rate"];
                             break;
                         }
@@ -91,24 +91,23 @@ class SalesReportController extends Controller
                     foreach ($bundle as $valueBundle) {
                         if($valueBundle["id"]==$items[0]){
                             $items[0]=$valueBundle["name"];
-                            $tempPrice = $valueBundle["price"];
+                            $tempPrice = $items[4];
                             $tempCommisionRate=$valueBundle["commision_rate"];
                             break;
                         }
                     }
                 }
 
-
                 if($i==count($carts)){
                     $product .= $items[0];
                     $qty .= $items[2];
                     $disc .= $items[3]."%";
-                    $price .= "IDR ".$tempPrice;
+                    $price .= "IDR ".number_format($tempPrice,0,',','.');
                 }else{
                     $product .= $items[0].'<hr class="split-line">';
                     $qty .= $items[2].'<hr class="split-line">';
                     $disc .= $items[3]."%".'<hr class="split-line">';
-                    $price .= "IDR ".$tempPrice.'<hr class="split-line">';
+                    $price .= "IDR ".number_format($tempPrice,0,',','.').'<hr class="split-line">';
                 }
                 
 
@@ -121,7 +120,6 @@ class SalesReportController extends Controller
                 }
 
                 $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
-
 
             }
 
@@ -166,11 +164,12 @@ class SalesReportController extends Controller
             $data[$count]["disc"]=$disc;
             $data[$count]["price"]=$price;
             $data[$count]["extras"]="IDR ".$extraVal;
-            $data[$count]["revenue"]="IDR ".($total-$value["shipping_cost"]);
-            $data[$count]["total"]="IDR ".($total);
+            $data[$count]["revenue"]="IDR ".number_format(($total-$value["shipping_cost"]),0,',','.');
+            $data[$count]["total"]="IDR ".number_format($total,0,',','.');
             $data[$count]["stepPayment"]=($stepPayment);
             $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
             $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            
             $count++;
         }
 
@@ -221,8 +220,6 @@ class SalesReportController extends Controller
         return $table;
     }
 
-
-
     private function getBody($data,$number) {
             $body = "";
             $body .= $this->makeBody($number).$this->makeBody($data["po_id"]).
@@ -232,7 +229,7 @@ class SalesReportController extends Controller
             $this->makeBody($data["product"]).$this->makeBody($data["qty"]).
             $this->makeBody($data["price"]).$this->makeBody($data["disc"]).
             $this->makeBody($data["extras"]).$this->makeBody($data["total"]).
-            $this->makeBody("IDR. ".$data["shipping_cost"]).$this->makeBody($data["revenue"]).
+            $this->makeBody("IDR. ".number_format($data["shipping_cost"],0,',','.')).$this->makeBody($data["revenue"]).
             $this->makeBody($data["status"]).$this->makeBody($data["stepPayment"]).
             $this->makeBody($data["created_by"]).$this->makeBody($data["paid_at"])
             ;

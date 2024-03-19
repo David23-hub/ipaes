@@ -34,6 +34,8 @@
                             <option value="admin" {{ "admin" == $user->role ? "selected" : "" }}>Admin</option>
                             <option value="marketing" {{ "marketing" == $user->role ? "selected" : "" }}>Marketing</option>
                             <option value="sales" {{ "sales" == $user->role ? "selected" : "" }}>Sales</option>
+                            <option value="finance" {{ "finance" == $user->role ? "selected" : "" }}>Finance</option>
+                            <option value="manager" {{ "manager" == $user->role ? "selected" : "" }}>Manager</option>
                             {{-- @foreach($dokter as $dok)
                               <option value={{$dok->id}}>{{$dok->name}}</option>
                             @endforeach --}}
