@@ -32,6 +32,8 @@
                             <option value="admin" >Admin</option>
                             <option value="marketing">Marketing</option>
                             <option value="sales">Sales</option>
+                            <option value="finance">Finance</option>
+                            <option value="manager">Manager</option>
                             {{-- @foreach($dokter as $dok)
                               <option value={{$dok->id}}>{{$dok->name}}</option>
                             @endforeach --}}

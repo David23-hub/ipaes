@@ -84,12 +84,10 @@
               <textarea type="notes_form" class="form-control" id="notes_form" rows="3"  placeholder="Masukkan Note For Admin"></textarea>
             </div>
 
-            @if($user->role=="admin")
               <div style="text-align: right">
                 <input type="checkbox" id="management_order" name="management_order">
                 <label for="management_order"> Management Order</label><br>
               </div>
-            @endif
             
             
 

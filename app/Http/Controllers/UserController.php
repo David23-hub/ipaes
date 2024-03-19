@@ -16,7 +16,7 @@ class UserController extends Controller
     }
 
     private function isAdmin(){
-        if(Auth::user()->role=="admin"){
+        if(Auth::user()->role=="superuser"){
             return true;
         }
         return false;
