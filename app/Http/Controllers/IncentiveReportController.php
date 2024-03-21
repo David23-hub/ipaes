@@ -102,7 +102,7 @@ class IncentiveReportController extends Controller
                         if($valueBundle["id"]==$items[0]){
                             $items[0]=$valueBundle["name"];
                             $tempPrice = $valueBundle["price"];
-                            $tempCommisionRate=$valueProd["commision_rate"];
+                            $tempCommisionRate=$valueBundle["commision_rate"];
                             break;
                         }
                     }
@@ -316,7 +316,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                     if($valueBundle["id"]==$items[0]){
                         $items[0]=$valueBundle["name"];
                         $tempPrice = $valueBundle["price"];
-                        $tempCommisionRate=$valueProd["commision_rate"];
+                        $tempCommisionRate=$valueBundle["commision_rate"];
                         break;
                     }
                 }
@@ -467,7 +467,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                     if($valueBundle["id"]==$items[0]){
                         $items[0]=$valueBundle["name"];
                         $tempPrice = $valueBundle["price"];
-                        $tempCommisionRate=$valueProd["commision_rate"];
+                        $tempCommisionRate=$valueBundle["commision_rate"];
                         break;
                     }
                 }

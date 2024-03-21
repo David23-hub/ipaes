@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class DokterModel extends Model
 {
@@ -31,6 +32,12 @@ class DokterModel extends Model
 
     public function GetListWithOrderTransaction() {
         return $this->leftJoin('cart', 'dokter.id', '=', 'cart.doctor_id')->orderBy('cart.created_at', 'desc')->select('dokter.*')->get();
+    }
+
+    public function GetListDoctorAndDate() {
+        return $this
+        ->where('deleted_by',null)
+        ->get();
     }
     
     
