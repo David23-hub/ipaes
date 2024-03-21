@@ -16,7 +16,7 @@
             <img src="..." alt="">
               <div><b>{{ $user['name'] }}</b></div>
               <div>{{ $user['role'] }}</div>
-              <button id="edit-profile">{Edit Profil}</button>
+              <a class="btn-primary" id="edit-profile" href="{{route('users.edit', $user)}}">Edit Profil</a>
           </div>
           <div class="col">
             <img src="..." alt="">
