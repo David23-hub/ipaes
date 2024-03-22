@@ -72,8 +72,10 @@ Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO'])->mi
 
 Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index'])->middleware('auth');
 Route::post('/getAllPO', [App\Http\Controllers\ListPOController::class, 'getAll'])->middleware('auth');
+Route::post('/getAllTransaction', [App\Http\Controllers\ListPOController::class, 'getAllTransaction'])->middleware('auth');
 Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'getListAllCart'])->middleware('auth');
 Route::get('/detailPO/{id}', [App\Http\Controllers\ListPOController::class, 'detailPOIndex'])->middleware('auth');
+Route::get('/detailTransaction/{id}', [App\Http\Controllers\ListPOController::class, 'detailTransaksiIndex'])->middleware('auth');
 Route::post('/canceledPO', [App\Http\Controllers\ListPOController::class, 'canceledOrder'])->middleware('auth');
 Route::post('/packingPO', [App\Http\Controllers\ListPOController::class, 'packingOrder'])->middleware('auth');
 Route::post('/sentPO', [App\Http\Controllers\ListPOController::class, 'sentOrder'])->middleware('auth');
