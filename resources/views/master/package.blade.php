@@ -24,6 +24,7 @@
                 <th>Price</th>
                 <th>Commission Rate</th>
                 <th>Product</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
           </thead>
@@ -59,7 +60,7 @@
                         <div class="input-group-prepend">
                           <div class="input-group-text">Rp</div>
                         </div>
-                        <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product (ex: 100000)" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');">
+                        <input type="price_add" class="form-control" id="price_add"  placeholder="Masukkan Harga Product (ex: 100000)" oninput="addDotPrice(this);">
                       </div>
                     </div>
                   </div>
@@ -117,7 +118,7 @@
                             </div>
                             <div class="col">
                               <div class="input-group mb-3">
-                                <input type="text" class="form-control" aria-describedby="basic-addon2" name="input-data" data-id="{{ $item->id }}">
+                                <input type="text" class="form-control" aria-describedby="basic-addon2" name="input-data" data-id="{{ $item->id }}" oninput="addDotPrice(this);">
                                 <span class="input-group-text" id="basic-addon2">Box {{ $key }}</span>
                               </div>
                             </div>
@@ -229,6 +230,14 @@
   window.onload = function() {
     getAllData()
   };
+  function addDotPrice(input) {
+      
+      input.value = input.value.replace(/[^0-9]/g, '')
+      
+      if (input.value > 3) {
+            input.value = input.value.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+          }
+    }
 
     function previewImage(event) {
         var reader = new FileReader();
@@ -312,8 +321,11 @@
               strName += `</ul>`
             }
           });
-
-          console.log(strName)
+          
+          stat = "Active"
+          if(item['status']==0){
+            stat = "InActive"
+          }
 
           dataTable.row.add([
               img,
@@ -321,6 +333,7 @@
               "Rp "+item['price'],
               item['commision_rate'] + "%",
               strName,
+              stat,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
               <button class="btn btn-danger" onclick="deleteItem(`+item['id']+`)">Delete</button>`,
           ])

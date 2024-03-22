@@ -243,7 +243,6 @@ function removeLeadingZero(input) {
         `
     });
 
-
     Object.keys(dataBundle).forEach(function(key) {
       let item = dataBundle[key];
 

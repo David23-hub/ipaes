@@ -24,6 +24,15 @@ class PackageController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        
+        $this->middleware(function ($request, $next) {
+            $role = auth()->user()->role;
+            if($role!="superuser"&&$role!="admin"){
+                    abort(403, 'Unauthorized access');
+                }
+            return $next($request);
+          });
+
         $this->model = new PackageModel;
         $this->modelCategoryProduct = new CategoryProductModel;
         $this->modelProduct = new ItemModel;
@@ -45,6 +54,7 @@ class PackageController extends Controller
             $data = $this->model->GetList();
             $result = [];
             foreach ($data as $key => $index) {
+                
                 // foreach ($product as $key => $cat) {
                 //     // if ($index->category_product == $cat->id){
                 //     //     $index->product_name = $cat->name;
@@ -52,28 +62,23 @@ class PackageController extends Controller
                 //     // }
     
                 // }
-                $arrProduct = explode(";", $index->product);
+                $arrProduct = explode(",", $index->product);
                 $arrResultProduct = [];
                 foreach ($arrProduct as $keyProduct => $singleProduct) {
                     // 1,1
-                    $single = explode(",", $singleProduct);
+                    $single = explode("|", $singleProduct);
                     foreach ($products as $keyP => $product) {
-                        // if ($single[0] == $product->id) {
-                            // $name = $product->name + " ( " + $single[1] + " Box" + " ) ";
-                        //     array_push($arrResultProduct, $name);
-                        //     break;
-                        // }
-                        if ($single[0] == $product->id) {
-                            $name = "$product->name ( $single[1] Box )";
+                        if ($single[1] == $product->id) {
+                            $name = "$product->name ( $single[0] $product->unit )";
                             array_push($arrResultProduct, $name);
                             break;
                         }
                     }
                 }
                 $index->product = $arrResultProduct;
+                $index["price"] = number_format( $index["price"],0,',','.');
                 array_push($result, $index);
             }
-            
             return $result;
         } catch (\Throwable $th) {
             Log::error("error di throwable");
@@ -87,6 +92,7 @@ class PackageController extends Controller
         $category = $this->modelCategoryProduct->GetList();
         $data = $this->model->GetItem($input['id']);
         $result = [];
+
 
         foreach ($data as $key => $index) {
             foreach ($category as $key => $cat) {
@@ -105,11 +111,11 @@ class PackageController extends Controller
     public function addItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
+        if ($input["name"]=="" || trim($input['name']=="") ) {
             return "Nama Paket Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+$/', $input["price"])) {
+        }else if ($input["price"]=="" || trim($input['price']=="")) {
             return "Harga Paket Harus Diisi!";
-        }else if (!preg_match('/^[0-9]+(\.[0-9]+)?$/', $input["commision_rate"])) {
+        }else if ($input["commision_rate"]=="" || trim($input['commision_rate']=="")) {
             return "Rate Komisi Harus Diisi!";
         }
 
@@ -120,6 +126,8 @@ class PackageController extends Controller
             $image->move(public_path('images'), $imageName);
         }
 
+        $input["price"] = str_replace('.', '', $input["price"]);
+        $input["product"] = str_replace('.', '', $input["product"]);
 
         $data = [
             'name' => $input['name'],
@@ -132,6 +140,7 @@ class PackageController extends Controller
             'created_by' => Auth::user()->email,
             'created_at' => date('Y-m-d H:i:s')
         ];
+
 
         $result = "";
         try {

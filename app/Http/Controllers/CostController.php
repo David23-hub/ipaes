@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CategoryProductModel;
+use App\Models\CostModel;
+use App\Models\EkspedisiModel;
+use App\Models\SalaryModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-class CategoryProductController extends Controller
+class CostController extends Controller
 {
     private $model;
     public function __construct()
@@ -20,8 +22,8 @@ class CategoryProductController extends Controller
                 }
             return $next($request);
           });
-
-        $this->model = new CategoryProductModel;
+          
+        $this->model = new CostModel;
     }
 
     public function index()
@@ -29,14 +31,18 @@ class CategoryProductController extends Controller
 
         // $data = $this->model->GetList();
 
-        // $data['data'] = json_encode($data);
-        return view('master.categoryProduct');
+        return view('master.cost');
         // return view('items.list',$data);
     }
 
     public function getAll(Request $request){
+        $res = [];
         $data = $this->model->GetList();
-        return $data;
+        foreach ($data as  $value) {
+            $value["price"]="Rp ".number_format($value["price"],0,',','.');
+            array_push($res,$value);
+        }
+        return $res;
     }
 
     public function getItem(Request $request){
@@ -44,23 +50,34 @@ class CategoryProductController extends Controller
 
         $data = $this->model->GetItem($input['id']);
 
+        $timestamp = strtotime($data[0]['date']);
+        $data[0]['date'] = date('Y-m', $timestamp);
+
         return $data[0];
     }
 
     public function addItem(Request $request){
         $input = $request->all();
 
-        if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
-            return "Nama Category Harus Diisi!";
+        if ($input["month"]=="" || trim($input['month']=="")) {
+            return "Bulan Salary Harus Diisi!";
+        }else if ($input["price"]=="" || trim($input['price']=="")) {
+            return "Value Salary Harus Diisi!";
         }
 
+        $input["price"] = str_replace('.', '', $input["price"]);
+
+        $date = \DateTime::createFromFormat('Y-m', $input["month"]);
+        $formattedDate = $date->format('Y F');
 
         $data = [
-            'name' => $input['name'],
-            'status' => $input['status'],
+            'date' => $formattedDate,
+            'price' => $input['price'],
+            'note' => $input['note'],
             'created_by' => Auth::user()->email,
             'created_at' => date('Y-m-d H:i:s')
         ];
+        // dd($data);
 
         $result = "";
         try {
@@ -72,7 +89,7 @@ class CategoryProductController extends Controller
             }
         } catch (\Throwable $th) {
             $result="gagal";
-        }
+        }        
 
         return $result;
     }
@@ -80,13 +97,21 @@ class CategoryProductController extends Controller
     public function updateItem(Request $request){
         $input = $request->all();
 
-    if (!preg_match('/^[a-zA-Z\s]+$/', $input["name"])) {
-        return "Nama Category Harus Diisi!";
-    }
+        if ($input["month"]=="" || trim($input['month']=="")) {
+            return "Bulan Salary Harus Diisi!";
+        }else if ($input["price"]=="" || trim($input['price']=="")) {
+            return "Value Salary Harus Diisi!";
+        }
+
+        $input["price"] = str_replace('.', '', $input["price"]);
+
+        $date = \DateTime::createFromFormat('Y-m', $input["month"]);
+        $formattedDate = $date->format('Y F');
 
         $data = [
-            'name' => $input['name'],
-            'status' => $input['status'],
+            'date' => $formattedDate,
+            'price' => $input['price'],
+            'note' => $input['note'],
             'updated_by' => Auth::user()->email,
             'updated_at' => date('Y-m-d H:i:s')
         ];
