@@ -18,6 +18,15 @@ class ListProductController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+            $role = auth()->user()->role;
+            if($role!="superuser"&&$role!="admin"&&$role!="marketing"){
+                    abort(403, 'Unauthorized access');
+                }
+            return $next($request);
+        });
+        
         $this->model = new ItemModel;
 
         $this->itemPackage = new PackageModel;
@@ -51,12 +60,14 @@ class ListProductController extends Controller
                 $productVal['qty_cart'] = '';
                 $productVal['disc_cart'] = '';
                 $productVal['priceNum'] = $productVal['price'];
+                $productVal['price']=number_format($productVal["price"],0,',','.');
                 array_push($resProduct,$productVal);
             }
             foreach ($productBundle as  $value) {
                 $value['qty_cart'] = '';
                 $value['disc_cart'] = '';
-                $resProductBundle['priceNum'] = $value['price'];
+                $value['priceNum'] = $value['price'];
+                $productVal['price']=number_format($productVal["price"],0,',','.');
                 array_push($resProductBundle,$value);
             }
             return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);

@@ -26,6 +26,15 @@ class ListPOController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+          $role = auth()->user()->role;
+          if($role!="superuser"&&$role!="admin"&&$role!="marketing"&&$role!="manager"){
+                  abort(403, 'Unauthorized access');
+              }
+          return $next($request);
+        });
+      
         $this->model = new ItemModel;
 
         $this->cart = new CartModel;

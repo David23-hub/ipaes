@@ -21,6 +21,16 @@ class SalesReportController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+            $role = auth()->user()->role;
+            if($role!="superuser"&&$role!="finance"){
+                    abort(403, 'Unauthorized access');
+                }
+            return $next($request);
+          });
+
+
         $this->model = new CartModel;
         $this->item = new ItemModel;
         $this->bundle = new PackageModel;
@@ -148,9 +158,9 @@ class SalesReportController extends Controller
                 foreach ($payments as $pay) {
                     $i++;
                     if($i==count($payments)){
-                        $stepPayment .= $pay."  =>  IDR ".$nominals[$counter];
+                        $stepPayment .= $pay."  =>  IDR ".number_format($nominals[$counter],0,',','.');
                     }else{
-                        $stepPayment .= $pay."  =>  IDR ".$nominals[$counter].'<hr class="split-line">';
+                        $stepPayment .= $pay."  =>  IDR ".number_format($nominals[$counter],0,',','.').'<hr class="split-line">';
                     }
                     $counter++;
                     $value["paid_at"]=$pay;
@@ -163,7 +173,7 @@ class SalesReportController extends Controller
             $data[$count]["qty"]=$qty;
             $data[$count]["disc"]=$disc;
             $data[$count]["price"]=$price;
-            $data[$count]["extras"]="IDR ".$extraVal;
+            $data[$count]["extras"]="IDR ".number_format($extraVal,0,',','.');
             $data[$count]["revenue"]="IDR ".number_format(($total-$value["shipping_cost"]),0,',','.');
             $data[$count]["total"]="IDR ".number_format($total,0,',','.');
             $data[$count]["stepPayment"]=($stepPayment);
@@ -425,7 +435,11 @@ class SalesReportController extends Controller
             $tDisc = explode('<hr class="split-line">', $row->disc);
             $tStepPayment = explode('<hr class="split-line">', $row->stepPayment);
             foreach ($tProduct as $ke => $prod) {
-                $rowData = [$no, $row->po_id,$row->created_at, $row->doctor_name,$row->clinic,$row->address,$row->billing_no_hp,$row->no_hp,$prod,$tQty[$ke],$tPrice[$ke],$tDisc[$ke],$row->extras,$row->total,"IDR ".$row->shipping_cost,$row->revenue,$row->status, $tStepPayment[$ke], $row->created_by, $row->paid_at];
+                if(count($tStepPayment)<=$ke){
+                    $rowData = [$no, $row->po_id,$row->created_at, $row->doctor_name,$row->clinic,$row->address,$row->billing_no_hp,$row->no_hp,$prod,$tQty[$ke],$tPrice[$ke],$tDisc[$ke],$row->extras,$row->total,"IDR ".$row->shipping_cost,$row->revenue,$row->status, "", $row->created_by, $row->paid_at];
+                }else{
+                    $rowData = [$no, $row->po_id,$row->created_at, $row->doctor_name,$row->clinic,$row->address,$row->billing_no_hp,$row->no_hp,$prod,$tQty[$ke],$tPrice[$ke],$tDisc[$ke],$row->extras,$row->total,"IDR ".$row->shipping_cost,$row->revenue,$row->status, $tStepPayment[$ke], $row->created_by, $row->paid_at];
+                }
                 $sheet->fromArray([$rowData], NULL, 'A' . ($rows + 1));
                 $sheet->getStyle('A'.($start+1).':T'.($rows+1))->applyFromArray([
                     'borders' => [

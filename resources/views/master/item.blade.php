@@ -134,7 +134,7 @@
         <div class="modal-body">
             <input type="hidden" class="form-control" id="id_update">
             <div class="form-group" >
-              <img id="preview_update" id ="image_update" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0; ">
+              <img id="preview_update" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0; ">
             </div>
             <div class="form-group" >
               <label for="image_update">Image</label>
@@ -294,8 +294,8 @@
     if (input.value > 3) {
           input.value = input.value.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
         }
-      
   }
+
   $('#status_add').change(function() {
         // If checkbox is checked, set its value to "1"; otherwise, set it to "0"
         if ($(this).is(':checked')) {
@@ -321,12 +321,14 @@
             output.style.display = 'block'; // Show the image preview
         }
         reader.readAsDataURL(event.target.files[0]);
+        
     }
 
     function previewImageUpdate(event) {
         var reader = new FileReader();
         reader.onload = function(){
             var output = document.getElementById('preview_update');
+            console.log(reader.result)
             output.src = reader.result;
             output.style.display = 'block'; // Show the image preview
         }
@@ -358,6 +360,11 @@
     function resetModalInput() {
       document.getElementById('nama_add').value = '';
       document.getElementById('qty_add').value = '';
+      document.getElementById('price_add').value = '';
+      document.getElementById('presentation_add').value = '';
+      document.getElementById('commision_rate_add').value = '';
+      document.getElementById('mini_desc_add').value = '';
+      document.getElementById('desc_add').value = '';
       document.getElementById('status_add').value = '0';
       document.getElementById('status_update').value = '0';
     }
@@ -384,7 +391,7 @@
           if(item['img']!=""){
             img = `<img style="display:block; margin:auto;" src="{{asset("`+path+`")}}" height="50px" width="50px"/>`
           }else{
-            img = `<img id="preview" style="width: 50px; height: 50px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;">`
+            img = `<img style="width: 50px; height: 50px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;">`
           }
 
           dataTable.row.add([

@@ -11,11 +11,24 @@ class ItemController extends Controller
 {
     private $model;
     private $modelCategoryProduct;
+    private $stockController;
+
     public function __construct()
     {
         $this->middleware('auth');
+        
+        $this->middleware(function ($request, $next) {
+            $role = auth()->user()->role;
+            if($role!="superuser"&&$role!="admin"){
+                    abort(403, 'Unauthorized access');
+                }
+            return $next($request);
+          });
+
         $this->model = new ItemModel;
         $this->modelCategoryProduct = new CategoryProductModel;
+        $this->stockController = new StockController;
+
     }
 
     public function index()
@@ -24,13 +37,17 @@ class ItemController extends Controller
         // $data = $this->model->GetList();
 
         $data = $this->modelCategoryProduct->GetListActive();
+        
         return view('master.item')->with('data', $data);
         // return view('items.list',$data);
     }
 
     public function getAll(Request $request){
         $result = $this->model->GetList();
-        
+        foreach ($result as $key => $value) {
+            $result[$key]["price"] = number_format( $result[$key]["price"],0,',','.');
+            $result[$key]["qty"] = number_format( $result[$key]["qty"],0,',','.');
+        }
         return $result;
     }
 
@@ -77,7 +94,6 @@ class ItemController extends Controller
             // Image is not uploaded
             $imageName="";
         }
-        
 
         $data = [
             'name' => $input['name'],
@@ -99,16 +115,30 @@ class ItemController extends Controller
         $result = "";
         try {
             $temp = $this->model->AddItem($data);
+
             if($temp){
                 $result="sukses";
             }else{
                 $result="gagal1";
+                return;
             }
+
+            $products=[];
+            $obj = [];
+            $obj["id_product"] = $temp;
+            $obj['stock_in'] = $data['qty'];
+            $obj['desc'] = "Penambahan Produk ".$data['name'];
+            $obj['created_at'] = date('Y-m-d H:i:s');
+            array_push($products, $obj);
+
+            $result = $this->stockController->insert($products);
+            return $result;
+
         } catch (\Throwable $th) {
             $result="gagal";
+            return;
         }        
 
-        return $result;
     }
 
     public function updateItem(Request $request){
@@ -134,6 +164,11 @@ class ItemController extends Controller
         
         $input["qty"] = str_replace('.', '', $input["qty"]);
         $input["price"] = str_replace('.', '', $input["price"]);
+
+        $index = $this->model->GetItem($input['id']);
+        if(count($index)==0){
+            return "gagal";
+        }
 
         if ($request->hasFile('img')) {
             // Image is uploaded
@@ -181,7 +216,26 @@ class ItemController extends Controller
                 $result="sukses";
             }else{
                 $result="gagal";
+                return;
             }
+
+
+            $products=[];
+            $obj = [];
+            $obj["id_product"] = $temp;
+            if($data['qty']<$index[0]["qty"]){
+                $obj['stock_out'] = $index[0]["qty"]-$data['qty'];
+                $obj['desc'] = "Pengurangan Produk Saat Update Stock ".$data['name'];
+            }else if($data['qty']>$index[0]["qty"]){
+                $obj['stock_in'] = $data['qty']-$index[0]["qty"];
+                $obj['desc'] = "Penambahan Produk Saat Update Stock".$data['name'];
+            }
+            
+            $obj['created_at'] = date('Y-m-d H:i:s');
+            array_push($products, $obj);
+
+            $result = $this->stockController->insert($products);
+            return $result;
         } catch (\Throwable $th) {
             $result="gagal";
         }        

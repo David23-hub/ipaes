@@ -23,6 +23,15 @@ class IncentiveReportController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+            $role = auth()->user()->role;
+            if($role!="superuser"&&$role!="finance"){
+                    abort(403, 'Unauthorized access');
+                }
+            return $next($request);
+          });
+          
         $this->model = new CartModel;
         $this->users = new User;
         
@@ -175,9 +184,9 @@ class IncentiveReportController extends Controller
             $data[$count]["price"]=$price;
             $data[$count]["extras"]="IDR ".$extraVal;
             $data[$count]["revenue"]="IDR ".($total-$value["shipping_cost"]);
-            $data[$count]["total"]="IDR ".($total);
+            $data[$count]["total"]="IDR ".number_format($total,0,',','.');
             $data[$count]["stepPayment"]=($stepPayment);
-            $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
+            $data[$count]["incentiveIdr"]="IDR ".number_format($incentiveIdr,0,',','.');
             $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
             $count++;
         }
@@ -390,7 +399,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
         $tot+=$value["total"];
         $incen+=$value["incentiveIdr"];
     };
-    $tempBody .= $this->getBodySummary($name,"IDR. ".$tot,"IDR. ".$incen, $no);
+    $tempBody .= $this->getBodySummary($name,"IDR. ".number_format($tot,0,',','.'),"IDR. ".number_format($incen,0,',','.'), $no);
 
     $tempBody = $this->rowDataSummary($tempBody);
     
@@ -540,9 +549,9 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
         $data[$count]["price"]=$price;
         $data[$count]["extras"]="IDR ".$extraVal;
         $data[$count]["revenue"]="IDR ".($total-$value["shipping_cost"]);
-        $data[$count]["total"]="IDR ".($total);
+        $data[$count]["total"]="IDR ".number_format($total,0,',','.');
         $data[$count]["stepPayment"]=($stepPayment);
-        $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
+        $data[$count]["incentiveIdr"]="IDR ".number_format($incentiveIdr,0,',','.');
         $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
         $count++;
     }

@@ -30,6 +30,15 @@ class CartController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+            $role = auth()->user()->role;
+            if($role!="superuser"&&$role!="admin"&&$role!="marketing"){
+                    abort(403, 'Unauthorized access');
+                }
+            return $next($request);
+        });
+        
         $this->model = new ItemModel;
         $this->bundle = new PackageModel;
 
@@ -48,6 +57,7 @@ class CartController extends Controller
 
     public function index()
     {
+        
         $category = $this->modelCategoryProduct->GetListActive();
         $dokter = $this->doctorModel->GetListActive();
         $items = $this->model->GetListActive();
@@ -176,7 +186,7 @@ class CartController extends Controller
                 if($temp[1]=="product"){
                     $obj = [];
                     $obj["id_product"] = $temp[0];
-                    $obj['stock_in'] = $temp[2];
+                    $obj['stock_out'] = $temp[2];
                     $obj['desc'] = "Dari Pesanan PO ".$po_id;
                     $obj['created_at'] = date('Y-m-d H:i:s');
                     array_push($products, $obj);
@@ -187,7 +197,7 @@ class CartController extends Controller
                         $temp = explode("|",$valuePackage);
                         $obj = [];
                         $obj["id_product"] = $temp[0];
-                        $obj['stock_in'] = $temp[1];
+                        $obj['stock_out'] = $temp[1];
                         $obj['desc'] = "Dari PAKET ".$listProd[0]["name"]." Pesanan PO ".$po_id;
                         $obj['created_at'] = date('Y-m-d H:i:s');
                         array_push($products, $obj);

@@ -16,6 +16,16 @@ class StockController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+            $role = auth()->user()->role;
+            if($role!="superuser"&&$role!="finance"){
+                    abort(403, 'Unauthorized access');
+                }
+            return $next($request);
+          });
+
+          
         $this->model = new StockModel;
         $this->item = new ItemModel;
     }
@@ -30,7 +40,6 @@ class StockController extends Controller
 
     public function insert($data){
 
-
         try {
             $temp = $this->model->AddItems($data);
 
@@ -40,7 +49,6 @@ class StockController extends Controller
                 return "Gagal mengurangi stock!! Tolong di cek lagi bagian stock!";
             }
         } catch (\Throwable $th) {
-            dd($th);
             return "Gagal mengurangi stock! Tolong di cek lagi bagian stock!";
         }
     }
@@ -60,6 +68,7 @@ class StockController extends Controller
         $formattedDateEnd = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
 
         $data = $this->model->GetList($formattedDateStart,$formattedDateEnd,$request["listUser"]);
+        
         if(count($data)==0){
             return "KOSONG";
         }
@@ -80,13 +89,13 @@ class StockController extends Controller
                 }
                 $no = 1;
                 $tbldiv .= $this->rowData($tempBody,$name,true);
-                $value["stock_masuk"] = $value["stock_in"]." ".$value["unit"];
-                $value["stock_keluar"] = $value["stock_out"]." ".$value["unit"];
+                $value["stock_masuk"] = number_format($value["stock_in"],0,',','.')." ".$value["unit"];
+                $value["stock_keluar"] = number_format($value["stock_out"],0,',','.')." ".$value["unit"];
                 $tempBody = $this->getBody($value,$no);
                 $name = $value["name"];
             }else{
-                $value["stock_masuk"] = $value["stock_in"]." ".$value["unit"];
-                $value["stock_keluar"] = $value["stock_out"]." ".$value["unit"];
+                $value["stock_masuk"] = number_format($value["stock_in"],0,',','.')." ".$value["unit"];
+                $value["stock_keluar"] = number_format($value["stock_out"],0,',','.')." ".$value["unit"];
                 $tempBody .= $this->getBody($value,$no);
             }
             
@@ -187,28 +196,24 @@ class StockController extends Controller
                 }
                 
                 $no++;
-                $tempBody .= $this->getBodySummary($name,$tempStockIn,$tempStockOut,$tempStockIn+($tempStockOut*-1),$no);
+                $tempBody .= $this->getBodySummary($name,number_format($tempStockIn,0,',','.'),number_format($tempStockOut,0,',','.'),number_format($tempStockIn+($tempStockOut*-1),0,',','.'),$no);
 
                 $tempStockIn=0;
                 $tempStockOut=0;
                 $tempStockIn+=$value["stock_in"];
                 $tempStockOut+=$value["stock_out"];
 
-                $value["stock_masuk"] = $value["stock_in"]." ".$value["unit"];
-                $value["stock_keluar"] = $value["stock_out"]." ".$value["unit"];
 
                 $name = $value["name"];
             }else{
                 $tempStockIn+=$value["stock_in"];
                 $tempStockOut+=$value["stock_out"];
 
-                $value["stock_masuk"] = $value["stock_in"]." ".$value["unit"];
-                $value["stock_keluar"] = $value["stock_out"]." ".$value["unit"];
             }
         }
 
         $no++;
-        $tempBody .= $this->getBodySummary($name,$tempStockIn,$tempStockOut,$tempStockIn+($tempStockOut*-1),$no);
+        $tempBody .= $this->getBodySummary($name,number_format($tempStockIn,0,',','.'),number_format($tempStockOut,0,',','.'),number_format($tempStockIn+($tempStockOut*-1),0,',','.'),$no);
         $tbldiv .= $this->rowDataSummary($tempBody);
 
         if($request["listUser"]=="all"){
@@ -248,10 +253,9 @@ class StockController extends Controller
             if(count($data)==0){
                 return "KOSONG";
             }
-    
             $no=0;
             $name=$data[0]["name"];
-    
+
             if($request["listUser"]!="all"){
                 array_push($tempMarketing, $data[0]["name"]);
             }
@@ -267,6 +271,7 @@ class StockController extends Controller
 
             if($request["listUser"]=="all"){
                 $marketing="All";
+                $tempMarketing[0]="All";
             }else{
                 $marketing=implode(', ', $tempMarketing);
             }
@@ -291,23 +296,23 @@ class StockController extends Controller
             
             $name = $tempMarketing[0];
             
-            $rows = 4;
-            $sheet->fromArray(['Product Name',$name], NULL, 'A'.($rows-1));
-            $sheet->getStyle('B'.($rows-1).':B'.($rows-1))->applyFromArray($styleArray);
+            $rows = 2;
+            // $sheet->fromArray(['Product Name',$name], NULL, 'A'.($rows-1));
+            // $sheet->getStyle('B'.($rows-1).':B'.($rows-1))->applyFromArray($styleArray);
 
-            $sheet->fromArray([$headers], NULL, 'A4');
+            // $sheet->fromArray([$headers], NULL, 'A4');
             
-            $sheet->getStyle('A4:E4')->applyFromArray([
-                'borders' => [
-                    'allBorders' => [
-                        'borderStyle' => Border::BORDER_THIN,
-                    ],
-                ],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => '00B6FF'], // Specify the color in RGB format
-                ],
-            ]);
+            // $sheet->getStyle('A4:E4')->applyFromArray([
+            //     'borders' => [
+            //         'allBorders' => [
+            //             'borderStyle' => Border::BORDER_THIN,
+            //         ],
+            //     ],
+            //     'fill' => [
+            //         'fillType' => Fill::FILL_SOLID,
+            //         'startColor' => ['rgb' => '00B6FF'], // Specify the color in RGB format
+            //     ],
+            // ]);
 
             //row untuk menentukan posisi keberapa kebawah
             $no = 0;
@@ -338,6 +343,16 @@ class StockController extends Controller
                 $tProduct = explode('<hr class="split-line">', $row->product);
                 $tQty = explode('<hr class="split-line">', $row->qty);
                 foreach ($tProduct as $ke => $prod) {
+                    if($row->stock_in==""){
+                        $row->stock_in="0";
+                        
+                    }
+                    if($row->stock_out==""){
+                        $row->stock_out="0";
+                    }
+                    $row->stock_in=number_format($row->stock_in,0,',','.')." ".$row->unit;
+                    $row->stock_out=number_format($row->stock_out,0,',','.')." ".$row->unit;
+
                     $rowData = [$no, $row->created_at,$row->desc, $row->stock_in,$row->stock_out];
                     $sheet->fromArray([$rowData], NULL, 'A' . ($rows + 1));
                     $sheet->getStyle('A'.($start+1).':E'.($rows+1))->applyFromArray([

@@ -110,3 +110,20 @@ Route::get('/stock/report', [App\Http\Controllers\StockController::class, 'index
 Route::post('/stock/getReport', [App\Http\Controllers\StockController::class, 'getAll'])->middleware('auth');
 Route::post('/stock/getReport/download', [App\Http\Controllers\StockController::class, 'download'])->middleware('auth');
 Route::post('/stock/getReport/summary', [App\Http\Controllers\StockController::class, 'getSummary'])->middleware('auth');
+
+
+// salary
+Route::get('/listSalary', [App\Http\Controllers\SalaryController::class, 'index'])->middleware('auth');
+Route::post('/getSalarys', [App\Http\Controllers\SalaryController::class, 'getAll'])->middleware('auth');
+Route::post('/addSalary', [App\Http\Controllers\SalaryController::class, 'addItem'])->middleware('auth');
+Route::post('/getSalary', [App\Http\Controllers\SalaryController::class, 'getItem'])->middleware('auth');
+Route::post('/updateSalary', [App\Http\Controllers\SalaryController::class, 'updateItem'])->middleware('auth');
+Route::post('/deleteSalary', [App\Http\Controllers\SalaryController::class, 'deleteItem'])->middleware('auth');
+
+// Other Cost
+Route::get('/listCost', [App\Http\Controllers\CostController::class, 'index'])->middleware('auth');
+Route::post('/getCosts', [App\Http\Controllers\CostController::class, 'getAll'])->middleware('auth');
+Route::post('/addCost', [App\Http\Controllers\CostController::class, 'addItem'])->middleware('auth');
+Route::post('/getCost', [App\Http\Controllers\CostController::class, 'getItem'])->middleware('auth');
+Route::post('/updateCost', [App\Http\Controllers\CostController::class, 'updateItem'])->middleware('auth');
+Route::post('/deleteCost', [App\Http\Controllers\CostController::class, 'deleteItem'])->middleware('auth');

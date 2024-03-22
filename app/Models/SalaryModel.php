@@ -5,22 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ItemModel extends Model
+class SalaryModel extends Model
 {
     use HasFactory;
-    protected $table = 'items';
+    protected $table = 'salary';
     public $timestamps = false;
 
-    public function GetAll(){
-        return ItemModel::all();
-    }
-
     public function GetList(){
-        return ItemModel::all()->where('deleted_by',null);
-    }
-
-    public function GetListActive() {
-        return ItemModel::all()->where('deleted_by',null)->where("status",1);
+        return SalaryModel::all()->where('deleted_by',null);
     }
     
     public function GetItem($id){
@@ -30,24 +22,13 @@ class ItemModel extends Model
     }
 
     public function AddItem($data){
-        $d = new ItemModel;
-        $d->name = $data['name'];
-        $d->status = $data['status'];
-        $d->qty = $data['qty'];
-
-        $d->unit = $data['unit'];
+        $d = new SalaryModel;
+        $d->date = $data['date'];
         $d->price = $data['price'];
-        $d->presentation = $data['presentation'];
-        $d->commision_rate = $data['commision_rate'];
-        $d->mini_desc = $data['mini_desc'];
-        $d->desc = $data['desc'];
-        $d->img = $data['img'];
-
+        $d->note = $data['note'];
         $d->created_by = $data['created_by'];
         $d->created_at = $data['created_at'];
-
-        $d->save();
-        return $d->id;
+        return $d->save();
     }
 
     public function UpdateItem($id, $data){
