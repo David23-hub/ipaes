@@ -657,11 +657,12 @@
     // ]
     datasets: [{
       label: "All",
-      data: [860,1140,1060,1060,1070,1110,1330,2210,7830,2478],
+      // data: [860,1140,1060,1060,1070,1110,1330,2210,7830,2478],
       data: [result['map_month'][1], result['map_month'][2], result['map_month'][3], result['map_month'][4], result['map_month'][5], result['map_month'][6], result['map_month'][7], result['map_month'][8], result['map_month'][9], result['map_month'][10], result['map_month'][11], result['map_month'][12]],
       borderColor: "red",
       fill: false
-    },{
+    },
+    {
       label: "transaction",
       data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
       borderColor: "green",
@@ -671,13 +672,17 @@
       data: [300,700,2000,5000,6000,4000,2000,1000,200,100],
       borderColor: "blue",
       fill: false
-    }]
+    }
+  ]
   };   
-  var chart1 = new Chart(ctx1, {
-    type: 'line',
-    data: kiri1,
-    options: options,
-  });
+
+  if(result['map_user'].length > 0) {
+    var chart1 = new Chart(ctx1, {
+      type: 'line',
+      data: kiri1,
+      options: options,
+    });
+  }
 
       // var ctx2 = $("#pie-chart2");
       // var kiri2 = {
