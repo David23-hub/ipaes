@@ -418,7 +418,7 @@
     function getItem(id){
       $.ajax({
         type: "POST",
-        url: "{{url('/')}}"+"/getItem",
+        url: "{{url('/')}}"+"/getProductBundle",
         data: { "_token": "{{ csrf_token() }}","id":id},
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),

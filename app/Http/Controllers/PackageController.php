@@ -62,11 +62,12 @@ class PackageController extends Controller
                 //     // }
     
                 // }
-                $arrProduct = explode(";", $index->product);
+                $arrProduct = explode(",", $index->product);
+                // Log::info("product", ['result' => $arrProduct]);
                 $arrResultProduct = [];
                 foreach ($arrProduct as $keyProduct => $singleProduct) {
                     // 1,1
-                    $single = explode(",", $singleProduct);
+                    $single = explode("|", $singleProduct);
                     foreach ($products as $keyP => $product) {
                         if ($single[1] == $product->id) {
                             $name = "$product->name ( $single[0] $product->unit )";
@@ -89,6 +90,7 @@ class PackageController extends Controller
     public function getItem(Request $request){
         $input = $request->all();
 
+        Log::info("masuk", ['message masuk sini']);
         $category = $this->modelCategoryProduct->GetList();
         $data = $this->model->GetItem($input['id']);
         $result = [];
@@ -96,9 +98,11 @@ class PackageController extends Controller
 
         foreach ($data as $key => $index) {
             foreach ($category as $key => $cat) {
-                if ($index->category_product == $cat->id){
-                    $index->category = $cat->name;
-                    break;
+                if(isset($index['category_product'])) {
+                    if ($index->category_product == $cat->id){
+                        $index->category = $cat->name;
+                        break;
+                    }
                 }
             }
             array_push($result,$index);
