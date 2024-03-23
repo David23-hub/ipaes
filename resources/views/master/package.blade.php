@@ -453,7 +453,7 @@
     function deleteItem(id){
       $.ajax({
         type: "POST",
-        url: "{{url('/')}}"+"/deleteItem",
+        url: "{{url('/')}}"+"/deleteProductBundle",
         data: { "_token": "{{ csrf_token() }}", "id":id},
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
