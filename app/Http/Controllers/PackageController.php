@@ -62,11 +62,11 @@ class PackageController extends Controller
                 //     // }
     
                 // }
-                $arrProduct = explode(",", $index->product);
+                $arrProduct = explode(";", $index->product);
                 $arrResultProduct = [];
                 foreach ($arrProduct as $keyProduct => $singleProduct) {
                     // 1,1
-                    $single = explode("|", $singleProduct);
+                    $single = explode(",", $singleProduct);
                     foreach ($products as $keyP => $product) {
                         if ($single[1] == $product->id) {
                             $name = "$product->name ( $single[0] $product->unit )";
