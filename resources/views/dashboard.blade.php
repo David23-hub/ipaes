@@ -37,32 +37,22 @@
 
     {{-- Looping buat yang ultah dokter --}}
     @foreach ($result['mapDoktor'] as $item)
-      <div class="card">
-        <div><h5>Hari ini dokter {{ $item['name'] }} berulang tahun</h5></div>
+      <div class="row">
+        <div class="col">
+          <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <h5>Today is {{ $item['name'] }} Birthday</h5>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+        </div>
       </div>
     @endforeach
 
     <div style="text-align: end">
       Set Period
       <div>
-        <select name="tanggal" id="select-tanggal">
-          <option value="All-Month">All Month</option>
-          <option value="1">Januari</option>
-          <option value="2">Februari</option>
-          <option value="3">Maret</option>
-          <option value="4">April</option>
-          <option value="5">Mei</option>
-          <option value="6">Juni</option>
-          <option value="7">Juli</option>
-          <option value="8">Agustus</option>
-          <option value="9">September</option>
-          <option value="10">Oktober</option>
-          <option value="11">November</option>
-          <option value="12">Desember</option>
-        </select>
-      </div>
-      <div>
-        <input type="text" id="datepicker1">
+        <input type="month" id="datepicker1">
       </div>
     </div>
 
@@ -107,10 +97,12 @@
           <div class="card">
             <div class="card-body">
               <h4><b>Best Product of The Period</b></h4>
-              <div class="d-flex align-items-center justify-content-between py-2 px-3 border rounded mb-1">
-                <span>Avalon Grand Plus</span>
-                <b class="p-2 border rounded bg-primary bg-opacity-10">91</b>
-              </div>
+              @foreach ($result['map_product'] as $itemProduct)
+                <div class="d-flex align-items-center justify-content-between py-2 px-3 border rounded mb-1">
+                  <span>{{ $itemProduct['name'] }}</span>
+                  <b class="p-2 border rounded bg-primary bg-opacity-10">{{ $itemProduct['stock_out'] }}</b>
+                </div>
+              @endforeach
             </div>
           </div>
         </div>
@@ -662,27 +654,25 @@
       borderColor: "red",
       fill: false
     },
-    {
-      label: "transaction",
-      data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
-      borderColor: "green",
-      fill: false
-    },{
-      label: "input user",
-      data: [300,700,2000,5000,6000,4000,2000,1000,200,100],
-      borderColor: "blue",
-      fill: false
-    }
+    // {
+    //   label: "transaction",
+    //   data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
+    //   borderColor: "green",
+    //   fill: false
+    // },{
+    //   label: "input user",
+    //   data: [300,700,2000,5000,6000,4000,2000,1000,200,100],
+    //   borderColor: "blue",
+    //   fill: false
+    // }
   ]
-  };   
+  };  
 
-  if(result['map_user'].length > 0) {
-    var chart1 = new Chart(ctx1, {
-      type: 'line',
-      data: kiri1,
-      options: options,
-    });
-  }
+  var chart1 = new Chart(ctx1, {
+    type: 'line',
+    data: kiri1,
+    options: options,
+  });
 
       // var ctx2 = $("#pie-chart2");
       // var kiri2 = {

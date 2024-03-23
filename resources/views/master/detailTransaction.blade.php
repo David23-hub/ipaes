@@ -608,7 +608,7 @@
     dataCartDokter = @json($dataCartDokter);
     dataEkspedisi = @json($dataEkspedisi);
     extraChargeAll = @json($extraChargeAll);
-    console.log({dataCartDokter, dokter, user, dataCartDokter, dataEkspedisi,extraChargeAll})
+    // console.log({dataCartDokter, dokter, user, dataCartDokter, dataEkspedisi,extraChargeAll})
     window.onload = function() {
       checkForButtonStatus()
     };
@@ -1240,7 +1240,7 @@
     }
 
     function EditStepPaymentButton(key, index) {
-      console.log({key, index})
+    //   console.log({key, index})
       document.getElementById(`step_edit_paid_at${key}`).value = dataCartDokter[key]['step_payment'][index].paid_at
       document.getElementById(`step_edit_bank_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_bank_name
       document.getElementById(`step_edit_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
@@ -1269,7 +1269,7 @@
           </div>
           `
       }
-      console.log(htmlExtraCharge, "html extra charge")
+    //   console.log(htmlExtraCharge, "html extra charge")
       document.querySelector(`#extra-charge-edit-product${key}`).innerHTML = htmlExtraCharge
       $(`#modalEditProduct${key}`).modal("show")
     }
@@ -1295,10 +1295,10 @@
           sent_by: user.name
         }
       }
-      console.log({
-        id: id,
-        ...objectStatus,
-      })
+    //   console.log({
+    //     id: id,
+    //     ...objectStatus,
+    //   })
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/updateStatus",
@@ -1374,10 +1374,10 @@
 
     function refreshTableExtraCharge(key, total_price, extra_charge) {
       let divExtraCharge = ""
-      console.log({dataCartDokter: dataCartDokter[key]})
+    //   console.log({dataCartDokter: dataCartDokter[key]})
       document.querySelector(`#t-foot${key}`).innerHTML = null
       for (let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
-        console.log({total_price, extra_charge })
+        // console.log({total_price, extra_charge })
         divExtraCharge += `
         <tr>
           <td colspan="4">
@@ -1395,7 +1395,7 @@
 
       
       total = Number(total_price) + Number(extra_charge)
-      console.log({total})
+    //   console.log({total})
       dataCartDokter[key]['total_price'] = total
       total = total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
       divExtraCharge += `
@@ -1427,7 +1427,7 @@
           </div>
         </td>
         </tr>`
-      console.log(divExtraCharge)
+    //   console.log(divExtraCharge)
       document.querySelector(`#t-foot${key}`).innerHTML = divExtraCharge
     }
 
@@ -1503,15 +1503,15 @@
         return
       }
 
-      console.log({
-          status: status,
-          paid_at: paid_at,
-          paid_bank_name: bank_name,
-          paid_account_bank_name: bank_account_name,
-          nominal: nominal_payment_input,
-          total: dataCartDokter[key]['total_price'],
-          id:id,
-        })
+    //   console.log({
+    //       status: status,
+    //       paid_at: paid_at,
+    //       paid_bank_name: bank_name,
+    //       paid_account_bank_name: bank_account_name,
+    //       nominal: nominal_payment_input,
+    //       total: dataCartDokter[key]['total_price'],
+    //       id:id,
+    //     })
 
       $.ajax({
         type: "POST",
@@ -1561,7 +1561,7 @@
               dataCartDokter[key]['total_paid_sum'] = data['total_paid_sum']
             }
             dataCartDokter[key].status = status
-            console.log(dataCartDokter[key], "data cart dokter")
+            // console.log(dataCartDokter[key], "data cart dokter")
             $(`#modalPayment${key}`).modal("hide")
             clearModalPayment(key)
             checkForButtonStatus()
@@ -1589,6 +1589,7 @@
       var paid_bank_name_before = dataCartDokter[key]['paid_bank_name']
       var paid_account_bank_name_before = dataCartDokter[key]['paid_account_bank_name']
       var nominal_before = dataCartDokter[key]['nominal']
+      console.log({nominal_before})
       var paid_by_before = dataCartDokter[key]['paid_by']
       if (!paid_at) {
         AlertWarningWithMsg("must fill the paid at")
