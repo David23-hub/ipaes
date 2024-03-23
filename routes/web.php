@@ -11,11 +11,11 @@ Route::resource('users', \App\Http\Controllers\UserController::class)->middlewar
 
 
 Route::get('/', function(){
-    return redirect('/home');
+    return redirect('/dashboard');
 });
 
 Route::get('password/reset', function () {
-    return redirect('/listItem');
+    return redirect('/dashboard');
 });
 
 

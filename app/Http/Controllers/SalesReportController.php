@@ -148,13 +148,17 @@ class SalesReportController extends Controller
             }
 
             //loop for payment step
+            $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
             $payments = explode("|", $value->paid_at);
             $stepPayment = "";
             $i=0;
             $counter=0;
             //if there's only 1 payment
             if(count($payments)!=0){
+                $value->nominal = substr($value->nominal,0,strlen($value->nominal)-1);
+
                 $nominals = explode("|", $value->nominal);
+
                 foreach ($payments as $pay) {
                     $i++;
                     if($i==count($payments)){
@@ -322,12 +326,12 @@ class SalesReportController extends Controller
                     $product .= $items[0];
                     $qty .= $items[2];
                     $disc .= $items[3]."%";
-                    $price .= "IDR ".$tempPrice;
+                    $price .= "IDR ".number_format($tempPrice,0,',','.');
                 }else{
                     $product .= $items[0].'<hr class="split-line">';
                     $qty .= $items[2].'<hr class="split-line">';
                     $disc .= $items[3]."%".'<hr class="split-line">';
-                    $price .= "IDR ".$tempPrice.'<hr class="split-line">';
+                    $price .= "IDR ".number_format($tempPrice,0,',','.').'<hr class="split-line">';
                 }
                 
 
@@ -359,19 +363,21 @@ class SalesReportController extends Controller
             }
 
             //loop for payment step
+            $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
             $payments = explode("|", $value->paid_at);
             $stepPayment = "";
             $i=0;
             $counter=0;
             //if there's only 1 payment
             if(count($payments)!=0){
+                $value->nominal = substr($value->nominal,0,strlen($value->nominal)-1);
                 $nominals = explode("|", $value->nominal);
                 foreach ($payments as $pay) {
                     $i++;
                     if($i==count($payments)){
-                        $stepPayment .= $pay."  =>  IDR ".$nominals[$counter];
+                        $stepPayment .= $pay."  =>  IDR ".number_format($nominals[$counter],0,',','.');
                     }else{
-                        $stepPayment .= $pay."  =>  IDR ".$nominals[$counter].'<hr class="split-line">';
+                        $stepPayment .= $pay."  =>  IDR ".number_format($nominals[$counter],0,',','.').'<hr class="split-line">';
                     }
                     $counter++;
                     $value["paid_at"]=$pay;
@@ -384,9 +390,9 @@ class SalesReportController extends Controller
             $data[$count]["qty"]=$qty;
             $data[$count]["disc"]=$disc;
             $data[$count]["price"]=$price;
-            $data[$count]["extras"]="IDR ".$extraVal;
-            $data[$count]["revenue"]="IDR ".($total-$value["shipping_cost"]);
-            $data[$count]["total"]="IDR ".($total);
+            $data[$count]["extras"]="IDR ".number_format($extraVal,0,',','.');
+            $data[$count]["revenue"]="IDR ".number_format(($total-$value["shipping_cost"]),0,',','.');
+            $data[$count]["total"]="IDR ".number_format($total,0,',','.');
             $data[$count]["stepPayment"]=($stepPayment);
             $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
             $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
