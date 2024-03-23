@@ -253,7 +253,7 @@
       e.preventDefault();
       var spanText = $('#reportrangeTransaction span').text();
       var dateArray = spanText.split(' - '); // Split text by hyphen
-      console.log(dateArray, "date array")
+      // console.log(dateArray, "date array")
       var startDate = formatDate(dateArray[0]);
 
       // Format end date

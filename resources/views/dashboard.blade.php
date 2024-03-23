@@ -52,7 +52,7 @@
     <div style="text-align: end">
       Set Period
       <div>
-        <input type="month" id="datepicker1">
+        <input type="month" id="datepicker1" onchange="GetAll(event)">
       </div>
     </div>
 
@@ -64,38 +64,38 @@
               <h4><b>Total Revenue This Period</b></h4>
               <br>
               <div class="d-flex justify-content-between">
-                Total Sales <p>IDR {{ $result['total_sales'] }}</p>
+                Total Sales <p id="total_sales">IDR {{ $result['total_sales'] }}</p>
               </div>
               <hr/>
               <div class="d-flex justify-content-between">
-                Total Incentive <p class="text-danger">IDR {{ $result['total_insentive'] }}</p>
+                Total Incentive <p class="text-danger" id="total_insentive">IDR {{ $result['total_insentive'] }}</p>
               </div>
               <hr />
               <div class="d-flex justify-content-between">
-                Shipping Cost <p class="text-danger">IDR {{ $result['total_shipping'] }}</p>
+                Shipping Cost <p class="text-danger" id="total_shipping">IDR {{ $result['total_shipping'] }}</p>
               </div>
               <hr />
               <div class="d-flex justify-content-between">
-                Total Salary <p class="text-danger">IDR 0</p>
+                Total Salary <p class="text-danger" id="total_salary">IDR {{ $result['total_salary'] }}</p>
               </div>
               <hr />
               <div class="d-flex justify-content-between">
-                Total Other Cost <p class="text-danger">IDR {{ $result['total_other_cost'] }}</p>
+                Total Other Cost <p class="text-danger" id="total_other_cost">IDR {{ $result['total_other_cost'] }}</p>
               </div>
               <hr />
               <div class="d-flex justify-content-between">
-                Total Revenue <p class="text-success">IDR {{ $result['total_revenue'] }}</p>
+                Total Revenue <p class="text-success" id="total_revenue">IDR {{ $result['total_revenue'] }}</p>
               </div>
               <hr />
               <div class="d-flex justify-content-between">
-                Total Paid <p class="text-success">IDR {{ $result['total_paid'] }}</p>
+                Total Paid <p class="text-success" id="total_paid">IDR {{ $result['total_paid'] }}</p>
               </div>
             </div>
           </div>
         </div>
         <div class="col">
           <div class="card">
-            <div class="card-body">
+            <div class="card-body" id="map_product">
               <h4><b>Best Product of The Period</b></h4>
               @foreach ($result['map_product'] as $itemProduct)
                 <div class="d-flex align-items-center justify-content-between py-2 px-3 border rounded mb-1">
@@ -123,7 +123,7 @@
                     </div>
                     <div class="col-md">
                       <h6 class="text-muted font-semibold">Total PO This Period</h6>
-                      <h5 class="font-extrabold mb-0">
+                      <h5 class="font-extrabold mb-0" id="total_po">
                         {{ $result['total_po'] }}
                       </h5>
                     </div>
@@ -140,7 +140,7 @@
                     </div>
                     <div class="col-md">
                       <h6 class="text-muted font-semibold">Total Stock This Period</h6>
-                      <span class="font-extrabold mb-0">IN : <span class="badge bg-warning">{{ $result['total_stock_in']}}</span> | OUT : <span class="badge bg-info">{{ $result['total_stock_out'] }}</span></span>
+                      <span class="font-extrabold mb-0">IN : <span class="badge bg-warning" id="total_stock_in">{{ $result['total_stock_in']}}</span> | OUT : <span class="badge bg-info" id="total_stock_out">{{ $result['total_stock_out'] }}</span></span>
                     </div>
                   </div>
                 </div>
@@ -157,7 +157,7 @@
                     </div>
                     <div class="col-md">
                       <h6 class="text-muted font-semibold">Total Marketing Users</h6>
-                      <h5 class="font-extrabold mb-0">
+                      <h5 class="font-extrabold mb-0" id="total_marketing_user">
                         {{ $result['total_marketing_user'] }}
                       </h5>
                     </div>
@@ -176,7 +176,7 @@
                     </div>
                     <div class="col-md">
                       <h6 class="text-muted font-semibold">Total Doctor Users</h6>
-                      <h5 class="font-extrabold mb-0">
+                      <h5 class="font-extrabold mb-0" id="total_doctor">
                         {{ $result['total_doctor'] }}
                       </h5>
                     </div>
@@ -194,22 +194,22 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   <span>Superuser 
                   </span>
-                  <span class="badge bg-danger badge-pill badge-round ms-1"> {{ $result['total_super_user'] }}</span>
+                  <span class="badge bg-danger badge-pill badge-round ms-1" id="total_super_user"> {{ $result['total_super_user'] }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   <span>Manager 
                   </span>
-                  <span class="badge bg-danger badge-pill badge-round ms-1"> {{ $result['total_manager_user'] }}</span>
+                  <span class="badge bg-danger badge-pill badge-round ms-1" id="total_manager_user"> {{ $result['total_manager_user'] }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   <span>Finance 
                   </span>
-                  <span class="badge bg-danger badge-pill badge-round ms-1"> {{ $result['total_finance_user'] }}</span>
+                  <span class="badge bg-danger badge-pill badge-round ms-1" id="total_finance_user"> {{ $result['total_finance_user'] }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   <span>Admin 
                   </span>
-                  <span class="badge bg-danger badge-pill badge-round ms-1"> {{ $result['total_admin_user'] }}</span>
+                  <span class="badge bg-danger badge-pill badge-round ms-1" id="total_admin_user"> {{ $result['total_admin_user'] }}</span>
                 </li>
               </ul>
             </div>
@@ -218,152 +218,20 @@
       </div>
     </div>
 
-    {{-- <div class="card" style="width: calc(100%/3); margin: 0.5em">
-      <div class="card-body px-4 py-4-0">
-        <div>
-          {#1}
-          <div class=" d-flex justify-content-center card-profile-picture">
-            <img src="..." alt="">
-          </div>
-          <div class="divider">
-            <div class="divider-text">
-              <h4 class="mt-2">{Nama}</h4>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col">
-            <div class="d-flex justify-content-between">
-              <h5>Purchase Order</h5>
-              <div>
-                <span>Total </span>
-                <span class="badge bg-primary ms-1">31</span>
-              </div>
-            </div>
-            <span class="text-success d-flex justify-content-start">IDR 112.969.000</span>
-            <hr class="my-2">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="d-flex justify-content-between">
-              <h5 class="mb-1">PO Sent</h5>
-              <div>
-                <span>Total</span>
-                <span class="badge bg-info ms-1">10</span>
-              </div>
-            </div>
-            <span class="text-success d-flex justify-content-start">IDR 32.043.000</span>
-            <hr class="my-2">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="d-flex justify-content-between">
-              <h5 class="mb-1">PO Paid</h5>
-              <div>
-                <span>Total</span>
-                <span class="badge bg-success ms-1">4</span>
-              </div>
-            </div>
-            <strong class="text-success d-flex justify-content-start">IDR 10.987.000</strong>
-            <hr class="my-2">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="d-flex justify-content-between">
-              <h5 class="mb-1">Incentive</h5>
-              <strong class="text-success d-flex justify-content-start">IDR 2.259.380</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> --}}
-
-    <div class="owl-carousel owl-theme">
-      @foreach ($result['map_user'] as $item)
-        <div class="item">
-          <div class="card">
-            <div class="card-body px-4 py-4-0">
-              <div>
-                #{{ $count++ }}
-                <div class=" d-flex justify-content-center card-profile-picture">
-                  <img src="..." alt="">
-                </div>
-                <div class="divider">
-                  <div class="divider-text">
-                    <h4 class="mt-2">{{ $item['name'] }}</h4>
-                  </div>
-                </div>
-              </div>
-              <div class="row mt-3">
-                <div class="col">
-                  <div class="d-flex justify-content-between">
-                    <h5>Purchase Order</h5>
-                    <div>
-                      <span>Total </span>
-                      <span class="badge bg-primary ms-1">{{ $item['total_po'] }}</span>
-                    </div>
-                  </div>
-                  <span class="text-success d-flex justify-content-start">IDR {{ $item['total_po_idr'] }}</span>
-                  <hr class="my-2">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="d-flex justify-content-between">
-                    <h5 class="mb-1">PO Sent</h5>
-                    <div>
-                      <span>Total</span>
-                      <span class="badge bg-info ms-1">{{ $item['total_sent'] }}</span>
-                    </div>
-                  </div>
-                  <span class="text-success d-flex justify-content-start">IDR {{ $item['total_sent_idr'] }}</span>
-                  <hr class="my-2">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="d-flex justify-content-between">
-                    <h5 class="mb-1">PO Paid</h5>
-                    <div>
-                      <span>Total</span>
-                      <span class="badge bg-success ms-1">{{ $item['total_paid'] }}</span>
-                    </div>
-                  </div>
-                  <strong class="text-success d-flex justify-content-start">IDR {{ $item['total_paid_idr'] }}</strong>
-                  <hr class="my-2">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <div class="d-flex justify-content-between">
-                    <h5 class="mb-1">Incentive</h5>
-                    <strong class="text-success d-flex justify-content-start">IDR {{ $item['incentive'] }}</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      @endforeach
-    </div>
-
-    {{-- <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <div class="cards-wrapper" style="display: flex">
+    <div id="map_user">
+      <div class="owl-carousel owl-theme">
+        @foreach ($result['map_user'] as $item)
+          <div class="item">
             <div class="card">
               <div class="card-body px-4 py-4-0">
                 <div>
-                  {#1}
+                  #{{ $count++ }}
                   <div class=" d-flex justify-content-center card-profile-picture">
                     <img src="..." alt="">
                   </div>
                   <div class="divider">
                     <div class="divider-text">
-                      <h4 class="mt-2">{Nama}</h4>
+                      <h4 class="mt-2">{{ $item['name'] }}</h4>
                     </div>
                   </div>
                 </div>
@@ -373,10 +241,10 @@
                       <h5>Purchase Order</h5>
                       <div>
                         <span>Total </span>
-                        <span class="badge bg-primary ms-1">31</span>
+                        <span class="badge bg-primary ms-1">{{ $item['total_po'] }}</span>
                       </div>
                     </div>
-                    <span class="text-success d-flex justify-content-start">IDR 112.969.000</span>
+                    <span class="text-success d-flex justify-content-start">IDR {{ $item['total_po_idr'] }}</span>
                     <hr class="my-2">
                   </div>
                 </div>
@@ -386,10 +254,10 @@
                       <h5 class="mb-1">PO Sent</h5>
                       <div>
                         <span>Total</span>
-                        <span class="badge bg-info ms-1">10</span>
+                        <span class="badge bg-info ms-1">{{ $item['total_sent'] }}</span>
                       </div>
                     </div>
-                    <span class="text-success d-flex justify-content-start">IDR 32.043.000</span>
+                    <span class="text-success d-flex justify-content-start">IDR {{ $item['total_sent_idr'] }}</span>
                     <hr class="my-2">
                   </div>
                 </div>
@@ -399,10 +267,10 @@
                       <h5 class="mb-1">PO Paid</h5>
                       <div>
                         <span>Total</span>
-                        <span class="badge bg-success ms-1">4</span>
+                        <span class="badge bg-success ms-1">{{ $item['total_paid'] }}</span>
                       </div>
                     </div>
-                    <strong class="text-success d-flex justify-content-start">IDR 10.987.000</strong>
+                    <strong class="text-success d-flex justify-content-start">IDR {{ $item['total_paid_idr'] }}</strong>
                     <hr class="my-2">
                   </div>
                 </div>
@@ -410,94 +278,16 @@
                   <div class="col">
                     <div class="d-flex justify-content-between">
                       <h5 class="mb-1">Incentive</h5>
-                      <strong class="text-success d-flex justify-content-start">IDR 2.259.380</strong>
+                      <strong class="text-success d-flex justify-content-start">IDR {{ $item['incentive'] }}</strong>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 1</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 1</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
           </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-wrapper" style="display: flex">
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 2</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 2</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 2</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-wrapper" style="display: flex">
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 3</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 3</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 3</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <div class="cards-wrapper" style="display: flex">
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 4</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 4</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-            <div class="card" style="width: calc(100%/3); margin: 0.5em">
-              <div class="card-body">
-                <h5 class="card-title">Card 4</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        @endforeach
       </div>
-    </div> --}}
+    </div>
 
     <div class="container">
       <div class="row">
@@ -508,61 +298,6 @@
             </div>
           </div>
         </div>
-        {{-- <div class="col-md">
-          <div class="card">
-            <div class="card-body">
-              <h5>Top 5 Best Marketing by
-                <strong class="text-primary">Omzet.</strong>
-              </h5>
-              <div id="top-5-marketing">
-                <ul class="list-group mt-3">
-                  <li class="list-group-item">
-                    <div class="row">
-                      <div class="col">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <strong><img src="" alt="">
-                          <br>
-                          Yudiono
-                          </strong>
-                          <span>
-                            <span class="badge bg-primary badge-pill badge-round ms-1">
-                              {Omzet pencapaian}
-                            </span>
-                          </span>
-                        </div>
-                        <div class="progress progress-sm progress-primary my-2">
-                          <div class="progress-bar" role="progressbar" style="width: 26.14%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li class="list-group-item">
-                    <div class="row">
-                      <div class="col">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <strong><img src="" alt="">
-                          <br>
-                          Yudiono
-                          </strong>
-                          <span>
-                            <span class="badge bg-primary badge-pill badge-round ms-1">
-                              {Omzet pencapaian}
-                            </span>
-                          </span>
-                        </div>
-                        <div class="progress progress-sm progress-primary my-2">
-                          <div class="progress-bar" role="progressbar" style="width: 26.14%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div> --}}
       </div>
     </div>
     
@@ -577,26 +312,9 @@
   data = @json($data);
   result = @json($result);
 
-  console.log(data)
-  console.log(result)
+  // console.log(data)
+  // console.log(result)
   //options
-
-  $('.owl-carousel').owlCarousel({
-    loop:true,
-    margin:10,
-    // nav:true,
-    autoplay:true,
-    autoplayTimeout:1000,
-    autoplayHoverPause:true,
-    responsive:{
-        0:{
-            items:1
-        },
-        600:{
-            items:3
-        }
-    }
-})
 
   var options = {
     responsive: true,
@@ -619,6 +337,205 @@
   
   const xValues = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober", "November", "Desember"];
 
+
+  function GetAll(e) {
+    // alert(e.target.value);
+    let val = e.target.value;
+    let [startDate, endDate] = formatDate(val)
+    // return
+    e.preventDefault();
+    $.ajax({
+      type: "POST",
+      url: "{{url('/')}}"+"/dashboard/getlist",
+      beforeSend: $.LoadingOverlay("show"),
+      afterSend:$.LoadingOverlay("hide"),
+      data: { "_token": "{{ csrf_token() }}","end_date": endDate, "start_date": startDate},
+      success: function (data) {
+        console.log({data}, "dataaa1")
+        document.querySelector(`#total_sales`).innerHTML = `IDR ${data['result']['total_sales']}`
+        document.querySelector(`#total_insentive`).innerHTML = `IDR ${data['result']['total_insentive']}`
+        document.querySelector(`#total_shipping`).innerHTML = `IDR ${data['result']['total_shipping']}`
+        document.querySelector(`#total_salary`).innerHTML = `IDR ${data['result']['total_salary']}`
+        document.querySelector(`#total_other_cost`).innerHTML = `IDR ${data['result']['total_other_cost']}`
+        document.querySelector(`#total_revenue`).innerHTML = `IDR ${data['result']['total_revenue']}`
+        document.querySelector(`#total_paid`).innerHTML = `IDR ${data['result']['total_paid']}`
+        document.querySelector(`#total_po`).innerHTML = `IDR ${data['result']['total_po']}`
+        document.querySelector(`#total_marketing_user`).innerHTML = `${data['result']['total_marketing_user']}`
+        document.querySelector(`#total_doctor`).innerHTML = `${data['result']['total_doctor']}`
+        document.querySelector(`#total_super_user`).innerHTML = `${data['result']['total_super_user']}`
+        document.querySelector(`#total_manager_user`).innerHTML = `${data['result']['total_manager_user']}`
+        document.querySelector(`#total_finance_user`).innerHTML = `${data['result']['total_finance_user']}`
+        document.querySelector(`#total_admin_user`).innerHTML = `${data['result']['total_admin_user']}`
+        document.querySelector(`#total_stock_in`).innerHTML = `${data['result']['total_stock_in']}`
+        document.querySelector(`#total_stock_out`).innerHTML = `${data['result']['total_stock_out']}`
+        MapProduct(data['result'])
+        MapUser(data['result'])
+        MapGrafik(data['result'])
+      },
+      error: function (result, status, err) {
+        console.log(err)
+      }
+    });
+  }
+
+  function MapProduct(result) {
+    let htmlElement = `<h4><b>Best Product of The Period</b></h4>`
+    for (let i = 0; i < result['map_product'].length; i++) {
+      const element = result['map_product'][i];
+      let el = `
+      <div class="d-flex align-items-center justify-content-between py-2 px-3 border rounded mb-1">
+        <span>${element['name']}</span>
+        <b class="p-2 border rounded bg-primary bg-opacity-10">${element['stock_out']}</b>
+      </div>
+      `
+      htmlElement += el
+    }
+
+    document.querySelector(`#map_product`).innerHTML = htmlElement;
+  }
+
+  function MapUser(result) {
+    let count = 1
+    let htmlElement = `<div class="owl-carousel owl-theme">`
+    for(const user in result['map_user']) {
+      const mapUser = result['map_user'][user]
+      htmlElement += `        
+      <div class="item">
+          <div class="card">
+            <div class="card-body px-4 py-4-0">
+              <div>
+                ${count}
+                <div class=" d-flex justify-content-center card-profile-picture">
+                  <img src="..." alt="">
+                </div>
+                <div class="divider">
+                  <div class="divider-text">
+                    <h4 class="mt-2">${mapUser['name']}</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="d-flex justify-content-between">
+                    <h5>Purchase Order</h5>
+                    <div>
+                      <span>Total </span>
+                      <span class="badge bg-primary ms-1">${mapUser['total_po']}</span>
+                    </div>
+                  </div>
+                  <span class="text-success d-flex justify-content-start">IDR ${mapUser['total_po_idr']}</span>
+                  <hr class="my-2">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="d-flex justify-content-between">
+                    <h5 class="mb-1">PO Sent</h5>
+                    <div>
+                      <span>Total</span>
+                      <span class="badge bg-info ms-1">${mapUser['total_sent']}</span>
+                    </div>
+                  </div>
+                  <span class="text-success d-flex justify-content-start">IDR ${mapUser['total_sent_idr']}</span>
+                  <hr class="my-2">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="d-flex justify-content-between">
+                    <h5 class="mb-1">PO Paid</h5>
+                    <div>
+                      <span>Total</span>
+                      <span class="badge bg-success ms-1">${mapUser['total_paid']}</span>
+                    </div>
+                  </div>
+                  <strong class="text-success d-flex justify-content-start">IDR ${mapUser['total_paid_idr']}</strong>
+                  <hr class="my-2">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="d-flex justify-content-between">
+                    <h5 class="mb-1">Incentive</h5>
+                    <strong class="text-success d-flex justify-content-start">IDR ${mapUser['incentive']}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`
+        count++
+      }
+      htmlElement += `</div>`
+      document.querySelector(`#map_user`).innerHTML = htmlElement;
+      $('.owl-carousel').owlCarousel({
+          loop:true,
+          margin:10,
+          // nav:true,
+          autoplay:true,
+          autoplayTimeout:1000,
+          autoplayHoverPause:true,
+          responsive:{
+              0:{
+                  items:1
+              },
+              600:{
+                  items:3
+              }
+          }
+      })
+  }
+
+  function MapGrafik(result) {
+    var ctx1 = $("#pie-chart1");
+    var kiri1 = {
+      labels: xValues,
+      datasets: [{
+        label: "All",
+        data: [result['map_month'][1], result['map_month'][2], result['map_month'][3], result['map_month'][4], result['map_month'][5], result['map_month'][6], result['map_month'][7], result['map_month'][8], result['map_month'][9], result['map_month'][10], result['map_month'][11], result['map_month'][12]],
+        borderColor: "red",
+        fill: false
+      },
+    ]
+    };  
+
+    var chart1 = new Chart(ctx1, {
+      type: 'line',
+      data: kiri1,
+      options: options,
+    });
+  }
+
+  $('.owl-carousel').owlCarousel({
+      loop:true,
+      margin:10,
+      // nav:true,
+      autoplay:true,
+      autoplayTimeout:1000,
+      autoplayHoverPause:true,
+      responsive:{
+          0:{
+              items:1
+          },
+          600:{
+              items:3
+          }
+      }
+    })
+
+  
+  function formatDate(dateString) {
+    let splitString = dateString.split('-')
+    let year = +splitString[0]
+    let month = +splitString[1]
+    let endDate = new Date(year, month + 1, 0);
+    // let endDate = moment(startDate).endOf('month');
+    endDate = endDate.getDate();
+    endDate = `${year}-${month}-${endDate}`
+    let startDate = `${year}-01-01`
+    return [startDate, endDate]
+  }
+  
   var ctx1 = $("#pie-chart1");
   var kiri1 = {
     labels: xValues,
@@ -654,17 +571,6 @@
       borderColor: "red",
       fill: false
     },
-    // {
-    //   label: "transaction",
-    //   data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
-    //   borderColor: "green",
-    //   fill: false
-    // },{
-    //   label: "input user",
-    //   data: [300,700,2000,5000,6000,4000,2000,1000,200,100],
-    //   borderColor: "blue",
-    //   fill: false
-    // }
   ]
   };  
 
@@ -673,118 +579,7 @@
     data: kiri1,
     options: options,
   });
-
-      // var ctx2 = $("#pie-chart2");
-      // var kiri2 = {
-      //   labels: dataKiri2.label,
-      //   datasets: [
-      //     {
-      //       label: "KIRI BAWAH",
-      //       data: dataKiri2.data,
-      //       backgroundColor: [
-      //         "#DEB887",
-      //         "#A9A9A9",
-      //         "#DC143C",
-      //         "#F4A460",
-      //         "#2E8B57",
-      //         "#1D7A46",
-      //         "#CDA776",
-      //       ],
-      //       borderColor: [
-      //         "#CDA776",
-      //         "#989898",
-      //         "#CB252B",
-      //         "#E39371",
-      //         "#1D7A46",
-      //         "#F4A460",
-      //         "#CDA776",
-      //       ],
-      //       borderWidth: [1, 1, 1, 1, 1,1,1]
-      //     }
-      //   ]
-      // };
-      // var chart2 = new Chart(ctx2, {
-      //   type: 'bar',
-      //   data: kiri2,
-      //   options: options,
-      // });
-
-      // var ctx3 = $("#pie-chart3");
-      // var tengah1 = {
-      //   labels: dataTengah1.label,
-      //   datasets: [
-      //     {
-      //       label: "TENGAH",
-      //       data: dataTengah1.data,
-      //       backgroundColor: [
-      //         "#DEB887",
-      //         "#A9A9A9",
-      //         "#DC143C",
-      //         "#F4A460",
-      //         "#2E8B57",
-      //         "#1D7A46",
-      //         "#CDA776",
-      //       ],
-      //       borderColor: [
-      //         "#CDA776",
-      //         "#989898",
-      //         "#CB252B",
-      //         "#E39371",
-      //         "#1D7A46",
-      //         "#F4A460",
-      //         "#CDA776",
-      //       ],
-      //       borderWidth: [1, 1, 1, 1, 1,1,1]
-      //     }
-      //   ]
-      // };
-      // var chart3 = new Chart(ctx3, {
-      //   type: 'bar',
-      //   data: tengah1,
-      //   options: options,
-      // });
-
-      // var ctx4 = $("#pie-chart4");
-      // var kanan1 = {
-      //   labels: dataKanan1.label,
-      //   datasets: [
-      //     {
-      //       label: "KANAN ATAS",
-      //       data: dataKanan1.data,
-      //       backgroundColor: [
-      //         "#DEB887",
-      //         "#A9A9A9",
-      //         "#DC143C",
-      //         "#F4A460",
-      //         "#2E8B57",
-      //         "#1D7A46",
-      //         "#CDA776",
-      //       ],
-      //       borderColor: [
-      //         "#CDA776",
-      //         "#989898",
-      //         "#CB252B",
-      //         "#E39371",
-      //         "#1D7A46",
-      //         "#F4A460",
-      //         "#CDA776",
-      //       ],
-      //       borderWidth: [1, 1, 1, 1, 1,1,1]
-      //     }
-      //   ]
-      // };
-      // var chart4 = new Chart(ctx4, {
-      //   type: 'bar',
-      //   data: kanan1,
-      //   options: options,
-      // });
-
-      
-
-      
-
-      
-
+    
 </script>
     
 @endpush
