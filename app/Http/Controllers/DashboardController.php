@@ -12,6 +12,7 @@ use App\Models\EkspedisiModel;
 use App\Models\ExtraChargeModel;
 use App\Models\PackageModel;
 use App\Models\StockModel;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -52,6 +53,8 @@ class DashboardController extends Controller
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
 
+        // Log::info();
+
         $newDate = date('Y-m-d');
         $incentiveIdr=0;
         $total =0;
@@ -90,141 +93,145 @@ class DashboardController extends Controller
             }
         }
 
-        foreach ($data as $value) {
-            // $i=0;
-            $totalPerorang = 0;
-            $revenuePerorang = 0;
-            $incentivePerorang = 0;
-            $carts = explode(",", $value->cart);
-            foreach ($carts as $key => $cart) {
-                $items = explode("|", $cart);
-                // $i++;
-                // $tempPrice="";
-                $tempTotal = 0;
-                $tempCommisionRate = 0;
-                $tempPrice = (int)$items[4];
-                if($items[1]=="product"){
-                    foreach ($products as $valueProd) {
-                        if($valueProd["id"]==$items[0]){
-                            $items[0]=$valueProd["name"];
-                            $tempCommisionRate=$valueProd["commision_rate"];
-                            break;
+        if(count($data) > 0) {
+            foreach ($data as $value) {
+                // $i=0;
+                $totalPerorang = 0;
+                $revenuePerorang = 0;
+                $incentivePerorang = 0;
+                $carts = explode(",", $value->cart);
+                foreach ($carts as $key => $cart) {
+                    $items = explode("|", $cart);
+                    // $i++;
+                    // $tempPrice="";
+                    $tempTotal = 0;
+                    $tempCommisionRate = 0;
+                    $tempPrice = (int)$items[4];
+                    if($items[1]=="product"){
+                        foreach ($products as $valueProd) {
+                            if($valueProd["id"]==$items[0]){
+                                $items[0]=$valueProd["name"];
+                                $tempCommisionRate=$valueProd["commision_rate"];
+                                break;
+                            }
+                        }
+                    }else if($items[1]=="paket"){
+                        foreach ($bundle as $valueBundle) {
+                            if($valueBundle["id"]==$items[0]){
+                                $items[0]=$valueBundle["name"];
+                                $tempCommisionRate=$valueBundle["commision_rate"];
+                                break;
+                            }
                         }
                     }
-                }else if($items[1]=="paket"){
-                    foreach ($bundle as $valueBundle) {
-                        if($valueBundle["id"]==$items[0]){
-                            $items[0]=$valueBundle["name"];
-                            $tempCommisionRate=$valueBundle["commision_rate"];
-                            break;
-                        }
+    
+                    if($items[3]!=0){
+                        $tempTotal = $tempPrice *$items[2] * ((100-$items[3])/100);
+                        $total += $tempTotal;
+                        $totalPerorang += $tempTotal;
+                    }else{
+                        $tempTotal = $tempPrice*$items[2];
+                        $total += $tempTotal;
+                        $totalPerorang += $tempTotal;
+                    }
+    
+                    $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
+                    $incentivePerorang += ceil(($tempTotal * $tempCommisionRate)/100);
+                }
+    
+                $revenuePerorang = $totalPerorang - $incentivePerorang;
+    
+                $month = date("n", strtotime($value['created_at']));
+    
+                $mapTotalPerMonth[$month] += $totalPerorang;
+    
+                $totalpaidItem = 0;
+                $totalpoIdr = 0;
+                $totalsentIdr = 0;
+                $countPo = 0;
+                $countSent = 0;
+                $countPaid = 0;
+                if($value['status'] == 3) {
+                    $totalpaidItem = $value['nominal'];
+                    $countPaid++;
+                } else if($value['status'] == 5) {
+                    $paidArray = explode('|', $value['nominal']);
+                    $totalpaidItem = array_sum($paidArray);
+                    $countPaid++;
+                } else if($value['status'] == 0) {
+                    $totalpoIdr = $totalPerorang;
+                    $countPo++;
+                } else if($value['status'] == 2) {
+                    $totalsentIdr = $totalPerorang;
+                    $countSent++;
+                } else if($value['status'] == 1) {
+                    $totalpoIdr = $totalPerorang;
+                    $countPo++;
+                }
+                if(!isset($mapUser[$value['created_by']])) {
+                    $mapUser[$value['created_by']] = [
+                        'revenue' => $revenuePerorang,
+                        'incentive' => $incentivePerorang,
+                        'total' => $totalPerorang,
+                        'total_po' => $countPo,
+                        'total_po_idr' => $totalpoIdr,
+                        'total_sent' => $countSent,
+                        'total_sent_idr' => $totalsentIdr,
+                        'total_paid' => $countPaid,
+                        'total_paid_idr' => $totalpaidItem,
+                    ];
+                } else {
+                    $arrTemp =[
+                        'revenue' => $revenuePerorang + $mapUser[$value['created_by']]['revenue'],
+                        'incentive' => $incentivePerorang + $mapUser[$value['created_by']]['incentive'],
+                        'total' => $totalPerorang + $mapUser[$value['created_by']]['total'],
+                        'total_po' => $mapUser[$value['created_by']]['total_po'] + $countPo,
+                        'total_po_idr' => $mapUser[$value['created_by']]['total_po_idr'] + $totalpoIdr,
+                        'total_sent' => $mapUser[$value['created_by']]['total_sent'] + $countSent,
+                        'total_sent_idr' => $mapUser[$value['created_by']]['total_sent_idr'] + $totalsentIdr,
+                        'total_paid' => $mapUser[$value['created_by']]['total_paid'] + $countPaid,
+                        'total_paid_idr' => $mapUser[$value['created_by']]['total_paid_idr'] + $totalpaidItem,
+                    ];
+                    $mapUser[$value['created_by']] = $arrTemp;
+                }
+                //loop for extra charge
+                $extras = $this->extra_charge->GetList($value["id"]);
+                foreach ($extras as $keyExtra => $extraValue) {
+                    $extraVal += $extraValue["price"];
+                }
+    
+                if($value['shipping_cost']) {
+                    $totalShippingCost+= $value['shipping_cost'];
+                }
+    
+                if($value->nominal) {
+                    $payment = explode("|", $value->nominal);
+                    foreach ($payment  as $valuePayment) {
+                        $totalPaid += (int)$valuePayment;
                     }
                 }
-
-                if($items[3]!=0){
-                    $tempTotal = $tempPrice *$items[2] * ((100-$items[3])/100);
-                    $total += $tempTotal;
-                    $totalPerorang += $tempTotal;
-                }else{
-                    $tempTotal = $tempPrice*$items[2];
-                    $total += $tempTotal;
-                    $totalPerorang += $tempTotal;
-                }
-
-                $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
-                $incentivePerorang += ceil(($tempTotal * $tempCommisionRate)/100);
+    
             }
-
-            $revenuePerorang = $totalPerorang - $incentivePerorang;
-
-            $month = date("n", strtotime($value['created_at']));
-
-            $mapTotalPerMonth[$month] += $totalPerorang;
-
-            $totalpaidItem = 0;
-            $totalpoIdr = 0;
-            $totalsentIdr = 0;
-            $countPo = 0;
-            $countSent = 0;
-            $countPaid = 0;
-            if($value['status'] == 3) {
-                $totalpaidItem = $value['nominal'];
-                $countPaid++;
-            } else if($value['status'] == 5) {
-                $paidArray = explode('|', $value['nominal']);
-                $totalpaidItem = array_sum($paidArray);
-                $countPaid++;
-            } else if($value['status'] == 0) {
-                $totalpoIdr = $totalPerorang;
-                $countPo++;
-            } else if($value['status'] == 2) {
-                $totalsentIdr = $totalPerorang;
-                $countSent++;
-            } else if($value['status'] == 1) {
-                $totalpoIdr = $totalPerorang;
-                $countPo++;
-            }
-            if(!isset($mapUser[$value['created_by']])) {
-                $mapUser[$value['created_by']] = [
-                    'revenue' => $revenuePerorang,
-                    'incentive' => $incentivePerorang,
-                    'total' => $totalPerorang,
-                    'total_po' => $countPo,
-                    'total_po_idr' => $totalpoIdr,
-                    'total_sent' => $countSent,
-                    'total_sent_idr' => $totalsentIdr,
-                    'total_paid' => $countPaid,
-                    'total_paid_idr' => $totalpaidItem,
-                ];
-            } else {
-                $arrTemp =[
-                    'revenue' => $revenuePerorang + $mapUser[$value['created_by']]['revenue'],
-                    'incentive' => $incentivePerorang + $mapUser[$value['created_by']]['incentive'],
-                    'total' => $totalPerorang + $mapUser[$value['created_by']]['total'],
-                    'total_po' => $mapUser[$value['created_by']]['total_po'] + $countPo,
-                    'total_po_idr' => $mapUser[$value['created_by']]['total_po_idr'] + $totalpoIdr,
-                    'total_sent' => $mapUser[$value['created_by']]['total_sent'] + $countSent,
-                    'total_sent_idr' => $mapUser[$value['created_by']]['total_sent_idr'] + $totalsentIdr,
-                    'total_paid' => $mapUser[$value['created_by']]['total_paid'] + $countPaid,
-                    'total_paid_idr' => $mapUser[$value['created_by']]['total_paid_idr'] + $totalpaidItem,
-                ];
-                $mapUser[$value['created_by']] = $arrTemp;
-            }
-            //loop for extra charge
-            $extras = $this->extra_charge->GetList($value["id"]);
-            foreach ($extras as $keyExtra => $extraValue) {
-                $extraVal += $extraValue["price"];
-            }
-
-            if($value['shipping_cost']) {
-                $totalShippingCost+= $value['shipping_cost'];
-            }
-
-            if($value->nominal) {
-                $payment = explode("|", $value->nominal);
-                foreach ($payment  as $valuePayment) {
-                    $totalPaid += (int)$valuePayment;
-                }
-            }
-
+            $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
         }
 
-        $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
 
         foreach ($userAll as $valueUser) {
-            if(isset($mapUser[$valueUser['email']])) {
-                $mapUser[$valueUser['email']]['name'] = $valueUser['name'];
-                $mapUser[$valueUser['email']]['revenue'] = number_format($mapUser[$valueUser['email']]['revenue'],0,',','.');
-
-                $mapUser[$valueUser['email']]['incentive'] = number_format($mapUser[$valueUser['email']]['incentive'],0,',','.');
-                
-                $mapUser[$valueUser['email']]['total'] = number_format($mapUser[$valueUser['email']]['total'],0,',','.');
-
-                $mapUser[$valueUser['email']]['total_po_idr'] = number_format($mapUser[$valueUser['email']]['total_po_idr'],0,',','.');
-
-                $mapUser[$valueUser['email']]['total_sent_idr'] = number_format($mapUser[$valueUser['email']]['total_sent_idr'],0,',','.');
-
-                $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
+            if (count($data) > 0 ) {
+                if(isset($mapUser[$valueUser['email']])) {
+                    $mapUser[$valueUser['email']]['name'] = $valueUser['name'];
+                    $mapUser[$valueUser['email']]['revenue'] = number_format($mapUser[$valueUser['email']]['revenue'],0,',','.');
+    
+                    $mapUser[$valueUser['email']]['incentive'] = number_format($mapUser[$valueUser['email']]['incentive'],0,',','.');
+                    
+                    $mapUser[$valueUser['email']]['total'] = number_format($mapUser[$valueUser['email']]['total'],0,',','.');
+    
+                    $mapUser[$valueUser['email']]['total_po_idr'] = number_format($mapUser[$valueUser['email']]['total_po_idr'],0,',','.');
+    
+                    $mapUser[$valueUser['email']]['total_sent_idr'] = number_format($mapUser[$valueUser['email']]['total_sent_idr'],0,',','.');
+    
+                    $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
+                }
             }
             if($valueUser['role'] == "superuser") {
                 $totalSuperUser++;
@@ -248,7 +255,7 @@ class DashboardController extends Controller
         }
 
         $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
-        $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
+        // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
         $result['total_sales'] = number_format(ceil($total),0,',','.');
         $result['total_shipping'] = number_format($totalShippingCost,0,',','.');
         $result['total_other_cost'] = number_format($extraVal,0,',','.');
