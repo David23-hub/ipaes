@@ -187,6 +187,7 @@ class CartController extends Controller
                     $obj = [];
                     $obj["id_product"] = $temp[0];
                     $obj['stock_out'] = $temp[2];
+                    $obj['cart_id'] = $input["id_cart"];
                     $obj['desc'] = "Dari Pesanan PO ".$po_id;
                     $obj['created_at'] = date('Y-m-d H:i:s');
                     array_push($products, $obj);
@@ -198,6 +199,7 @@ class CartController extends Controller
                         $obj = [];
                         $obj["id_product"] = $temp[0];
                         $obj['stock_out'] = $temp[1];
+                        $obj['cart_id'] = $input["id_cart"];
                         $obj['desc'] = "Dari PAKET ".$listProd[0]["name"]." Pesanan PO ".$po_id;
                         $obj['created_at'] = date('Y-m-d H:i:s');
                         array_push($products, $obj);
