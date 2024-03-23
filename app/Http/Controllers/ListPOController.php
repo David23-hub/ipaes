@@ -582,7 +582,7 @@ class ListPOController extends Controller
             $data['total_paid'] = number_format($input['total'],0,',','.');
             // $data['total_paid_sum'] = number_format($input['total'] - $input['nominal'],0,',','.');
           } else {
-            $data['nominal_step'] = $input['nominal'];
+            $data['nominal_step'] = $input['data']['nominal'];
             $data['total_paid'] = number_format($input['nominal'],0,',','.');
             $data['total_num_paid_sum'] = $input['total'] - $input['nominal'];
             $data['total_paid_sum'] = number_format($input['total'] - $input['nominal'],0,',','.');

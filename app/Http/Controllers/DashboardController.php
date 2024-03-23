@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CartModel;
-use App\Models\CategoryProductModel;
+use App\Models\OtherCostModel;
 use App\Models\DokterModel;
 use App\Models\ItemModel;
 use App\Models\User;
@@ -23,6 +23,7 @@ class DashboardController extends Controller
     private $doctorModel;
     private $ekspedisi;
     private $extra_charge;
+    private $otherCost;
     private $stock;
     public function __construct()
     {
@@ -37,6 +38,7 @@ class DashboardController extends Controller
         $this->ekspedisi = new EkspedisiModel;
         $this->extra_charge = new ExtraChargeModel;
         $this->stock = new StockModel;
+        $this->otherCost = new OtherCostModel;
     }
 
     public function index()
@@ -52,6 +54,7 @@ class DashboardController extends Controller
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
+        $otherCost = $this->otherCost->GetAllByRange($formattedDateStart, $formattedDateEnd);
 
         // Log::info();
 
@@ -92,6 +95,32 @@ class DashboardController extends Controller
                 ]);
             }
         }
+
+        foreach ($otherCost as $valueOtherCost) {
+            $extraVal += $valueOtherCost;
+        }
+
+        foreach ($stockAll as $valueStock) {
+            $stockIn += $valueStock['stock_in'];
+            $stockOut += $valueStock['stock_out'];
+            if($valueStock['stock_out'] != 0) {
+                if(isset($mapProduct[$valueStock['id_product']])) {
+                    $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
+                } else {
+                    $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
+                }
+            }
+        }
+
+        foreach ($products as $valueProduct) {
+            if(isset($mapProduct[$valueProduct['id']])) {
+                $mapProduct[$valueProduct['id']]['name'] = $valueProduct['name'];
+            }
+        }
+
+        usort($mapProduct, function($a, $b) {
+            return $a['stock_out'] < $b['stock_out'];
+        });
 
         if(count($data) > 0) {
             foreach ($data as $value) {
@@ -153,10 +182,12 @@ class DashboardController extends Controller
                 $countPaid = 0;
                 if($value['status'] == 3) {
                     $totalpaidItem = $value['nominal'];
+                    $totalPaid += $value['nominal'];
                     $countPaid++;
                 } else if($value['status'] == 5) {
                     $paidArray = explode('|', $value['nominal']);
                     $totalpaidItem = array_sum($paidArray);
+                    $totalPaid += $totalpaidItem;
                     $countPaid++;
                 } else if($value['status'] == 0) {
                     $totalpoIdr = $totalPerorang;
@@ -195,21 +226,23 @@ class DashboardController extends Controller
                     $mapUser[$value['created_by']] = $arrTemp;
                 }
                 //loop for extra charge
-                $extras = $this->extra_charge->GetList($value["id"]);
-                foreach ($extras as $keyExtra => $extraValue) {
-                    $extraVal += $extraValue["price"];
-                }
+                // $extras = $this->extra_charge->GetList($value["id"]);
+                // foreach ($extras as $keyExtra => $extraValue) {
+                //     $extraVal += $extraValue["price"];
+                // }
     
                 if($value['shipping_cost']) {
                     $totalShippingCost+= $value['shipping_cost'];
                 }
     
-                if($value->nominal) {
-                    $payment = explode("|", $value->nominal);
-                    foreach ($payment  as $valuePayment) {
-                        $totalPaid += (int)$valuePayment;
-                    }
-                }
+                // if($value['status'] == 3 || $value['status'] == 5) {
+                //     if($value->nominal) {
+                //         $payment = explode("|", $value->nominal);
+                //         foreach ($payment  as $valuePayment) {
+                //             $totalPaid += (int)$valuePayment;
+                //         }
+                //     }
+                // }
     
             }
             $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
@@ -241,16 +274,6 @@ class DashboardController extends Controller
                 $totalFinanceUser++;
             } else if($valueUser['role'] == "admin") {
                 $totalAdminUser++;
-            }
-        }
-
-        foreach ($stockAll as $valueStock) {
-            $stockIn += $valueStock['stock_in'];
-            $stockOut += $valueStock['stock_out'];
-            if(isset($mapProduct[$valueStock['id_product']])) {
-                $mapProduct[$valueStock['id_product']] += $valueStock['stock_out'];
-            } else {
-                $mapProduct[$valueStock['id_product']] = $valueStock['stock_out'];
             }
         }
 
@@ -315,6 +338,7 @@ class DashboardController extends Controller
         $totalPaid = 0;
         $totalSuperUser = 0;
         $totalManagerUser = 0;
+        $totalMarketingUser = 0;
         $totalFinanceUser = 0;
         $totalAdminUser = 0;
         $stockIn = 0;
@@ -480,6 +504,8 @@ class DashboardController extends Controller
                 $totalFinanceUser++;
             } else if($valueUser['role'] == "admin") {
                 $totalAdminUser++;
+            } else if($valueUser['role'] == "marketing") {
+                $totalMarketingUser++;
             }
         }
 
@@ -510,7 +536,7 @@ class DashboardController extends Controller
         $result['total_stock_in'] = $stockIn;
         $result['total_stock_out'] = $stockOut;
         $result['map_product'] = $mapProduct;
-        $result['total_marketing_user'] = $totalManagerUser + $totalFinanceUser + $totalAdminUser;
+        $result['total_marketing_user'] = $totalMarketingUser;
         $result['total_doctor'] = count($doctorAll);
         $result['map_user'] = $mapUser;
         $count = 1;
