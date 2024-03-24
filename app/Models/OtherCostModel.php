@@ -17,7 +17,7 @@ class OtherCostModel extends Model
     }
 
     public function GetAllByRange($start,$end) {
-        return $this->whereBetween(DB::raw('DATE(created_at)'),[$start,$end]);
+        return $this->whereBetween(DB::raw('DATE(created_at)'),[$start,$end])->get();
     }
 
     public function GetList(){

@@ -56,8 +56,6 @@ class DashboardController extends Controller
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
         $otherCost = $this->otherCost->GetAllByRange($formattedDateStart, $formattedDateEnd);
 
-        // Log::info();
-
         $newDate = date('Y-m-d');
         $incentiveIdr=0;
         $total =0;
@@ -282,7 +280,7 @@ class DashboardController extends Controller
             }
         }
 
-        
+        Log::info("other cost", [$totalOtherCost]);
 
         $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);

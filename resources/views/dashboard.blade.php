@@ -313,7 +313,7 @@
   result = @json($result);
 
   // console.log(data)
-  // console.log(result)
+  console.log({result})
   //options
 
   var options = {
