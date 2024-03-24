@@ -181,6 +181,7 @@ class CartController extends Controller
             $products = [];
             $carts = $this->cart->GetItemWithoutEmail($input['id_cart']);
             $cart = explode(",",$carts[0]["cart"]);
+            $date = date('Y-m-d H:i:s');
             foreach ($cart as $value) {
                 $temp = explode("|",$value);
                 if($temp[1]=="product"){
@@ -188,8 +189,9 @@ class CartController extends Controller
                     $obj["id_product"] = $temp[0];
                     $obj['stock_out'] = $temp[2];
                     $obj['cart_id'] = $input["id_cart"];
+                    $obj['status'] = "1";
                     $obj['desc'] = "Dari Pesanan PO ".$po_id;
-                    $obj['created_at'] = date('Y-m-d H:i:s');
+                    $obj['created_at'] = $date;
                     array_push($products, $obj);
                 }else if($temp[1]=="paket"){
                     $listProd = $this->bundle->GetItem($value[0]);
@@ -200,8 +202,9 @@ class CartController extends Controller
                         $obj["id_product"] = $temp[0];
                         $obj['stock_out'] = $temp[1];
                         $obj['cart_id'] = $input["id_cart"];
+                        $obj['status'] = "1";
                         $obj['desc'] = "Dari PAKET ".$listProd[0]["name"]." Pesanan PO ".$po_id;
-                        $obj['created_at'] = date('Y-m-d H:i:s');
+                        $obj['created_at'] = $date;
                         array_push($products, $obj);
                     }
                 }
@@ -225,7 +228,5 @@ class CartController extends Controller
         return $result;
 
     }
-   
-
 
 }

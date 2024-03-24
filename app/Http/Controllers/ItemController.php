@@ -128,6 +128,7 @@ class ItemController extends Controller
             $obj["id_product"] = $temp;
             $obj['stock_in'] = $data['qty'];
             $obj['desc'] = "Penambahan Produk ".$data['name'];
+            $obj['status'] = "1";
             $obj['created_at'] = date('Y-m-d H:i:s');
             array_push($products, $obj);
 
@@ -169,6 +170,7 @@ class ItemController extends Controller
         if(count($index)==0){
             return "gagal";
         }
+        $qtyAwal = (int)$index[0]['qty'];
 
         if ($request->hasFile('img')) {
             // Image is uploaded
@@ -223,16 +225,20 @@ class ItemController extends Controller
             $products=[];
             $obj = [];
             $obj["id_product"] = $temp;
-            if($data['qty']<$index[0]["qty"]){
-                $obj['stock_out'] = $index[0]["qty"]-$data['qty'];
+
+            if((int)$input['qty']<$qtyAwal){
+                $obj['stock_out'] = $qtyAwal-$input['qty'];
+                $obj['status'] = "1";
                 $obj['desc'] = "Pengurangan Produk Saat Update Stock ".$data['name'];
-            }else if($data['qty']>$index[0]["qty"]){
-                $obj['stock_in'] = $data['qty']-$index[0]["qty"];
+            }else if((int)$input['qty']>$qtyAwal){
+                $obj['stock_in'] = $input['qty']-$qtyAwal;
+                $obj['status'] = "1";
                 $obj['desc'] = "Penambahan Produk Saat Update Stock".$data['name'];
             }
             
             $obj['created_at'] = date('Y-m-d H:i:s');
             array_push($products, $obj);
+
 
             $result = $this->stockController->insert($products);
             return $result;
