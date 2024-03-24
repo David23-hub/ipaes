@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ItemModel extends Model
 {
@@ -60,5 +61,12 @@ class ItemModel extends Model
         return $this
         ->where('id', '=', $id)
         ->update( $data);
+    }
+
+    public function UpdateQtyStock($id, $qty){
+        DB::statement('UPDATE items SET qty = qty + ? WHERE id = ?', [$qty, $id]);
+
+        return 1;
+
     }
 }
