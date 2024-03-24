@@ -52,7 +52,7 @@
     <div style="text-align: end">
       Set Period
       <div>
-        <input type="month" id="datepicker1" onchange="GetAll(event)">
+        <input type="month" id="datepicker1" onchange="GetAll(event)" value="<?=date('Y-m')?>">
       </div>
     </div>
 
@@ -309,11 +309,15 @@
   //   $("#datepicker1").datetimepicker({ dateFormat: 'yy' });
   // });
 
+  window.onload = function() {
+    $('datepicker1').val = 
+  };
+
   data = @json($data);
   result = @json($result);
 
   // console.log(data)
-  // console.log(result)
+  console.log({result})
   //options
 
   var options = {

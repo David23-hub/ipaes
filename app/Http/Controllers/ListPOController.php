@@ -22,6 +22,7 @@ class ListPOController extends Controller
     private $doctorModel;
     private $ekspedisi;
     private $extra_charge;
+    private $stockController;
     
     public function __construct()
     {
@@ -45,6 +46,7 @@ class ListPOController extends Controller
         $this->doctorModel = new DokterModel;
         $this->ekspedisi = new EkspedisiModel;
         $this->extra_charge = new ExtraChargeModel;
+        $this->stockController = new StockController;
         
     }
 
@@ -242,8 +244,8 @@ class ListPOController extends Controller
                 } else if($data['status'] == 3) {
                   $data['total_num_paid'] = $data['total_price'];
                   $data['total_paid'] = number_format($data['total_price'],0,',','.');
-                  $data['total_num_paid_sum'] = $data['total_price'];
-                  $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
+                  $data['total_num_paid_sum'] = $data['total_price'] - $data['total_num_paid'];
+                  $data['total_paid_sum'] = number_format($data['total_num_paid_sum'],0,',','.');
                 } else {
                   $sum = 0;
                   $data['total_num_paid'] = $sum;
@@ -261,14 +263,18 @@ class ListPOController extends Controller
                 'new_date' => $newDate
               ]);
               if(strtotime($data['due_date']) <= strtotime($newDate)) {
-                $data['status'] = 4;
-                $data['cancel_at'] = $data['due_date'];
-                $data['cancel_by'] = "system";
-                $data['cancel_reason'] = "due date is passed";
+                // $data['status'] = 4;
+
+                // $data['cancel_at'] = $data['due_date'];
+                // $data['cancel_by'] = "system";
+                // $data['cancel_reason'] = "due date is passed";
+                $data['status_due_date'] = true;
+              } else {
+                $data['status_due_date'] = false;
               }
               
             }
-            return view('master.detailTransaction')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
+            return view('master.detailPO')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
             // return $dataCart;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
@@ -382,14 +388,14 @@ class ListPOController extends Controller
               } else if($data['status'] == 3) {
                 $data['total_num_paid'] = $data['total_price'];
                 $data['total_paid'] = number_format($data['total_price'],0,',','.');
-                $data['total_num_paid_sum'] = $data['total_price'];
-                $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
+                $data['total_num_paid_sum'] = $data['total_price'] - $data['total_num_paid'];
+                $data['total_paid_sum'] = number_format($data['total_num_paid_sum'],0,',','.');
               } else {
-                $sum = 0;
-                $data['total_num_paid'] = $sum;
-                $data['total_paid'] = number_format($sum,0,',','.');
-                $data['total_num_paid_sum'] = $data['total_price'];
-                $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
+                // $sum = 0;
+                // $data['total_num_paid'] = $sum;
+                // $data['total_paid'] = number_format($sum,0,',','.');
+                // $data['total_num_paid_sum'] = $data['total_price'];
+                // $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
               }
             } 
 
@@ -401,10 +407,14 @@ class ListPOController extends Controller
                 'new_date' => $newDate
               ]);
               if(strtotime($data['due_date']) <= strtotime($newDate)) {
-                $data['status'] = 4;
-                $data['cancel_at'] = $data['due_date'];
-                $data['cancel_by'] = "system";
-                $data['cancel_reason'] = "due date is passed";
+                // $data['status'] = 4;
+
+                // $data['cancel_at'] = $data['due_date'];
+                // $data['cancel_by'] = "system";
+                // $data['cancel_reason'] = "due date is passed";
+                $data['status_due_date'] = true;
+              } else {
+                $data['status_due_date'] = false;
               }
           }
           return view('master.detailTransaction')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
@@ -497,7 +507,8 @@ class ListPOController extends Controller
             $input['data']['cancel_by'] = Auth::user()->name;
             $input['data']['cancel_at'] = date('Y-m-d H:i:s');
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
-            return "sukses";
+            $res = $this->stockController->cancelPO($request['data']['id']);
+            return $res;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
             Log::error($th);
@@ -603,8 +614,20 @@ class ListPOController extends Controller
     public function stepPaymentOrder(Request $request) {
       try {
         $input = $request->all();
+        Log::info('nominal', [
+          'nominal_paid' => $input['nominal_paid'],
+          'nominal_payment' => $input['data']['nominal'],
+          'total_num_paid_sum' => $input['total_num_paid_sum']
+        ]);
+        if($input['nominal_paid'] > $input['total_num_paid_sum'] ) {
+          $input['nominal_paid'] = $input['total_num_paid_sum'];
+        }
+        $nominalPaid = $input['nominal_paid'] + $input['nominal_payment_input'];
+        $nominalPaidAll = $input['total_num_paid_sum'] - $input['nominal_payment_input'];
         $this->cart->UpdateItem($input['data']['id'], $input['data']);
         $data['message'] = "sukses";
+        $data['nominal'] = number_format($nominalPaid,0,',','.');
+        $data['nominal_num'] = number_format($nominalPaidAll,0,',','.');
         return $data;
       }catch(\Throwable $th) {
           Log::error("error di throwable");
@@ -619,7 +642,8 @@ class ListPOController extends Controller
         $input = $request->all();
         $this->cart->UpdateItem($input['data']['id'], $input['data']);
         $data['message'] = "sukses";
-        return $data;
+        $data['nominal'] = number_format($input['nominal_paid'],0,',','.');
+        $data['nominal_num'] = number_format($input['total_num_paid_sum'],0,',','.');
         return $data;
       }catch(\Throwable $th) {
           Log::error("error di throwable");
