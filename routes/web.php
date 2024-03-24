@@ -28,6 +28,7 @@ Route::get('/listUser', [App\Http\Controllers\UserController::class, 'index'])->
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::post('/dashboard/getlist', [App\Http\Controllers\DashboardController::class, 'getAll'])->name('dashboardGetlist')->middleware('auth');
 
 // items
 Route::get('/listItem', [App\Http\Controllers\ItemController::class, 'index'])->name('homelist')->middleware('auth');
