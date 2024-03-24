@@ -50,7 +50,7 @@ class DashboardController extends Controller
         $formattedDateStart = mktime(0, 0, 0, 1, 1, date("Y"));
         $formattedDateStart = date("Y-m-d H:i:s", $formattedDateStart);
 
-        $data = $this->cart->GetListJoinDoctorAndDateWithUser($formattedDateStart,$formattedDateEnd,"all");
+        $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -62,12 +62,14 @@ class DashboardController extends Controller
         $incentiveIdr=0;
         $total =0;
         $totalShippingCost = 0;
+        $totalOtherCost = 0;
         $extraVal = 0;
         $totalPaid = 0;
         $totalSuperUser = 0;
         $totalManagerUser = 0;
         $totalFinanceUser = 0;
         $totalAdminUser = 0;
+        $totalMarketingUser = 0;
         $stockIn = 0;
         $stockOut = 0;
         $mapProduct = [];
@@ -97,7 +99,8 @@ class DashboardController extends Controller
         }
 
         foreach ($otherCost as $valueOtherCost) {
-            $extraVal += $valueOtherCost;
+            $extraVal += $valueOtherCost['price'];
+            $totalOtherCost += $valueOtherCost['price'];
         }
 
         foreach ($stockAll as $valueStock) {
@@ -226,10 +229,10 @@ class DashboardController extends Controller
                     $mapUser[$value['created_by']] = $arrTemp;
                 }
                 //loop for extra charge
-                // $extras = $this->extra_charge->GetList($value["id"]);
-                // foreach ($extras as $keyExtra => $extraValue) {
-                //     $extraVal += $extraValue["price"];
-                // }
+                $extras = $this->extra_charge->GetList($value["id"]);
+                foreach ($extras as $extraValue) {
+                    $extraVal += $extraValue["price"];
+                }
     
                 if($value['shipping_cost']) {
                     $totalShippingCost+= $value['shipping_cost'];
@@ -274,15 +277,19 @@ class DashboardController extends Controller
                 $totalFinanceUser++;
             } else if($valueUser['role'] == "admin") {
                 $totalAdminUser++;
+            } else if($valueUser['role'] == "marketing") {
+                $totalMarketingUser++;
             }
         }
+
+        
 
         $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
         $result['total_sales'] = number_format(ceil($total),0,',','.');
         $result['total_shipping'] = number_format($totalShippingCost,0,',','.');
-        $result['total_other_cost'] = number_format($extraVal,0,',','.');
-        $totalRevenue = $total - ceil($incentiveIdr);
+        $result['total_other_cost'] = number_format($totalOtherCost,0,',','.');
+        $totalRevenue = ($total + $extraVal) - ceil($totalShippingCost);
         $result['total_revenue'] = number_format($totalRevenue,0,',','.');
         $result['total_paid'] = number_format($totalPaid,0,',','.');
         $result['total_po'] = count($data);
@@ -295,7 +302,7 @@ class DashboardController extends Controller
         $result['total_stock_out'] = $stockOut;
         $result['map_product'] = $mapProduct;
         $result['total_salary'] = 0;
-        $result['total_marketing_user'] = $totalManagerUser + $totalFinanceUser + $totalAdminUser;
+        $result['total_marketing_user'] = $totalMarketingUser;
         $result['total_doctor'] = count($doctorAll);
         $result['map_user'] = $mapUser;
         $count = 1;
@@ -309,13 +316,14 @@ class DashboardController extends Controller
     public function getAll(Request $request)
     {
         $input = $request->all();
+        $user = auth()->user();
         $products = $this->model->GetAll();
         $bundle=$this->bundle->GetAll();
         $endDate = strtotime($input['end_date']);
         $startDate = strtotime($input['start_date']);
         $formattedDateEnd = date("Y-m-d H:i:s", $endDate);
         $formattedDateStart = date("Y-m-d H:i:s", $startDate);
-        $data = $this->cart->GetListJoinDoctorAndDateWithUser($formattedDateStart,$formattedDateEnd,"all");
+        $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -335,10 +343,12 @@ class DashboardController extends Controller
         $totalShippingCost = 0;
         $extraVal = 0;
         $totalPaid = 0;
+        $totalOtherCost = 0;
         $totalSuperUser = 0;
         $totalManagerUser = 0;
         $totalFinanceUser = 0;
         $totalAdminUser = 0;
+        $totalMarketingUser = 0;
         $stockIn = 0;
         $stockOut = 0;
         $mapProduct = [];
@@ -368,7 +378,8 @@ class DashboardController extends Controller
         }
 
         foreach ($otherCost as $valueOtherCost) {
-            $extraVal += $valueOtherCost;
+            $extraVal += $valueOtherCost['price'];
+            $totalOtherCost += $valueOtherCost['price'];
         }
 
         foreach ($stockAll as $valueStock) {
@@ -497,10 +508,10 @@ class DashboardController extends Controller
                     $mapUser[$value['created_by']] = $arrTemp;
                 }
                 //loop for extra charge
-                // $extras = $this->extra_charge->GetList($value["id"]);
-                // foreach ($extras as $keyExtra => $extraValue) {
-                //     $extraVal += $extraValue["price"];
-                // }
+                $extras = $this->extra_charge->GetList($value["id"]);
+                foreach ($extras as $extraValue) {
+                    $extraVal += $extraValue["price"];
+                }
     
                 if($value['shipping_cost']) {
                     $totalShippingCost+= $value['shipping_cost'];
@@ -545,6 +556,8 @@ class DashboardController extends Controller
                 $totalFinanceUser++;
             } else if($valueUser['role'] == "admin") {
                 $totalAdminUser++;
+            } else if($valueUser['role'] == "marketing") {
+                $totalMarketingUser++;
             }
         }
 
@@ -552,8 +565,8 @@ class DashboardController extends Controller
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
         $result['total_sales'] = number_format(ceil($total),0,',','.');
         $result['total_shipping'] = number_format($totalShippingCost,0,',','.');
-        $result['total_other_cost'] = number_format($extraVal,0,',','.');
-        $totalRevenue = $total - ceil($incentiveIdr);
+        $result['total_other_cost'] = number_format($totalOtherCost,0,',','.');
+        $totalRevenue = ($total + $extraVal) - ceil($totalShippingCost);
         $result['total_revenue'] = number_format($totalRevenue,0,',','.');
         $result['total_paid'] = number_format($totalPaid,0,',','.');
         $result['total_po'] = count($data);
@@ -566,7 +579,7 @@ class DashboardController extends Controller
         $result['total_stock_in'] = $stockIn;
         $result['total_stock_out'] = $stockOut;
         $result['map_product'] = $mapProduct;
-        $result['total_marketing_user'] = $totalManagerUser + $totalFinanceUser + $totalAdminUser;
+        $result['total_marketing_user'] = $totalMarketingUser;
         $result['total_doctor'] = count($doctorAll);
         $result['map_user'] = $mapUser;
         $count = 1;

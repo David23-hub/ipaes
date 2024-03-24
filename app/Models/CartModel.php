@@ -114,6 +114,34 @@ class CartModel extends Model
         }
     }
 
+    public function GetListJoinDoctorAndDateWithUserAndManagementOrder($start,$end,$roleUser, $listUser) {
+        if($roleUser == "manager"){
+            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
+            ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+            ->where('cart.management_order', '0')
+            ->where('cart.deleted_by',null)
+            ->orderBy('cart.created_by', 'desc')
+            ->get();
+        }else if($roleUser=="superuser" || $roleUser == "admin"){
+            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
+            ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+            ->where('cart.deleted_by',null)
+            ->orderBy('cart.created_by', 'desc')
+            ->get();
+        } else {
+            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
+            ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+            ->whereIn('cart.created_by', $listUser)
+            ->where('cart.management_order', '0')
+            ->where('cart.deleted_by',null)
+            ->orderBy('cart.created_by', 'desc')
+            ->get();
+        }
+    }
+
     public function GetListJoinDoctorWithId($id) {
         return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('cart.id', '=', $id)->select('cart.*', 'dokter.name as name', 'dokter.clinic as clinic', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'dokter.address as address', 'dokter.information as information' )->get();
     }
