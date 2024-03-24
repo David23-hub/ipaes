@@ -12,6 +12,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 class StockController extends Controller
 {
     private $model;
+
     private $item;
     public function __construct()
     {
@@ -43,11 +44,83 @@ class StockController extends Controller
         try {
             $temp = $this->model->AddItems($data);
 
-            if($temp){
+            if(!$temp){
+                return "Gagal Menambahkan di reporting stock!! Hubungi admin untuk mencocokan kembali jumlah stock product dan reporting";
+            }
+
+            $result = "Gagal Update Stock Product Dengan id: ";
+            foreach ($data as $value) {
+                $res = 0;
+                if(isset($value["stock_in"]) &&$value["stock_in"]!=0){
+                    $res = $this->item->UpdateQtyStock($value['id_product'],$value["stock_in"]);
+                }else if(isset($value["stock_out"]) &&$value["stock_out"]!=0){
+                    $res = $this->item->UpdateQtyStock($value['id_product'],($value["stock_out"] * -1));
+                }
+
+                if ($res != 1){
+                    $result .= $value["product_id"].", ";
+                }
+            }
+
+            if($result == "Gagal Update Stock Product Dengan id: "){
                 return "sukses";
-            }else{
+            }
+            
+            return $result;
+        } catch (\Throwable $th) {
+            return "Gagal mengurangi stock atau menambahkan reporting stock! Hubungi developer untuk mencocokan data kembali!";
+        }
+    }
+
+    public function cancelPO(Request $request){
+        $input = $request->all();
+
+        $products = [];
+        try {
+            $datas = $this->model->GetItems($input["id"],1);
+
+            if(count($datas)==0){
+                return "Data Tidak Ditemukan didalam Stock";
+            }
+
+
+            foreach ($datas as $value) {
+                $obj = [];
+                $obj["id_product"] = $value->id_product;
+                $obj['stock_in'] = $value->stock_out;
+                $obj['cart_id'] = $value->cart_id;
+                $obj['desc'] = "CANCEL ORDER ".$value->desc;
+                $obj['status'] = "0";
+                $obj['created_at'] = date('Y-m-d H:i:s');
+                array_push($products, $obj);
+            }
+            
+
+            $temp = $this->model->AddItems($products);
+
+            if(!$temp){
                 return "Gagal mengurangi stock!! Tolong di cek lagi bagian stock!";
             }
+
+
+            $result = "Gagal Update Stock Product Dengan id: ";
+            foreach ($datas as $value) {
+                $res = 0;
+
+                $res = $this->item->UpdateQtyStock($value['id_product'],($value["stock_out"]));
+
+                if ($res != 1){
+                    $result .= $value["product_id"].", ";
+                }
+            }
+
+            if($result == "Gagal Update Stock Product Dengan id: "){
+                return "sukses";
+            }
+            
+            return $result;
+
+
         } catch (\Throwable $th) {
             return "Gagal mengurangi stock! Tolong di cek lagi bagian stock!";
         }

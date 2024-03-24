@@ -43,4 +43,8 @@ class StockModel extends Model
     public function AddItems($data){
         return StockModel::insert($data);        
     }
+
+    public function GetItems($id,$status){
+        return StockModel::all()->where('cart_id',$id)->where('status',$status);
+    }
 }
