@@ -93,8 +93,8 @@ class PackageController extends Controller
         Log::info("masuk", ['message masuk sini']);
         $category = $this->modelCategoryProduct->GetList();
         $data = $this->model->GetItem($input['id']);
+        $product = $this->modelProduct->GetList();
         $result = [];
-
 
         foreach ($data as $key => $index) {
             foreach ($category as $key => $cat) {
@@ -105,9 +105,29 @@ class PackageController extends Controller
                     }
                 }
             }
+
+            $resultProduct = [];
+            $explodeProduct = explode(",", $index['product']);
+            foreach ($explodeProduct as $valueExplode) {
+                $prod = explode("|", $valueExplode);
+                $id = $prod[0];
+                $stock = $prod[1];
+                foreach ($product as $valueProduct) {
+                    if($id == $valueProduct['id']) {
+                        $pushArr = [
+                            'name' => $valueProduct['name'],
+                            'stock' => $stock,
+                            'img' => $valueProduct['img']
+                        ];
+                        array_push($resultProduct, $pushArr);
+                        break;
+                    }
+                }
+            }
+
+            $index['product'] = $resultProduct;
             array_push($result,$index);
         }
-
 
         return $result[0];
     }

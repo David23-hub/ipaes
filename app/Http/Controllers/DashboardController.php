@@ -309,15 +309,11 @@ class DashboardController extends Controller
     public function getAll(Request $request)
     {
         $input = $request->all();
-        $user = auth()->user();
         $products = $this->model->GetAll();
         $bundle=$this->bundle->GetAll();
         $endDate = strtotime($input['end_date']);
         $startDate = strtotime($input['start_date']);
         $formattedDateEnd = date("Y-m-d H:i:s", $endDate);
-        // Log::info("end date", [$formattedDateEnd]);
-        // return;
-        // $formattedDateStart = mktime(0, 0, 0, 1, 1, date("Y"));
         $formattedDateStart = date("Y-m-d H:i:s", $startDate);
         $data = $this->cart->GetListJoinDoctorAndDateWithUser($formattedDateStart,$formattedDateEnd,"all");
         $userAll = $this->user->GetUserAll();

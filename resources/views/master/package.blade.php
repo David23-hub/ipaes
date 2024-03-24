@@ -152,8 +152,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-        <div class="modal-body">
-          
+        <div class="modal-body">  
           <div class="form-group">
             <label for="nama_detail">Nama</label>
             <input type="nama_detail" class="form-control" id="nama_detail"  placeholder="Masukkan Nama" disabled>
@@ -218,8 +217,12 @@
             <label for="updated_by_detail">Diubah Oleh</label>
             <input type="updated_by_detail" class="form-control" id="updated_by_detail"  placeholder="Masukkan Status" disabled>
           </div>
+          <div>
+            <strong>List Product</strong>
+            <div id="list-product">
+            </div>
+          </div>
         </div>
-
     </div>
   </div>
 </div>
@@ -423,6 +426,7 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
+          console.log({data})
           $('#id_detail').val(data.id)
           $('#nama_detail').val(data.name)
           $('#qty_detail').val(data.qty)
@@ -443,12 +447,41 @@
           $('#created_by_detail').val(FormatTimeStamp(data.created_by,data.created_at))
           $('#updated_by_detail').val(FormatTimeStamp(data.updated_by,data.updated_at))
           $('#modalDetail').modal("show")
+          ListProduct (data['product'])
         },
         error: function (result, status, err) {
           alert(err)
         }
       });
     };
+
+    function ListProduct (product) { 
+      let htmlElement = `
+      <table class="table table-stripped">
+        <thead>
+          <tr>
+            <th scope="col"> Name Product </th>
+            <th scope="col"> Stock </th>
+          </tr>
+        </thead>
+        <tbody>`
+      for (let i = 0; i < product.length; i++) {
+        const element = product[i];
+        htmlElement += `
+          <tr>
+            <td> ${element['name']} </td>
+            <td> ${element['stock']} </td>
+          </tr>
+        `
+      }
+
+      htmlElement += `
+        </tbody>
+      </table>
+      `
+
+      document.querySelector(`#list-product`).innerHTML = htmlElement      
+    }
 
     function deleteItem(id){
       $.ajax({
