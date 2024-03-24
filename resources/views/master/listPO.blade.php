@@ -226,9 +226,8 @@
             // alert(urlDetail)
             // console.log("detailPO/" + item["id"], "url")
             let detailButton = ``
-            if(user['role'] == "superuser" || user['role'] == "admin") {
-              detailButton = `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
-            } 
+            detailButton = `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
+            
 
             dataTable.row.add([
                 item['name'],
@@ -309,9 +308,7 @@
             }
 
             let detailButton = ``
-            if(user['role'] == "superuser" || user['role'] == "admin") {
-              detailButton = `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
-            } 
+            detailButton = `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
 
             dataTable2.row.add([
                 item['po_id'],

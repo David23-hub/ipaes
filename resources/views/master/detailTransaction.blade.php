@@ -1234,6 +1234,10 @@
             </div>
           `
         }
+
+        if (dataCartDokter[i]['status_due_date'] && dataCartDokter[i].status != 5 && dataCartDokter[i].status != 3) {
+          document.querySelector(`#button_status_update${i}`).innerHTML = ``
+        }
       }
     }
 

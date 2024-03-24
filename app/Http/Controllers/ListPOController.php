@@ -22,6 +22,7 @@ class ListPOController extends Controller
     private $doctorModel;
     private $ekspedisi;
     private $extra_charge;
+    private $stockController;
     
     public function __construct()
     {
@@ -45,6 +46,7 @@ class ListPOController extends Controller
         $this->doctorModel = new DokterModel;
         $this->ekspedisi = new EkspedisiModel;
         $this->extra_charge = new ExtraChargeModel;
+        $this->stockController = new StockController;
         
     }
 
@@ -261,10 +263,14 @@ class ListPOController extends Controller
                 'new_date' => $newDate
               ]);
               if(strtotime($data['due_date']) <= strtotime($newDate)) {
-                $data['status'] = 4;
-                $data['cancel_at'] = $data['due_date'];
-                $data['cancel_by'] = "system";
-                $data['cancel_reason'] = "due date is passed";
+                // $data['status'] = 4;
+
+                // $data['cancel_at'] = $data['due_date'];
+                // $data['cancel_by'] = "system";
+                // $data['cancel_reason'] = "due date is passed";
+                $data['status_due_date'] = true;
+              } else {
+                $data['status_due_date'] = false;
               }
               
             }
@@ -401,10 +407,14 @@ class ListPOController extends Controller
                 'new_date' => $newDate
               ]);
               if(strtotime($data['due_date']) <= strtotime($newDate)) {
-                $data['status'] = 4;
-                $data['cancel_at'] = $data['due_date'];
-                $data['cancel_by'] = "system";
-                $data['cancel_reason'] = "due date is passed";
+                // $data['status'] = 4;
+
+                // $data['cancel_at'] = $data['due_date'];
+                // $data['cancel_by'] = "system";
+                // $data['cancel_reason'] = "due date is passed";
+                $data['status_due_date'] = true;
+              } else {
+                $data['status_due_date'] = false;
               }
           }
           return view('master.detailTransaction')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
@@ -497,7 +507,8 @@ class ListPOController extends Controller
             $input['data']['cancel_by'] = Auth::user()->name;
             $input['data']['cancel_at'] = date('Y-m-d H:i:s');
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
-            return "sukses";
+            $res = $this->stockController->cancelPO($request['data']['id']);
+            return $res;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
             Log::error($th);

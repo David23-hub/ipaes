@@ -1248,6 +1248,10 @@
             </div>
           `
         }
+
+        if (dataCartDokter[i]['status_due_date'] && dataCartDokter[i].status != 5 && dataCartDokter[i].status != 3) {
+          document.querySelector(`#button_status_update${i}`).innerHTML = ``
+        }
       }
     }
 
@@ -1876,7 +1880,7 @@
             dataCartDokter[key].status = 4
             checkForButtonStatus()
             AlertSuccess()
-          }else if(data!='gagal'|| data!="gagal2"){
+          }else if(data!='gagal'&& data!="gagal2"){
             AlertWarningWithMsg(data)
           }else{
             AlertError()

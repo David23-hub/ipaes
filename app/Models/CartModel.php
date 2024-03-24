@@ -134,7 +134,7 @@ class CartModel extends Model
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
             ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
             ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
-            ->whereIn('cart.created_by', $listUser)
+            ->where('cart.created_by', $listUser)
             ->where('cart.management_order', '0')
             ->where('cart.deleted_by',null)
             ->orderBy('cart.created_by', 'desc')
@@ -151,7 +151,7 @@ class CartModel extends Model
     }
 
     public function GetListJoinDoctorWithDoctorIdAndEmail($id, $role, $email) {
-        if($role == "superuser" || $role == "admin") {
+        if($role == "superuser" || $role == "admin" || $role == "manager") {
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->select('cart.*' )->get();        
         } else {
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->where('cart.created_by', '=', $email)->select('cart.*' )->get();

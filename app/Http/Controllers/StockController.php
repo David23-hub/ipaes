@@ -72,12 +72,10 @@ class StockController extends Controller
         }
     }
 
-    public function cancelPO(Request $request){
-        $input = $request->all();
-
+    public function cancelPO(string $id){
         $products = [];
         try {
-            $datas = $this->model->GetItems($input["id"],1);
+            $datas = $this->model->GetItems($id,1);
 
             if(count($datas)==0){
                 return "Data Tidak Ditemukan didalam Stock";
