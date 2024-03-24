@@ -157,18 +157,14 @@
             <label for="nama_detail">Nama</label>
             <input type="nama_detail" class="form-control" id="nama_detail"  placeholder="Masukkan Nama" disabled>
           </div>
-          <div class="form-group">
-            <label for="category_product_detail">Category Product</label>
-            <input type="category_product_detail" class="form-control" id="category_product_detail"  placeholder="Masukkan Status" disabled>
-          </div>
-          <div class="form-group">
+          {{-- <div class="form-group">
             <label for="qty_detail">Stock</label>
             <input type="qty_detail" class="form-control" id="qty_detail"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
-          </div>
-          <div class="form-group">
+          </div> --}}
+          {{-- <div class="form-group">
             <label for="unit_detail">Unit Product</label>
             <input type="unit_detail" class="form-control" id="unit_detail"  placeholder="Masukkan Status" disabled>
-          </div>
+          </div> --}}
           <div class="form-group">
             <label for="price_detail">Price (ex: 100000)</label>
             
@@ -179,7 +175,7 @@
               <input type="price_detail" class="form-control" id="price_detail"  placeholder="Masukkan Harga Product" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
             </div>
           </div>
-          <div class="form-group">
+          {{-- <div class="form-group">
             <label for="presentation_detail">Presentation (ex: 2.5)</label>
             <div class="input-group mb-2">
               <input type="presentation_detail" class="form-control" id="presentation_detail"  placeholder="Masukkan Presentasi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');" disabled>
@@ -187,7 +183,7 @@
                 <div class="input-group-text">%</div>
               </div>
             </div>
-          </div>
+          </div> --}}
           <div class="form-group">
             <label for="commision_rate_detail">Commission Rate (ex: 2.5)</label>
             <div class="input-group mb-2">
@@ -197,10 +193,10 @@
               </div>
             </div>
           </div>
-          <div class="form-group">
+          {{-- <div class="form-group">
             <label for="mini_desc_detail">Mini Description</label>
             <textarea type="mini_desc_detail" class="form-control" id="mini_desc_detail" rows="1"  placeholder="Masukkan Informasi Mini" disabled></textarea>
-          </div>
+          </div> --}}
           <div class="form-group">
             <label for="desc_detail">Description</label>
             <textarea type="desc_detail" class="form-control" id="desc_detail" rows="4"  placeholder="Masukkan Informasi" disabled></textarea>
@@ -285,7 +281,7 @@
 
     function resetModalInput() {
       document.getElementById('nama_add').value = '';
-      document.getElementById('category_product_add').value = '';
+      // document.getElementById('category_product_add').value = '';
       document.getElementById('desc_add').value = '';
       document.getElementById('price_add').value = '';
       document.getElementsByName('input-data').value = '';
@@ -357,8 +353,9 @@
     $('#add_btn').on('click', function(e) {
       name = $("#nama_add").val()
       status = ""
-      if ($('#status_add').is(":checked"))
-      {
+      console.log($('#status_add').is(":checked"), "checked")
+      // return
+      if ($('#status_add').is(":checked")){
         // it is checked
         status = "1"
       } else {
@@ -436,12 +433,8 @@
             $('#status_detail').val("Active")
           }
 
-          $("#category_product_detail").val(data.category)
-          $("#unit_detail").val(data.unit)
           $("#price_detail").val(data.price)
-          $("#presentation_detail").val(data.presentation)
           $("#commision_rate_detail").val(data.commision_rate)
-          $("#mini_desc_detail").val(data.mini_desc)
           $("#desc_detail").val(data.desc)
 
           $('#created_by_detail').val(FormatTimeStamp(data.created_by,data.created_at))

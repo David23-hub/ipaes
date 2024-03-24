@@ -157,6 +157,7 @@ class PackageController extends Controller
             'name' => $input['name'],
             'product' => $input['product'],
             // 'category_product' => $input['category_product'],
+            'status' => $input['status'],
             'price' => $input['price'],
             'commision_rate' => $input['commision_rate'],
             'desc' => $input['desc'],

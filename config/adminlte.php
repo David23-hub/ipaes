@@ -321,134 +321,134 @@ return [
         //     'label'       => 4,
         //     'label_color' => 'success',
         // ],
-        // ['header' => 'MAIN MENU',],
-        // [
-        //     'text' => 'Home',
-        //     'url'  => 'home',
-        //     'icon' => 'fas fa-fw fa-home',
-        // ],
-        // [
-        //     'text' => 'Dashboard',
-        //     'url'  => 'dashboard',
-        //     'icon' => 'fas fa-fw fa-user',
-        // ],
-        // [
-        //     'text' => 'Sales',
-        //     'icon'=> 'fas fa-user-tie',
-        //     'submenu'=>[
-        //         [
-        //             'text'=>'Cart',
-        //             'icon'=>'fas fa-shopping-cart',
-        //             'icon_color'=>'cyan',
-        //             'url'=>'viewCart',
-        //         ],
-        //         [
-        //             'text'=>'List Product',
-        //             'icon'=>'fas fa-boxes',
-        //             'icon_color'=>'cyan',
-        //             'url'=>'listProduct',
-        //         ],
-        //         [
-        //             'text'=>'List PO',
-        //             'icon'=>'fas fa-boxes',
-        //             'icon_color'=>'cyan',
-        //             'url'=>'listPO',
-        //         ],
-        //     ],
-        // ],
-        // [
-        //     'text' => 'Master Data',
-        //     'icon'    => 'fas fa-fw fa-share',
-        //     'submenu' => [
-        //         [
-        //             'text' => "Product",
-        //             'icon_color' => 'red',
-        //             'url' => "listItem",
-        //         ],
-        //         [
-        //             'text' => "Ekspedisi",
-        //             'icon_color' => 'red',
-        //             'url' => "listEkspedisi",
-        //         ],
-        //         [
-        //             'text' => "Dokter",
-        //             'icon_color' => 'red',
-        //             'url' => "listDokter",
-        //         ],
-        //         // [
-        //         //     'text' => "Category Product",
-        //         //     'icon_color' => 'red',
-        //         //     'url' => "listCategoryProduct",
-        //         // ],
-        //         [
-        //             'text' => "Product Bundle",
-        //             'icon_color' => 'red',
-        //             'url' => 'listProductBundle'
-        //         ]
-        //         // [
-        //         //     'text' => "add",
-        //         //     'icon_color' => 'yellow',
-        //         //     'url' => "#",
-        //         // ],
-        //         // [
-        //         //     'text' => "delete",
-        //         //     'icon_color' => 'red',
-        //         //     'url' => "#",
-        //         // ],
-        //     ]
-        // ],
-        // [
-        //     'text' => 'User Management',
-        //     'icon'    => 'fas fa-fw fa-users',
-        //     'submenu' => [
-        //         [
-        //             'text' => "Users",
-        //             'icon'    => 'fas fa-fw fa-child',
-        //             // 'icon_color' => 'red',
-        //             'url' => "listUser",
-        //         ],
-        //     ]
-        // ],
-        // [
-        //     'text' => 'Reporting',
-        //     'icon'    => 'fas fa-fw fa-clipboard-list',
-        //     'submenu' => [
-        //         [
-        //             'text' => "Sales",
-        //             'icon'    => 'fas fa-fw fa-user-tag',
-        //             'icon_color' => 'green',
-        //             'url' => "sales/report",
-        //         ],
-        //         [
-        //             'text' => "Insentive",
-        //             'icon'    => 'fas fa-fw fa-user-tag',
-        //             'icon_color' => 'green',
-        //             'url' => "incentive/report",
-        //         ],
-        //         [
-        //             'text' => "Stock",
-        //             'icon'    => 'fas fa-fw fa-user-tag',
-        //             'icon_color' => 'green',
-        //             'url' => "stock/report",
-        //         ],
-        //     ]
-        // ],
-        // ['header' => 'labels'],
-        // [
-        //     'text'       => 'important',
-        //     'icon_color' => 'red',
-        //     'url'        => '#',
-        // ],
-        // [
-        //     'text'       => 'warning',
-        //     'icon_color' => 'yellow',
-        //     'url'        => '#',
-        // ],
-        // [
-        //     'text'       => 'information',
-        //     'icon_color' => 'cyan',
-        //     'url'        => '#',
-        // ],
+        ['header' => 'MAIN MENU',],
+        [
+            'text' => 'Home',
+            'url'  => 'home',
+            'icon' => 'fas fa-fw fa-home',
+        ],
+        [
+            'text' => 'Dashboard',
+            'url'  => 'dashboard',
+            'icon' => 'fas fa-fw fa-user',
+        ],
+        [
+            'text' => 'Sales',
+            'icon'=> 'fas fa-user-tie',
+            'submenu'=>[
+                [
+                    'text'=>'Cart',
+                    'icon'=>'fas fa-shopping-cart',
+                    'icon_color'=>'cyan',
+                    'url'=>'viewCart',
+                ],
+                [
+                    'text'=>'List Product',
+                    'icon'=>'fas fa-boxes',
+                    'icon_color'=>'cyan',
+                    'url'=>'listProduct',
+                ],
+                [
+                    'text'=>'List PO',
+                    'icon'=>'fas fa-boxes',
+                    'icon_color'=>'cyan',
+                    'url'=>'listPO',
+                ],
+            ],
+        ],
+        [
+            'text' => 'Master Data',
+            'icon'    => 'fas fa-fw fa-share',
+            'submenu' => [
+                [
+                    'text' => "Product",
+                    'icon_color' => 'red',
+                    'url' => "listItem",
+                ],
+                [
+                    'text' => "Ekspedisi",
+                    'icon_color' => 'red',
+                    'url' => "listEkspedisi",
+                ],
+                [
+                    'text' => "Dokter",
+                    'icon_color' => 'red',
+                    'url' => "listDokter",
+                ],
+                // [
+                //     'text' => "Category Product",
+                //     'icon_color' => 'red',
+                //     'url' => "listCategoryProduct",
+                // ],
+                [
+                    'text' => "Product Bundle",
+                    'icon_color' => 'red',
+                    'url' => 'listProductBundle'
+                ]
+                // [
+                //     'text' => "add",
+                //     'icon_color' => 'yellow',
+                //     'url' => "#",
+                // ],
+                // [
+                //     'text' => "delete",
+                //     'icon_color' => 'red',
+                //     'url' => "#",
+                // ],
+            ]
+        ],
+        [
+            'text' => 'User Management',
+            'icon'    => 'fas fa-fw fa-users',
+            'submenu' => [
+                [
+                    'text' => "Users",
+                    'icon'    => 'fas fa-fw fa-child',
+                    // 'icon_color' => 'red',
+                    'url' => "listUser",
+                ],
+            ]
+        ],
+        [
+            'text' => 'Reporting',
+            'icon'    => 'fas fa-fw fa-clipboard-list',
+            'submenu' => [
+                [
+                    'text' => "Sales",
+                    'icon'    => 'fas fa-fw fa-user-tag',
+                    'icon_color' => 'green',
+                    'url' => "sales/report",
+                ],
+                [
+                    'text' => "Insentive",
+                    'icon'    => 'fas fa-fw fa-user-tag',
+                    'icon_color' => 'green',
+                    'url' => "incentive/report",
+                ],
+                [
+                    'text' => "Stock",
+                    'icon'    => 'fas fa-fw fa-user-tag',
+                    'icon_color' => 'green',
+                    'url' => "stock/report",
+                ],
+            ]
+        ],
+        ['header' => 'labels'],
+        [
+            'text'       => 'important',
+            'icon_color' => 'red',
+            'url'        => '#',
+        ],
+        [
+            'text'       => 'warning',
+            'icon_color' => 'yellow',
+            'url'        => '#',
+        ],
+        [
+            'text'       => 'information',
+            'icon_color' => 'cyan',
+            'url'        => '#',
+        ],
     ],
 
     /*

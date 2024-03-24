@@ -195,7 +195,7 @@
                               </p>
                             </div>
                           </td>
-                          <td>
+                          <td id="total_paid_sum_div{{ $key }}">
                             <div>
                               IDR {{ $itemDokter['total_paid_sum'] }}
                             </div>
@@ -479,7 +479,7 @@
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" required>
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" max="{{ $itemDokter['total_paid_sum'] }}">
                 </div>
               </div>
             </div>
@@ -608,7 +608,8 @@
     dataCartDokter = @json($dataCartDokter);
     dataEkspedisi = @json($dataEkspedisi);
     extraChargeAll = @json($extraChargeAll);
-    console.log({dataCartDokter, dokter, user, dataCartDokter, dataEkspedisi,extraChargeAll})
+    // console.log({dataCartDokter, dokter, user, dataCartDokter, dataEkspedisi,extraChargeAll})
+    console.log({dataCartDokter})
     window.onload = function() {
       checkForButtonStatus()
     };
@@ -644,6 +645,13 @@
       x.style.display = "block"
     }
 
+    // function SetInputStepPayment(e) {
+    //   let val = e.target.value;
+    //   if(dataCartDokter[key]['total_num_paid_sum'] < val) {
+    //     e.target.value = dataCartDokter[key]['total_num_paid_sum']
+    //   }
+    // }
+
     function resetModalInput() {
       document.getElementById('cancel_reason').value = '';
     }
@@ -660,6 +668,8 @@
 
       for (let i = 0; i < dataCartDokter.length; i++) {
         const element = dataCartDokter[i];
+
+        // console.log({status:dataCartDokter[i].status })
         
         if(dataCartDokter[i].status == 0) {
           document.querySelector(`#span_status${i}`).innerHTML = `
@@ -938,9 +948,9 @@
           }
 
           let checkNominal = ``
-
-          if (user['role'] == "admin" || user['role'] == "superuser") {
-            let checkNominal = `
+          // console.log("role", user['role'] == "superuser")
+          if (user['role'] == "superuser" || user['role'] == "admin") {
+            checkNominal = `
             <div class="card">
                 <div class="card-body">
                 <h5 style="font-weight: 600">Payment Information</h5>
@@ -966,7 +976,7 @@
                 </div>
             </div>`
           } else {
-            let checkNominal = `
+            checkNominal = `
             <div class="card">
                 <div class="card-body">
                 <h5 style="font-weight: 600">Payment Information</h5>
@@ -996,6 +1006,13 @@
               - IDR ${dataCartDokter[i]['total_paid']}
             </div>
           `
+
+          document.querySelector(`#total_paid_sum_div${i}`).innerHTML = `
+          <div>
+              IDR ${dataCartDokter[i]['total_paid_sum']}
+            </div>
+          `
+          // console.log(checkNominal)
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
         } else if (dataCartDokter[i].status == 4) {
           document.querySelector(`#span_status${i}`).innerHTML = `
@@ -1046,6 +1063,10 @@
           </span>
           `
 
+          $(`#nominal_step_payment_input${i}`).attr({
+              "max": dataCartDokter[i]['total_num_paid_sum'],
+          })
+
           if(user['role'] == "superuser" || user['role'] == "admin") {
             document.querySelector(`#button_status_update${i}`).innerHTML = `
             <button class="btn btn-outline-success" id="payment_btn_modal" data-toggle="modal" data-target="#modalStepPayment${i}" onclick="clearModalPayment(${i})">
@@ -1079,66 +1100,66 @@
           </select>
           `
 
-            if(user['role'] == "superuser" || user['role'] == "admin") {
-                document.querySelector(`#column_sent${i}`).innerHTML = `
-                <div class="card">
-                    <div class="card-body">
-                        <h5 style="font-weight: 600">Sent Information</h5>
-                        <table class="table table-boredered">
-                        <tr>
-                            <td class="border">Sent at</td>
-                            <td class="border">${dataCartDokter[i].sent_at}</td>
-                        </tr>
-                        <tr>
-                            <td class="border">Expedition</td>
-                            <td class="border">${dataCartDokter[i].expedition_id}</td>
-                        </tr>
-                        <tr>
-                            <td class="border">Receipt Number</td>
-                            <td class="border">${dataCartDokter[i].recepient_number}</td>
-                        </tr>
-                        <tr>
-                            <td class="border">Shipping Cost</td>
-                            <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
-                        </tr>
-                        <tr>
-                            <td class="border">Sent by</td>
-                            <td class="border">${dataCartDokter[i].sent_by}</td>
-                        </tr>
-                        </table>
-                        <span type="button" class="btn btn-block btn-outline-primary" onclick="EditSentButton(${i})">Edit Sent Infomartion</span>
-                    </div>
-                </div>`
-            } else {
-                document.querySelector(`#column_sent${i}`).innerHTML = `
-                <div class="card">
-                        <div class="card-body">
-                        <h5 style="font-weight: 600">Sent Information</h5>
-                        <table class="table table-boredered">
-                            <tr>
-                            <td class="border">Sent at</td>
-                            <td class="border">${dataCartDokter[i].sent_at}</td>
-                            </tr>
-                            <tr>
-                            <td class="border">Expedition</td>
-                            <td class="border">${dataCartDokter[i].expedition_id}</td>
-                            </tr>
-                            <tr>
-                            <td class="border">Receipt Number</td>
-                            <td class="border">${dataCartDokter[i].recepient_number}</td>
-                            </tr>
-                            <tr>
-                            <td class="border">Shipping Cost</td>
-                            <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
-                            </tr>
-                            <tr>
-                            <td class="border">Sent by</td>
-                            <td class="border">${dataCartDokter[i].sent_by}</td>
-                            </tr>
-                        </table>
-                        </div>
-                    </div>`
-            }
+          if(user['role'] == "superuser" || user['role'] == "admin") {
+              document.querySelector(`#column_sent${i}`).innerHTML = `
+              <div class="card">
+                  <div class="card-body">
+                      <h5 style="font-weight: 600">Sent Information</h5>
+                      <table class="table table-boredered">
+                      <tr>
+                          <td class="border">Sent at</td>
+                          <td class="border">${dataCartDokter[i].sent_at}</td>
+                      </tr>
+                      <tr>
+                          <td class="border">Expedition</td>
+                          <td class="border">${dataCartDokter[i].expedition_id}</td>
+                      </tr>
+                      <tr>
+                          <td class="border">Receipt Number</td>
+                          <td class="border">${dataCartDokter[i].recepient_number}</td>
+                      </tr>
+                      <tr>
+                          <td class="border">Shipping Cost</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
+                      </tr>
+                      <tr>
+                          <td class="border">Sent by</td>
+                          <td class="border">${dataCartDokter[i].sent_by}</td>
+                      </tr>
+                      </table>
+                      <span type="button" class="btn btn-block btn-outline-primary" onclick="EditSentButton(${i})">Edit Sent Infomartion</span>
+                  </div>
+              </div>`
+          } else {
+              document.querySelector(`#column_sent${i}`).innerHTML = `
+              <div class="card">
+                      <div class="card-body">
+                      <h5 style="font-weight: 600">Sent Information</h5>
+                      <table class="table table-boredered">
+                          <tr>
+                          <td class="border">Sent at</td>
+                          <td class="border">${dataCartDokter[i].sent_at}</td>
+                          </tr>
+                          <tr>
+                          <td class="border">Expedition</td>
+                          <td class="border">${dataCartDokter[i].expedition_id}</td>
+                          </tr>
+                          <tr>
+                          <td class="border">Receipt Number</td>
+                          <td class="border">${dataCartDokter[i].recepient_number}</td>
+                          </tr>
+                          <tr>
+                          <td class="border">Shipping Cost</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
+                          </tr>
+                          <tr>
+                          <td class="border">Sent by</td>
+                          <td class="border">${dataCartDokter[i].sent_by}</td>
+                          </tr>
+                      </table>
+                      </div>
+                  </div>`
+          }
           var checkNominal = ""
           for (let j = 0; j < dataCartDokter[i]['step_payment'].length; j++) {
               const element = dataCartDokter[i]['step_payment'][j];
@@ -1220,6 +1241,12 @@
               - IDR ${dataCartDokter[i]['total_paid']}
             </div>
           `
+
+          document.querySelector(`#total_paid_sum_div${i}`).innerHTML = `
+          <div>
+              IDR ${dataCartDokter[i]['total_paid_sum']}
+            </div>
+          `
         }
       }
     }
@@ -1240,7 +1267,7 @@
     }
 
     function EditStepPaymentButton(key, index) {
-      console.log({key, index})
+      // console.log({key, index})
       document.getElementById(`step_edit_paid_at${key}`).value = dataCartDokter[key]['step_payment'][index].paid_at
       document.getElementById(`step_edit_bank_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_bank_name
       document.getElementById(`step_edit_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
@@ -1269,7 +1296,7 @@
           </div>
           `
       }
-      console.log(htmlExtraCharge, "html extra charge")
+      // console.log(htmlExtraCharge, "html extra charge")
       document.querySelector(`#extra-charge-edit-product${key}`).innerHTML = htmlExtraCharge
       $(`#modalEditProduct${key}`).modal("show")
     }
@@ -1374,10 +1401,10 @@
 
     function refreshTableExtraCharge(key, total_price, extra_charge) {
       let divExtraCharge = ""
-      console.log({dataCartDokter: dataCartDokter[key]})
+      // console.log({dataCartDokter: dataCartDokter[key]})
       document.querySelector(`#t-foot${key}`).innerHTML = null
       for (let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
-        console.log({total_price, extra_charge })
+        // console.log({total_price, extra_charge })
         divExtraCharge += `
         <tr>
           <td colspan="4">
@@ -1395,7 +1422,7 @@
 
       
       total = Number(total_price) + Number(extra_charge)
-      console.log({total})
+      // console.log({total})
       dataCartDokter[key]['total_price'] = total
       total = total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
       divExtraCharge += `
@@ -1427,7 +1454,7 @@
           </div>
         </td>
         </tr>`
-      console.log(divExtraCharge)
+      // console.log(divExtraCharge)
       document.querySelector(`#t-foot${key}`).innerHTML = divExtraCharge
     }
 
@@ -1561,7 +1588,7 @@
               dataCartDokter[key]['total_paid_sum'] = data['total_paid_sum']
             }
             dataCartDokter[key].status = status
-            console.log(dataCartDokter[key], "data cart dokter")
+            // console.log(dataCartDokter[key], "data cart dokter")
             $(`#modalPayment${key}`).modal("hide")
             clearModalPayment(key)
             checkForButtonStatus()
@@ -1605,9 +1632,18 @@
         return
       }
 
+      // return
       if (!nominal_payment_input && status == 5) {
         AlertWarningWithMsg("must fill the bank nominal payment")
         return
+      }
+      // console.log({nominal_payment_input, "nominal_paid_sum": dataCartDokter[key]['total_num_paid_sum']})
+      // alert("check")
+      // return
+      if (Number(nominal_payment_input) > dataCartDokter[key]['total_num_paid_sum']) {
+        nominal_payment_input = `${dataCartDokter[key]['total_num_paid_sum']}`
+        // console.log()
+        // return
       }
 
       // console.log({indexEdit})
@@ -1636,7 +1672,11 @@
       $.ajax({
       type: "POST",
         url: "{{url('/')}}"+"/stepPaymentOrder",
-        data: { "_token": "{{ csrf_token() }}", data: {
+        data: { "_token": "{{ csrf_token() }}", 
+        nominal_payment_input: nominal_payment_input,
+        nominal_paid: dataCartDokter[key]['total_num_paid'] ,
+        total_num_paid_sum: dataCartDokter[key]['total_num_paid_sum'],
+        data: {
           status: 5,
           paid_at: paid_at_after,
           paid_bank_name: bank_name_after,
@@ -1648,7 +1688,7 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          console.log({data})
+          // console.log({data})
           if(data['message']=="sukses"){
             let obj = {
               paid_by: user.name,
@@ -1663,8 +1703,15 @@
             // dataCartDokter[key]['nominal'] = data['nominal']
             // dataCartDokter[key]['paid_by'] = data['paid_by']
             // dataCartDokter[key]['paid_at'] = data['paid_at']
+            dataCartDokter[key]['total_num_paid'] += nominal_payment_input
+            dataCartDokter[key]['total_num_paid_sum'] -= nominal_payment_input
+            dataCartDokter[key]['total_paid'] = data['nominal']
+            dataCartDokter[key]['total_paid_sum'] = data['nominal_num']
             dataCartDokter[key].status = 5
             $(`#modalStepPayment${key}`).modal("hide")
+            $(`#nominal_step_payment_input${key}`).attr({
+              "max": dataCartDokter[key]['total_num_paid_sum'],
+            })
             clearStepModalPayment(key)
             checkForButtonStatus()
             AlertSuccess()
@@ -1712,7 +1759,35 @@
         return
       }
 
-      console.log({indexEdit})
+      let kurangin = nominal_payment_input - dataCartDokter[key]['step_payment'][indexEdit].nominal
+      let kuranginTotal = dataCartDokter[key]['total_num_paid_sum'] - kurangin
+      let totalan = dataCartDokter[key]['total_num_paid_sum']
+      let totalTemp = dataCartDokter[key]['total_num_paid']
+      let kuranginPaid = dataCartDokter[key]['total_num_paid'] + kurangin
+      dataCartDokter[key]['total_num_paid'] += kurangin
+      dataCartDokter[key]['total_num_paid_sum'] -= kurangin
+      if(kuranginTotal < 0) {
+        let num = 0
+        for (let i = 0; i < dataCartDokter[key]['step_payment'].length; i++) {
+          const element = dataCartDokter[key]['step_payment'][i];
+          if(i != indexEdit) {
+            num += Number(element['nominal'])
+          }
+        }
+        nominal_payment_input = Number(totalTemp) + Number(totalan) - Number(num)
+        kurangin = Math.abs(kurangin)
+        kuranginPaid = Number(totalTemp) + Number(totalan)
+        kuranginTotal = 0
+        dataCartDokter[key]['total_num_paid'] = Number(totalTemp) + Number(totalan)
+        dataCartDokter[key]['total_num_paid_sum'] = 0
+        console.log({nominal_payment_input})
+        // return
+      }
+
+      
+
+      // return
+      // console.log({indexEdit})
       var paid_at_after = paid_at_before + "|" +paid_at
       var bank_name_after = paid_bank_name_before + "|" +bank_name
       var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
@@ -1738,7 +1813,11 @@
       $.ajax({
       type: "POST",
         url: "{{url('/')}}"+"/editStepPaymentOrder",
-        data: { "_token": "{{ csrf_token() }}", data: {
+        data: { "_token": "{{ csrf_token() }}", 
+        nominal_payment_input: nominal_payment_input,
+        nominal_paid: kuranginPaid,
+        total_num_paid_sum: kuranginTotal,
+        data: {
           id:id,
           status: 5,
           paid_at: paidSplit,
@@ -1755,9 +1834,14 @@
             dataCartDokter[key]['step_payment'][indexEdit].paid_bank_name = bank_name
             dataCartDokter[key]['step_payment'][indexEdit].paid_account_bank_name = bank_account_name
             dataCartDokter[key]['step_payment'][indexEdit].nominal = nominal_payment_input
-            console.log(dataCartDokter[key]['step_payment'][indexEdit])
+            // console.log(dataCartDokter[key]['step_payment'][indexEdit])
+            dataCartDokter[key]['total_paid'] = data['nominal']
+            dataCartDokter[key]['total_paid_sum'] = data['nominal_num']
             dataCartDokter[key].status = 5
             $(`#modalEditStepPayment${key}`).modal("hide")
+            $(`#nominal_step_payment_input${key}`).attr({
+              "max": dataCartDokter[key]['total_num_paid_sum'],
+            })
             clearEditStepModalPayment(key)
             checkForButtonStatus()
             AlertSuccess()
@@ -1861,14 +1945,14 @@
         }
       }
 
-      console.log({productJoin})
+      // console.log({productJoin})
 
       let extraCharge = []
       for(let i = 0; i < dataCartDokter[key]['extra_charge'].length; i++) {
         // let el = dataCartDokter[key]['extra_charge'][i]
         var desc = $(`#extraChargeDescription-${key}-${i}`).val()
         var price = $(`#extraChargePrice-${key}-${i}`).val()
-        console.log({desc, price})
+        // console.log({desc, price})
         extraCharge.push({
           id: dataCartDokter[key]['extra_charge'][i]['id'],
           transaction_id: dataCartDokter[key]['extra_charge'][i]['transaction_id'],
@@ -1877,7 +1961,7 @@
         })      
       }
 
-      console.log({extraCharge})
+      // console.log({extraCharge})
 
       $.ajax({
         type: "POST",
