@@ -12,6 +12,8 @@ use App\Models\EkspedisiModel;
 use App\Models\ExtraChargeModel;
 use App\Models\PackageModel;
 use App\Models\StockModel;
+// use App\Models\OtherCostModel;
+
 use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
@@ -97,7 +99,7 @@ class DashboardController extends Controller
         }
 
         foreach ($otherCost as $valueOtherCost) {
-            $extraVal += $valueOtherCost['price'];
+            // $extraVal += $valueOtherCost['price'];
             $totalOtherCost += $valueOtherCost['price'];
         }
 
@@ -284,10 +286,11 @@ class DashboardController extends Controller
 
         $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
-        $result['total_sales'] = number_format(ceil($total),0,',','.');
+        $totalSales = ceil($total) + ceil($extraVal);
+        $result['total_sales'] = number_format($totalSales,0,',','.');
         $result['total_shipping'] = number_format($totalShippingCost,0,',','.');
         $result['total_other_cost'] = number_format($totalOtherCost,0,',','.');
-        $totalRevenue = ($total + $extraVal) - ceil($totalShippingCost);
+        $totalRevenue = $totalSales - ceil($totalShippingCost);
         $result['total_revenue'] = number_format($totalRevenue,0,',','.');
         $result['total_paid'] = number_format($totalPaid,0,',','.');
         $result['total_po'] = count($data);
@@ -561,15 +564,15 @@ class DashboardController extends Controller
 
         $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
-        $result['total_sales'] = number_format(ceil($total),0,',','.');
+        $totalSales = ceil($total) + ceil($extraVal);
+        $result['total_sales'] = number_format($totalSales,0,',','.');
         $result['total_shipping'] = number_format($totalShippingCost,0,',','.');
         $result['total_other_cost'] = number_format($totalOtherCost,0,',','.');
-        $totalRevenue = ($total + $extraVal) - ceil($totalShippingCost);
+        $totalRevenue = $totalSales - ceil($totalShippingCost);
         $result['total_revenue'] = number_format($totalRevenue,0,',','.');
         $result['total_paid'] = number_format($totalPaid,0,',','.');
         $result['total_po'] = count($data);
         // $result['user'] = $userAll;
-        $result['total_salary'] = 0;
         $result['total_super_user'] = $totalSuperUser;
         $result['total_manager_user'] = $totalManagerUser;
         $result['total_finance_user'] = $totalFinanceUser;
@@ -577,6 +580,7 @@ class DashboardController extends Controller
         $result['total_stock_in'] = $stockIn;
         $result['total_stock_out'] = $stockOut;
         $result['map_product'] = $mapProduct;
+        $result['total_salary'] = 0;
         $result['total_marketing_user'] = $totalMarketingUser;
         $result['total_doctor'] = count($doctorAll);
         $result['map_user'] = $mapUser;

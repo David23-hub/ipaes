@@ -524,7 +524,7 @@
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_edit_step_payment_input{{ $key }}" oninput="SetInputStepPayment(event, {{ $key }})" required>
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_edit_step_payment_input{{ $key }}" oninput="SetInputEditStepPayment(event, {{ $key }})" required>
                 </div>
               </div>
             </div>
@@ -653,6 +653,28 @@
       }
     }
 
+    function SetInputEditStepPayment(e, key) {
+      let val = e.target.value;
+      console.log(dataCartDokter[key]['total_num_paid_sum'], val)
+      let indexEdit = document.getElementById(`key_edit_step_payment${key}`).value
+      let totalan = dataCartDokter[key]['total_num_paid_sum']
+      let totalTemp = dataCartDokter[key]['total_num_paid']
+      if(dataCartDokter[key]['total_num_paid_sum'] < val) {
+        // e.target.value = dataCartDokter[key]['total_num_paid_sum']
+        let num = 0
+        for (let i = 0; i < dataCartDokter[key]['step_payment'].length; i++) {
+          const element = dataCartDokter[key]['step_payment'][i];
+          if(i != indexEdit) {
+            num += Number(element['nominal'])
+          }
+        }
+        nominal_payment_input = Number(totalTemp) + Number(totalan) - Number(num)
+        e.target.value = nominal_payment_input
+      }
+
+        
+    }
+
     function resetModalInput() {
       document.getElementById('cancel_reason').value = '';
     }
@@ -667,10 +689,10 @@
       paid step payment => 5
       */
 
+     console.log({dataCartDokter})
       for (let i = 0; i < dataCartDokter.length; i++) {
         const element = dataCartDokter[i];
 
-        // console.log({status:dataCartDokter[i].status })
         
         if(dataCartDokter[i].status == 0) {
           document.querySelector(`#span_status${i}`).innerHTML = `
@@ -1235,6 +1257,20 @@
                     </div>`
               }
           }
+
+          if (dataCartDokter[i]['total_paid_sum'] == "0") {
+            document.querySelector(`#button_status_update${i}`).innerHTML = ``
+            document.querySelector(`#span_status${i}`).innerHTML = `
+            <span class="badge bg-success text-wrap fs-2">
+              Paid (Completed)
+            </span>
+            `
+
+            let queryCancel = document.querySelector(`#button-status-canceled${i}`)
+            if(queryCancel) {
+              queryCancel.innerHTML = ""
+            }
+          }
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
 
           document.querySelector(`#grand-total-paid${i}`).innerHTML = `
@@ -1575,6 +1611,8 @@
               dataCartDokter[key]['paid_at'] = data['paid_at']
               dataCartDokter[key]['total_paid'] = data['total_paid']
               dataCartDokter[key]['total_paid_sum'] = 0
+              dataCartDokter[key]['total_num_paid'] = dataCartDokter[key]['total_num_paid_sum']
+              dataCartDokter[key]['total_num_paid_sum'] = 0
               // dataCartDokter[key]['total_paid_sum'] = data['total_paid_sum']
             } else if(status == 5) {
               dataCartDokter[key]['paid_bank_name'] = data['paid_bank_name']
@@ -1596,6 +1634,8 @@
 
               dataCartDokter[key]['total_paid'] = data['total_paid']
               dataCartDokter[key]['total_paid_sum'] = data['total_paid_sum']
+              dataCartDokter[key]['total_num_paid_sum'] = data['total_num_paid_sum']
+              dataCartDokter[key]['total_num_paid'] = data['nominal_step']
             }
             dataCartDokter[key].status = status
             // console.log(dataCartDokter[key], "data cart dokter")
@@ -1680,7 +1720,7 @@
           nominal_paid: dataCartDokter[key]['total_num_paid'],
           total_num_paid_sum: dataCartDokter[key]['total_num_paid_sum'],
           must_paid: Number(dataCartDokter[key]['total_num_paid']) + Number(nominal_payment_input),
-          left_paid:  dataCartDokter[key]['total_num_paid_sum'] - nominal_payment_input,
+          left_paid:  Number(dataCartDokter[key]['total_num_paid_sum']) - nominal_payment_input,
         }
       })
       // return
@@ -1688,9 +1728,9 @@
       type: "POST",
         url: "{{url('/')}}"+"/stepPaymentOrder",
         data: { "_token": "{{ csrf_token() }}", 
-        nominal_payment_input: nominal_payment_input,
-        nominal_paid: dataCartDokter[key]['total_num_paid'] ,
-        total_num_paid_sum: dataCartDokter[key]['total_num_paid_sum'],
+        nominal_payment_input: Number(nominal_payment_input),
+        nominal_paid: Number(dataCartDokter[key]['total_num_paid']) ,
+        total_num_paid_sum: Number(dataCartDokter[key]['total_num_paid_sum']),
         data: {
           status: 5,
           paid_at: paid_at_after,
@@ -1703,7 +1743,7 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          // console.log({data})
+          console.log({data})
           if(data['message']=="sukses"){
             let obj = {
               paid_by: user.name,

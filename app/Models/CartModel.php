@@ -60,7 +60,7 @@ class CartModel extends Model
                 ->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
                 ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.name as user_name')
                 ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
-                ->where('cart.status', $status)
+                ->whereIn('cart.status', $status)
                 ->where('cart.deleted_by',null)
                 ->get();
             } else {
@@ -71,7 +71,7 @@ class CartModel extends Model
                 ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
                 ->where('cart.created_by', '=', $email)
                 ->where('cart.management_order', '=', '0')
-                ->where('cart.status', $status)
+                ->whereIn('cart.status', $status)
                 ->where('cart.deleted_by',null)
                 ->get();
             }

@@ -186,7 +186,7 @@
     })
 
     $('#status-select-transaction').on('change', function (e) { 
-      $(document).trigger('myCustomEvent');
+      $(document).trigger('myCustomEvent2');
     })
 
     // console.log()
@@ -201,7 +201,14 @@
       var endDate = formatDate(dateArray[1]);
       var selectStatus = $('#status-select').val();
       console.log(selectStatus, "select status")
-
+      if(selectStatus != "all") {
+        if(selectStatus == 3) {
+          selectStatus = [3, 5]
+        } else {
+          selectStatus = [selectStatus]
+        }
+      }
+      
       startTemp = startDate
       endTemp = endDate
         $.ajax({
@@ -259,6 +266,13 @@
       var endDate = formatDate(dateArray[1]);
       var selectStatus = $('#status-select-transaction').val();
       console.log(selectStatus, "select status")
+      if(selectStatus != "all") {
+        if(selectStatus == 3) {
+          selectStatus = [3, 5]
+        } else {
+          selectStatus = [selectStatus]
+        }
+      }
 
       startTemp = startDate
       endTemp = endDate
@@ -302,6 +316,9 @@
                 break;
               case 5:
                 htmlStatus = `<span class="badge bg-success">PAID</span>`
+                if(item['total_paid']) {
+                  htmlStatus = `<span class="badge bg-success">PAID (completed)</span>`
+                }
                 break;
               default:
                 break;

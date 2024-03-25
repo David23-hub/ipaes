@@ -114,7 +114,9 @@ class ListPOController extends Controller
     {
       $input = $request->all();
       $user = auth()->user();
-      // Log::info("input", $input);
+      $items = $this->model->getAll();
+      $bundles = $this->bundle->getAll();
+      Log::info("input", $input);
       $dateParts = explode('/', str_replace('-', '/', $input["startDate"]));
 
       // Rearrange the parts to form the desired format
@@ -127,13 +129,43 @@ class ListPOController extends Controller
 
       $dataTransaction = [];
       $dataTransaction = $this->cart->GetListJoinDoctorAndDateAndStatus($formattedDateStart, $formattedDateEnd, $input['status'], $user['role'], $user['email']);
+      $extraChargeAll = $this->extra_charge->GetListAll();
 
       // Log::info("array transaction", ['transaction' => $dataTransaction]);
       foreach ($dataTransaction as $valueTransaction) {
+        $totalan = 0;
         $createdAt = explode(' ',$valueTransaction['created_at']);
         $valueTransaction['created_at'] = $createdAt[0];
         $dueDate = explode(' ',$valueTransaction['due_date']);
         $valueTransaction['due_date'] = $dueDate[0];
+
+        if (strlen($valueTransaction['cart'])!=0) {
+          $carts = explode(",", $valueTransaction['cart']);
+
+          foreach ($carts as $valueCart) {
+            $temp = explode("|", $valueCart);
+
+            $price_product = $temp[4];
+            $price = $price_product*$temp[2];
+            $disc = $price*($temp[3]/100);
+            $totalan += $price-$disc;
+          }
+        }
+
+        foreach ($extraChargeAll as $valueExtra) {
+          if ($valueTransaction['id'] == $valueExtra['transaction_id']) {
+            $totalan += $valueExtra['price'];
+          }
+        } 
+
+        
+        if($valueTransaction['status'] == 5) {
+          $sum = array_sum(explode("|", $valueTransaction['nominal']));
+          $paid_num = $totalan - $sum;
+          if($paid_num == 0) {
+            $valueTransaction['total_paid'] = true;
+          }
+        }
       }
 
       return $dataTransaction;
@@ -392,11 +424,11 @@ class ListPOController extends Controller
                 $data['total_num_paid_sum'] = $data['total_price'] - $data['total_num_paid'];
                 $data['total_paid_sum'] = number_format($data['total_num_paid_sum'],0,',','.');
               } else {
-                // $sum = 0;
-                // $data['total_num_paid'] = $sum;
-                // $data['total_paid'] = number_format($sum,0,',','.');
-                // $data['total_num_paid_sum'] = $data['total_price'];
-                // $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
+                $sum = 0;
+                $data['total_num_paid'] = $sum;
+                $data['total_paid'] = number_format($sum,0,',','.');
+                $data['total_num_paid_sum'] = $data['total_price'];
+                $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
               }
             } 
 
@@ -618,13 +650,18 @@ class ListPOController extends Controller
         Log::info('nominal', [
           'nominal_paid' => $input['nominal_paid'],
           'nominal_payment' => $input['data']['nominal'],
-          'total_num_paid_sum' => $input['total_num_paid_sum']
+          'total_num_paid_sum' => $input['total_num_paid_sum'],
+          'total_nominal' => $input['nominal_payment_input']  
         ]);
-        if($input['nominal_paid'] > $input['total_num_paid_sum'] ) {
-          $input['nominal_paid'] = $input['total_num_paid_sum'];
+        if($input['nominal_payment_input'] > $input['total_num_paid_sum'] && $input['nominal_payment_input'] !=  $input['total_num_paid_sum']) {
+          $input['nominal_payment_input'] = $input['total_num_paid_sum'];
         }
         $nominalPaid = $input['nominal_paid'] + $input['nominal_payment_input'];
         $nominalPaidAll = $input['total_num_paid_sum'] - $input['nominal_payment_input'];
+        Log::info('nominal', [
+          'nominalPaid' => $nominalPaid,
+          'nominalPaidAll' => $nominalPaidAll
+        ]);
         $this->cart->UpdateItem($input['data']['id'], $input['data']);
         $data['message'] = "sukses";
         $data['nominal'] = number_format($nominalPaid,0,',','.');
@@ -680,10 +717,12 @@ class ListPOController extends Controller
     public function editProduct(Request $request) {
         try {
           $input = $request->all();
-          $data['extra_charge'] = $input['data']['extra_charge'];
-          Log::info('extra_charge', [$data['extra_charge']]);
           $this->cart->UpdateItem($input['data']['id'], $input['data']['cart']);
-          $this->extra_charge->UpdatesItem($data['extra_charge']);
+          if(isset($input['data']['extra_charge'])) {
+            $data['extra_charge'] = $input['data']['extra_charge'];
+            Log::info('extra_charge', [$data['extra_charge']]);
+            $this->extra_charge->UpdatesItem($data['extra_charge']);
+          }
           $result = "sukses";
           return $result;
         }catch(\Throwable $th) {

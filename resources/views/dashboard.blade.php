@@ -363,7 +363,7 @@
         document.querySelector(`#total_other_cost`).innerHTML = `IDR ${data['result']['total_other_cost']}`
         document.querySelector(`#total_revenue`).innerHTML = `IDR ${data['result']['total_revenue']}`
         document.querySelector(`#total_paid`).innerHTML = `IDR ${data['result']['total_paid']}`
-        document.querySelector(`#total_po`).innerHTML = `IDR ${data['result']['total_po']}`
+        document.querySelector(`#total_po`).innerHTML = `${data['result']['total_po']}`
         document.querySelector(`#total_marketing_user`).innerHTML = `${data['result']['total_marketing_user']}`
         document.querySelector(`#total_doctor`).innerHTML = `${data['result']['total_doctor']}`
         document.querySelector(`#total_super_user`).innerHTML = `${data['result']['total_super_user']}`
