@@ -310,7 +310,7 @@
   // });
 
   window.onload = function() {
-    $('datepicker1').val = 
+    // $('datepicker1').val = 
   };
 
   data = @json($data);
@@ -525,8 +525,8 @@
               items:3
           }
       }
-    })
-
+    });
+  
   
   function formatDate(dateString) {
     let splitString = dateString.split('-')
