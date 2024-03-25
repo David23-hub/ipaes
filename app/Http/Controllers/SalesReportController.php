@@ -44,7 +44,6 @@ class SalesReportController extends Controller
 
     public function getAll(Request $request){
 
-        // dd("W(O");
         $input = $request->all();
 
         $products = $this->item->GetAll();
@@ -149,8 +148,14 @@ class SalesReportController extends Controller
             }
 
             //loop for payment step
-            $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
-            $payments = explode("|", $value->paid_at);
+            if($value->paid_at[strlen($value->paid_at)-1]=="|"){
+                $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
+            }
+            if($value->paid_at != ""){
+                $payments = explode("|", $value->paid_at);
+            }else{
+                $payments = [];
+            }
             $stepPayment = "";
             $i=0;
             $counter=0;
@@ -364,8 +369,14 @@ class SalesReportController extends Controller
             }
 
             //loop for payment step
-            $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
-            $payments = explode("|", $value->paid_at);
+            if($value->paid_at[strlen($value->paid_at)-1]=="|"){
+                $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
+            }
+            if($value->paid_at != ""){
+                $payments = explode("|", $value->paid_at);
+            }else{
+                $payments = [];
+            }
             $stepPayment = "";
             $i=0;
             $counter=0;

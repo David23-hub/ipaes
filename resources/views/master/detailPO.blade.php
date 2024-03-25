@@ -447,7 +447,7 @@
       </div>
     </div>
 
-    <!-- Modal Payment-->
+    <!-- Modal Edit Payment-->
     <div class="modal fade" id="modalEditPayment{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -468,7 +468,7 @@
               </div>
               <div class="form-group">
                 <label for="bank_name">Bank Name *</label>
-                <input type="text" class="form-control" id="edit_paid_at{{ $key }}"  placeholder="Masukkan Bank Name" required>
+                <input type="text" class="form-control" id="edit_bank_name{{ $key }}"  placeholder="Masukkan Bank Name" required>
               </div>
               <div class="form-group">
                 <label for="bank_account_name">Bank Account Name *</label>
@@ -1694,7 +1694,7 @@
 
     function EditPaymentButton(id, key) {
       var paid_at = $(`#edit_paid_at${key}`).val();
-      var bank_name = $(`#edit_paid_at${key}`).val();
+      var bank_name = $(`#edit_bank_name${key}`).val();
       var bank_account_name = $(`#edit_bank_account_name${key}`).val();
       var status = 3
 
@@ -1710,11 +1710,6 @@
 
       if (!bank_account_name) {
         AlertWarningWithMsg("must fill the bank account name")
-        return
-      }
-
-      if (!nominal_payment_input && status == 5) {
-        AlertWarningWithMsg("must fill the bank nominal payment")
         return
       }
 

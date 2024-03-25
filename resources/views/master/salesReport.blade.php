@@ -43,6 +43,8 @@
             <button id="dwnld-excl" class="btn btn-success">Download To Excel</button>
           </div>
         </div>
+        <h5>Period: <span style="font-weight: bold" id="periode"></span></h5>
+
       </div>
       <div class="card-body">
         <div id="listTbl">
@@ -144,7 +146,6 @@
               
               var period = document.getElementById('periode');
               period.innerHTML = datas.periode
-              alert("woi")
             }
             
           },

@@ -60,14 +60,15 @@ class ListProductController extends Controller
                 $productVal['qty_cart'] = '';
                 $productVal['disc_cart'] = '';
                 $productVal['priceNum'] = $productVal['price'];
-                $productVal['price']=number_format($productVal["price"],0,',','.');
+                $productVal['price']=number_format($productVal["priceNum"],0,',','.');
                 array_push($resProduct,$productVal);
             }
+
             foreach ($productBundle as  $value) {
                 $value['qty_cart'] = '';
                 $value['disc_cart'] = '';
                 $value['priceNum'] = $value['price'];
-                $productVal['price']=number_format($productVal["price"],0,',','.');
+                $value['price']=number_format($value["priceNum"],0,',','.');
                 array_push($resProductBundle,$value);
             }
             return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);
@@ -94,7 +95,7 @@ class ListProductController extends Controller
                     $productVal['disc_cart'] = '';
                 }
                 $productVal['priceNum']=$productVal["price"];
-                $productVal['price']=number_format($productVal["price"],0,',','.');
+                $productVal['price']=number_format($productVal["priceNum"],0,',','.');
                 array_push($resProduct,$productVal);
         }
 
@@ -118,7 +119,7 @@ class ListProductController extends Controller
                 }
                 $productVal['unit'] = "Package";
                 $productVal['priceNum']=$productVal["price"];
-                $productVal['price']=number_format($productVal["price"],0,',','.');
+                $productVal['price']=number_format($productVal["priceNum"],0,',','.');
                 array_push($resProductBundle,$productVal);
         }
 
