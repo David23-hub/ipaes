@@ -230,17 +230,21 @@ class ItemController extends Controller
                 $obj['stock_out'] = $qtyAwal-$input['qty'];
                 $obj['status'] = "1";
                 $obj['desc'] = "Pengurangan Produk Saat Update Stock ".$data['name'];
+                $obj['created_at'] = date('Y-m-d H:i:s');
+                array_push($products, $obj);
+
+                $result = $this->stockController->insert($products);
             }else if((int)$input['qty']>$qtyAwal){
                 $obj['stock_in'] = $input['qty']-$qtyAwal;
                 $obj['status'] = "1";
                 $obj['desc'] = "Penambahan Produk Saat Update Stock".$data['name'];
+                $obj['created_at'] = date('Y-m-d H:i:s');
+                array_push($products, $obj);
+
+                $result = $this->stockController->insert($products);
             }
             
-            $obj['created_at'] = date('Y-m-d H:i:s');
-            array_push($products, $obj);
-
-
-            $result = $this->stockController->insert($products);
+            
             return $result;
         } catch (\Throwable $th) {
             $result="gagal";

@@ -119,7 +119,7 @@
                             <div class="col">
                               <div class="input-group mb-3">
                                 <input type="text" class="form-control" aria-describedby="basic-addon2" name="input-data" data-id="{{ $item->id }}" oninput="addDotPrice(this);">
-                                <span class="input-group-text" id="basic-addon2">Box {{ $key }}</span>
+                                <span class="input-group-text" id="basic-addon2">{{ $item->unit }}</span>
                               </div>
                             </div>
                           </div>
