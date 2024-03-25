@@ -685,6 +685,7 @@
     function SetInputStepPayment(e, key) {
       let val = e.target.value;
       console.log(dataCartDokter[key]['total_num_paid_sum'], val)
+      console.log("i")
       if(dataCartDokter[key]['total_num_paid_sum'] < val) {
         e.target.value = dataCartDokter[key]['total_num_paid_sum']
       }
@@ -706,6 +707,8 @@
           }
         }
         nominal_payment_input = Number(totalTemp) + Number(totalan) - Number(num)
+
+        console.log(nominal_payment_input, dataCartDokter[key]['total_num_paid_sum'])
         e.target.value = nominal_payment_input
       }
 
@@ -1859,8 +1862,8 @@
             // dataCartDokter[key]['nominal'] = data['nominal']
             // dataCartDokter[key]['paid_by'] = data['paid_by']
             // dataCartDokter[key]['paid_at'] = data['paid_at']
-            dataCartDokter[key]['total_num_paid'] += nominal_payment_input
-            dataCartDokter[key]['total_num_paid_sum'] -= nominal_payment_input
+            dataCartDokter[key]['total_num_paid'] += Number(nominal_payment_input)
+            dataCartDokter[key]['total_num_paid_sum'] -= Number(nominal_payment_input)
             dataCartDokter[key]['total_paid'] = data['nominal']
             dataCartDokter[key]['total_paid_sum'] = data['nominal_num']
             dataCartDokter[key].status = 5
@@ -1940,10 +1943,14 @@
         // return
       }
 
-      
+      console.log({
+         nominal_payment_input: nominal_payment_input,
+        nominal_paid: kuranginPaid,
+        total_num_paid_sum: kuranginTotal
+      })
 
       // return
-      // console.log({indexEdit})
+
       var paid_at_after = paid_at_before + "|" +paid_at
       var bank_name_after = paid_bank_name_before + "|" +bank_name
       var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
