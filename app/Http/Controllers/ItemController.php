@@ -127,12 +127,12 @@ class ItemController extends Controller
             $obj = [];
             $obj["id_product"] = $temp;
             $obj['stock_in'] = $data['qty'];
-            $obj['desc'] = "Penambahan Produk ".$data['name'];
+            $obj['desc'] = "Penambahan Produk Saat Insert Stock".$data['name'];
             $obj['status'] = "1";
             $obj['created_at'] = date('Y-m-d H:i:s');
             array_push($products, $obj);
 
-            $result = $this->stockController->insert($products);
+            $result = $this->stockController->insert($products,"0");
             return $result;
 
         } catch (\Throwable $th) {
@@ -172,6 +172,13 @@ class ItemController extends Controller
         }
         $qtyAwal = (int)$index[0]['qty'];
 
+        // if (!strpos("Pengurangan Produk Saat Update", "Pengurangan")) {
+        //     print_r("The string contains 'hello'");die();
+        // } else {
+        //     print_r("GAK ");die();
+        // }
+
+
         if ($request->hasFile('img')) {
             // Image is uploaded
             $image = $request->file('img');
@@ -210,7 +217,6 @@ class ItemController extends Controller
                 'updated_at' => date('Y-m-d H:i:s')
             ];
         }
-
         $result = "";
         try {
             $temp = $this->model->UpdateItem($input["id"],$data);
@@ -221,11 +227,9 @@ class ItemController extends Controller
                 return;
             }
 
-
             $products=[];
             $obj = [];
-            $obj["id_product"] = $temp;
-
+            $obj["id_product"] = $input["id"];
             if((int)$input['qty']<$qtyAwal){
                 $obj['stock_out'] = $qtyAwal-$input['qty'];
                 $obj['status'] = "1";
@@ -233,7 +237,7 @@ class ItemController extends Controller
                 $obj['created_at'] = date('Y-m-d H:i:s');
                 array_push($products, $obj);
 
-                $result = $this->stockController->insert($products);
+                $result = $this->stockController->insert($products,"0");
             }else if((int)$input['qty']>$qtyAwal){
                 $obj['stock_in'] = $input['qty']-$qtyAwal;
                 $obj['status'] = "1";
@@ -241,9 +245,8 @@ class ItemController extends Controller
                 $obj['created_at'] = date('Y-m-d H:i:s');
                 array_push($products, $obj);
 
-                $result = $this->stockController->insert($products);
+                $result = $this->stockController->insert($products,"0");
             }
-            
             
             return $result;
         } catch (\Throwable $th) {

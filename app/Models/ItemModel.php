@@ -63,8 +63,14 @@ class ItemModel extends Model
         ->update( $data);
     }
 
-    public function UpdateQtyStock($id, $qty){
+    public function UpdateQtyStockPlus($id, $qty){
         DB::statement('UPDATE items SET qty = qty + ? WHERE id = ?', [$qty, $id]);
+
+        return 1;
+
+    }
+    public function UpdateQtyStockMinus($id, $qty){
+        DB::statement('UPDATE items SET qty = qty - ? WHERE id = ?', [$qty, $id]);
 
         return 1;
 
