@@ -366,7 +366,8 @@
       document.getElementById('mini_desc_add').value = '';
       document.getElementById('desc_add').value = '';
       document.getElementById('status_add').value = '0';
-      document.getElementById('status_update').value = '0';
+      document.getElementById('preview').src = '';
+    document.getElementById('image_add').value = '';
     }
 
     function getAllData(){
