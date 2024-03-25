@@ -1388,18 +1388,43 @@
       objectStatus = {
           updated_by: user.name,
           status: select_id,
+          packing_by: null,
+          packing_at: null,
+          expedition_id: null,
+          shipping_cost: null,
+          sent_by: null,
+          sent_at: null,
+          paid_at: null,
+          paid_by: null,
+          paid_bank_name: null,
+          paid_account_bank_name: null,
+          nominal: null,
         }
       } else if(select_id == "1") {
         objectStatus = {
           updated_by: user.name,
           status: select_id,
-          packing_by: user.name
+          packing_by: user.name,
+          sent_by: null,
+          expedition_id: null,
+          shipping_cost: null,
+          sent_at: null,
+          paid_at: null,
+          paid_by: null,
+          paid_bank_name: null,
+          paid_account_bank_name: null,
+          nominal: null,
         }
       } else if(select_id == "2") {
         objectStatus = {
           updated_by: user.name,
           status: select_id,
-          sent_by: user.name
+          sent_by: user.name,
+          paid_at: null,
+          paid_by: null,
+          paid_bank_name: null,
+          paid_account_bank_name: null,
+          nominal: null,
         }
       }
       console.log({
@@ -1801,6 +1826,7 @@
       }
 
       // console.log({indexEdit})
+      console.log({paid_at_before, paid_bank_name_before, paid_account_bank_name_before, nominal_before,paid_by_before})
       var paid_at_after = paid_at_before +paid_at + "|"
       var bank_name_after = paid_bank_name_before  +bank_name + "|"
       var bank_account_name_after = paid_account_bank_name_before  +bank_account_name + "|"
@@ -1848,6 +1874,13 @@
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
           console.log({data})
+          console.log({
+            paid_at: paid_at_after,
+            paid_bank_name: bank_name_after,
+            paid_account_bank_name: bank_account_name_after,
+            nominal: nominal_after,
+            paid_by: paid_by_after,
+          })
           if(data['message']=="sukses"){
             let obj = {
               paid_by: user.name,
@@ -1857,11 +1890,11 @@
               nominal: nominal_payment_input
             }
             dataCartDokter[key]['step_payment'].push(obj)
-            // dataCartDokter[key]['paid_bank_name'] = bank_name
-            // dataCartDokter[key]['paid_account_bank_name'] = bank_account_name
-            // dataCartDokter[key]['nominal'] = data['nominal']
-            // dataCartDokter[key]['paid_by'] = data['paid_by']
-            // dataCartDokter[key]['paid_at'] = data['paid_at']
+            dataCartDokter[key]['paid_bank_name'] = bank_name_after
+            dataCartDokter[key]['paid_account_bank_name'] = bank_account_name_after
+            dataCartDokter[key]['nominal'] = nominal_after
+            dataCartDokter[key]['paid_by'] = paid_by_after
+            dataCartDokter[key]['paid_at'] = paid_at_after
             dataCartDokter[key]['total_num_paid'] += Number(nominal_payment_input)
             dataCartDokter[key]['total_num_paid_sum'] -= Number(nominal_payment_input)
             dataCartDokter[key]['total_paid'] = data['nominal']
@@ -1888,6 +1921,7 @@
     }
 
     function EditStepPayment(id, key) {
+      console.log({dataCartDokter, "status": "edit step"})
       var indexEdit = document.getElementById(`key_edit_step_payment${key}`).value;
       var paid_at = $(`#step_edit_paid_at${key}`).val();
       var bank_name = $(`#step_edit_bank_name${key}`).val();
@@ -1951,15 +1985,16 @@
 
       // return
 
-      var paid_at_after = paid_at_before + "|" +paid_at
-      var bank_name_after = paid_bank_name_before + "|" +bank_name
-      var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
-      var nominal_after = nominal_before + "|" + nominal_payment_input
+      // var paid_at_after = paid_at_before + "|" +paid_at
+      // var bank_name_after = paid_bank_name_before + "|" +bank_name
+      // var bank_account_name_after = paid_account_bank_name_before + "|" +bank_account_name
+      // var nominal_after = nominal_before + "|" + nominal_payment_input
       var paidSplit = paid_at_before.split("|")
       var paidBankNameSplit = paid_bank_name_before.split("|")
       var paidAccountBankNameSplit = paid_account_bank_name_before.split("|")
       var paidNominalSplit = nominal_before.split("|")
       var paidBySplit = paid_by_before.split("|")
+      console.log({paidSplit,paidBankNameSplit,paidAccountBankNameSplit,paidNominalSplit,paidBySplit,indexEdit, paid_at_before, paid_bank_name_before,paid_account_bank_name_before,nominal_payment_input })
       paidSplit[indexEdit] = paid_at
       paidBankNameSplit[indexEdit] = bank_name
       paidAccountBankNameSplit[indexEdit] = bank_account_name
@@ -1971,8 +2006,9 @@
       paidNominalSplit = paidNominalSplit.join('|')
       paidBySplit = paidBySplit.join('|')
       console.log({split: {
-        paidSplit,paidBankNameSplit,paidAccountBankNameSplit,paidNominalSplit,paidBySplit
+        paidSplit,paidBankNameSplit,paidAccountBankNameSplit,paidNominalSplit,paidBySplit,indexEdit
       }})
+      // return
       $.ajax({
       type: "POST",
         url: "{{url('/')}}"+"/editStepPaymentOrder",

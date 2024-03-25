@@ -404,13 +404,15 @@ class ListPOController extends Controller
                 $dataNominal = explode("|", $data['nominal']);
                 $sum = array_sum(explode("|", $data['nominal']));
                 foreach ($dataPaidBy as $key => $value) {
-                  $dataStepPayment['paid_by'] = $value;
-                  $dataStepPayment['paid_at'] = $dataPaidAt[$key];
-                  $dataStepPayment['paid_bank_name'] = $dataPaidBankName[$key];
-                  $dataStepPayment['paid_account_bank_name'] = $dataPaidAccountBankName[$key];
-                  $dataStepPayment['nominal'] = $dataNominal[$key];
-                  // $totalPaid += $dataStepPayment['nominal'];
-                  array_push($stepPayment, $dataStepPayment);
+                  if($value != "") {
+                    $dataStepPayment['paid_by'] = $value;
+                    $dataStepPayment['paid_at'] = $dataPaidAt[$key];
+                    $dataStepPayment['paid_bank_name'] = $dataPaidBankName[$key];
+                    $dataStepPayment['paid_account_bank_name'] = $dataPaidAccountBankName[$key];
+                    $dataStepPayment['nominal'] = $dataNominal[$key];
+                    // $totalPaid += $dataStepPayment['nominal'];
+                    array_push($stepPayment, $dataStepPayment);
+                  }
                 }
 
                 $data['total_num_paid'] = $sum;
@@ -610,6 +612,7 @@ class ListPOController extends Controller
           $input['data']['paid_at'] = strtotime($input['data']['paid_at']);
           $input['data']['paid_at'] = date('Y-m-d', $input['data']['paid_at']);
           $input['data']['paid_by'] = Auth::user()->name;
+          $nominal = $input['data']['nominal'];
           if($input['data']['status'] == 5) {
             $input['data']['paid_at'] .= "|";
             $input['data']['paid_by'] .= "|";
@@ -626,7 +629,7 @@ class ListPOController extends Controller
             $data['total_paid'] = number_format($input['total'],0,',','.');
             // $data['total_paid_sum'] = number_format($input['total'] - $input['nominal'],0,',','.');
           } else {
-            $data['nominal_step'] = $input['data']['nominal'];
+            $data['nominal_step'] = $nominal;
             $data['total_paid'] = number_format($input['nominal'],0,',','.');
             $data['total_num_paid_sum'] = $input['total'] - $input['nominal'];
             $data['total_paid_sum'] = number_format($input['total'] - $input['nominal'],0,',','.');
