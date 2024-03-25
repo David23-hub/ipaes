@@ -390,7 +390,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
     foreach ($data as $value) {
         
         if($name!=$value->created_by){
-            $tempBody .= $this->getBodySummary($name,"IDR. ".$tot,"IDR. ".$incen, $no);
+            $tempBody .= $this->getBodySummary($name,"IDR ".number_format($tot,0,',','.'),"IDR ".number_format($incen,0,',','.'), $no);
             $name = $value["created_by"];
             $no++;
             $tot=0;
@@ -399,7 +399,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
         $tot+=$value["total"];
         $incen+=$value["incentiveIdr"];
     };
-    $tempBody .= $this->getBodySummary($name,"IDR. ".number_format($tot,0,',','.'),"IDR. ".number_format($incen,0,',','.'), $no);
+    $tempBody .= $this->getBodySummary($name,"IDR ".number_format($tot,0,',','.'),"IDR ".number_format($incen,0,',','.'), $no);
 
     $tempBody = $this->rowDataSummary($tempBody);
     
