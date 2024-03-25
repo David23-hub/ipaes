@@ -479,7 +479,7 @@
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" max="{{ $itemDokter['total_paid_sum'] }}">
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" oninput="SetInputStepPayment(event, {{ $key }})" max="{{ $itemDokter['total_paid_sum'] }}">
                 </div>
               </div>
             </div>
@@ -524,7 +524,7 @@
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_edit_step_payment_input{{ $key }}" required>
+                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_edit_step_payment_input{{ $key }}" oninput="SetInputStepPayment(event, {{ $key }})" required>
                 </div>
               </div>
             </div>
@@ -645,12 +645,13 @@
       x.style.display = "block"
     }
 
-    // function SetInputStepPayment(e) {
-    //   let val = e.target.value;
-    //   if(dataCartDokter[key]['total_num_paid_sum'] < val) {
-    //     e.target.value = dataCartDokter[key]['total_num_paid_sum']
-    //   }
-    // }
+    function SetInputStepPayment(e, key) {
+      let val = e.target.value;
+      console.log(dataCartDokter[key]['total_num_paid_sum'], val)
+      if(dataCartDokter[key]['total_num_paid_sum'] < val) {
+        e.target.value = dataCartDokter[key]['total_num_paid_sum']
+      }
+    }
 
     function resetModalInput() {
       document.getElementById('cancel_reason').value = '';
@@ -1382,12 +1383,14 @@
           if(data.message=="sukses"){
             clearModalExtraCharge(key)
             $(`#modalExtraCharge${key}`).modal("hide")
+            // data[key]['total_paid_sum'] += price
             dataCartDokter[key]['extra_charge'].push({
+              id: data['id'],
               transaction_id: id,
               description: desc,
               price: price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
             })
-            refreshTableExtraCharge(key, dataCartDokter[key]['total_price'], price)
+            refreshTableExtraCharge(key, dataCartDokter[key]['total_num_paid_sum'], price)
 
             AlertSuccess()
           }else if(data!='gagal'|| data!="gagal2"){
@@ -1427,7 +1430,7 @@
       
       total = Number(total_price) + Number(extra_charge)
       // console.log({total})
-      dataCartDokter[key]['total_price'] = total
+      dataCartDokter[key]['total_num_paid_sum'] = total
       total = total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
       divExtraCharge += `
       <tr>
@@ -1453,7 +1456,7 @@
           </div>
         </td>
         <td>
-          <div id="grand_total${key}">
+          <div id="total_paid_sum_div${key}">
             IDR ${total}
           </div>
         </td>
@@ -1508,6 +1511,8 @@
       var bank_account_name = $(`#bank_account_name${key}`).val();
       var nominal_payment_input = $(`#nominal_payment_input${key}`).val();
       var nominal_input = document.getElementById(`container_nominal_input${key}`);
+
+      // console.log()
       var status = 5
       if(nominal_input.style.display == "none") {
         nominal_payment_input = 0
@@ -1540,10 +1545,10 @@
           paid_bank_name: bank_name,
           paid_account_bank_name: bank_account_name,
           nominal: nominal_payment_input,
-          total: dataCartDokter[key]['total_price'],
+          total: dataCartDokter[key]['total_num_paid_sum'],
           id:id,
         })
-
+      // return;
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/paymentOrder",
@@ -1555,7 +1560,7 @@
           nominal: nominal_payment_input,
           id:id,
         }, 
-        total: dataCartDokter[key]['total_price'],
+        total: dataCartDokter[key]['total_num_paid_sum'],
         nominal: nominal_payment_input,
         },
         beforeSend: $.LoadingOverlay("show"),
@@ -1569,6 +1574,7 @@
               dataCartDokter[key]['paid_by'] = data['paid_by']
               dataCartDokter[key]['paid_at'] = data['paid_at']
               dataCartDokter[key]['total_paid'] = data['total_paid']
+              dataCartDokter[key]['total_paid_sum'] = 0
               // dataCartDokter[key]['total_paid_sum'] = data['total_paid_sum']
             } else if(status == 5) {
               dataCartDokter[key]['paid_bank_name'] = data['paid_bank_name']
@@ -1671,8 +1677,13 @@
           paid_by_before: dataCartDokter[key]['paid_by'],
           // indexEdit,
           paid_by: paid_by_after,
+          nominal_paid: dataCartDokter[key]['total_num_paid'],
+          total_num_paid_sum: dataCartDokter[key]['total_num_paid_sum'],
+          must_paid: Number(dataCartDokter[key]['total_num_paid']) + Number(nominal_payment_input),
+          left_paid:  dataCartDokter[key]['total_num_paid_sum'] - nominal_payment_input,
         }
       })
+      // return
       $.ajax({
       type: "POST",
         url: "{{url('/')}}"+"/stepPaymentOrder",
@@ -1940,12 +1951,14 @@
         let el = dataCartDokter[key]['products'][i]
         var quantity = $(`#productQty-${key}-${i}`).val()
         var discount = $(`#productDiscount-${key}-${i}`).val()
+        
         dataCartDokter[key]['products'][i]['qty'] = quantity
         dataCartDokter[key]['products'][i]['disc'] = discount
+        let price_product = dataCartDokter[key]['products'][i]['price_product_real']
         if(dataCartDokter[key]['products'].length -1 == i) {
-          productJoin += `${el['id']}|${el['type']}|${quantity}|${discount}`
+          productJoin += `${el['id']}|${el['type']}|${quantity}|${discount}|${price_product}`
         } else {
-          productJoin += `${el['id']}|${el['type']}|${quantity}|${discount},`
+          productJoin += `${el['id']}|${el['type']}|${quantity}|${discount}|${price_product},`
         }
       }
 

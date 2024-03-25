@@ -226,6 +226,8 @@
 
 @push('js')
 <script>
+  data = @json($data);
+  console.log({data})
   window.onload = function() {
     getAllData()
   };
@@ -372,6 +374,8 @@
         }
       }).get()
       arr = arr.join(",")
+
+      console.log()
 
       var fileInput = document.getElementById('image_add');
 

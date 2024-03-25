@@ -182,6 +182,7 @@ class ListPOController extends Controller
                   }
 
                   $product['price_product'] = $temp[4];
+                  $product['price_product_real'] = $temp[4];
                   $product["type"] = $temp[1];
                   $product["id"] = $temp[0];
                   $product["qty"]=$temp[2];
@@ -658,11 +659,15 @@ class ListPOController extends Controller
           $data['description'] = $input['data']['description'];
           $data['price'] = $input['data']['price'];
           $data['created_at'] = date('Y-m-d H:i:s');
-          $data['created_by'] = Auth::user()->name;
+          $data['created_by'] = Auth::user()->email;
           $data['updated_at'] = date('Y-m-d H:i:s');
-          $data['updated_by'] = Auth::user()->name;
-          $this->extra_charge->AddItem($data);
+          $data['updated_by'] = Auth::user()->email;
+          $res = $this->extra_charge->AddItem($data);
+          Log::info('extra_charge', [
+            'res' => $res
+          ]);
           $result['message'] = "sukses";
+          $result['id'] = $res;
           $result['price'] = number_format($data["price"],0,',','.');
           return $result;
         }catch(\Throwable $th) {
@@ -676,6 +681,7 @@ class ListPOController extends Controller
         try {
           $input = $request->all();
           $data['extra_charge'] = $input['data']['extra_charge'];
+          Log::info('extra_charge', [$data['extra_charge']]);
           $this->cart->UpdateItem($input['data']['id'], $input['data']['cart']);
           $this->extra_charge->UpdatesItem($data['extra_charge']);
           $result = "sukses";

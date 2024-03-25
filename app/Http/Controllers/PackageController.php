@@ -108,10 +108,12 @@ class PackageController extends Controller
 
             $resultProduct = [];
             $explodeProduct = explode(",", $index['product']);
+            Log::info('explode product', [$explodeProduct]);
             foreach ($explodeProduct as $valueExplode) {
                 $prod = explode("|", $valueExplode);
-                $id = $prod[0];
-                $stock = $prod[1];
+                $id = $prod[1];
+                $stock = $prod[0];
+                Log::info('array product', [$id, $stock]);
                 foreach ($product as $valueProduct) {
                     if($id == $valueProduct['id']) {
                         $pushArr = [

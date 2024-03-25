@@ -62,7 +62,8 @@ class ExtraChargeModel extends Model
         $d->price = $data['price'];
         $d->created_by = $data['created_by'];
         $d->created_at = $data['created_at'];
-        return $d->save();
+        $d->save();
+        return $d->id;
     }
 
     public function UpdateItem($id, $data){
