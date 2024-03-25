@@ -39,7 +39,7 @@ class StockController extends Controller
         return view('master.stockReport')->with('items',$items);
     }
 
-    public function insert($data){
+    public function insert($data,$update_item){
 
         try {
             $temp = $this->model->AddItems($data);
@@ -49,18 +49,21 @@ class StockController extends Controller
             }
 
             $result = "Gagal Update Stock Product Dengan id: ";
+
             foreach ($data as $value) {
                 $res = 0;
-                if(isset($value["stock_in"]) &&$value["stock_in"]!=0){
-                    $res = $this->item->UpdateQtyStock($value['id_product'],$value["stock_in"]);
-                }else if(isset($value["stock_out"]) &&$value["stock_out"]!=0){
-                    $res = $this->item->UpdateQtyStock($value['id_product'],($value["stock_out"] * -1));
+                if(isset($value["stock_in"]) && $value["stock_in"]!=0 && $update_item=="1"){
+                    $res = $this->item->UpdateQtyStockPlus($value['id_product'],$value["stock_in"]);
+                }else if(isset($value["stock_out"]) &&$value["stock_out"]!=0 && $update_item=="1" ){
+                    $res = $this->item->UpdateQtyStockMinus($value['id_product'],($value["stock_out"] ));
                 }
 
-                if ($res != 1){
-                    $result .= $value["product_id"].", ";
+                if ($res != 1 && $update_item =="1"){
+                    $result .= $value["id_product"].", ";
                 }
             }
+
+            
 
             if($result == "Gagal Update Stock Product Dengan id: "){
                 return "sukses";

@@ -210,7 +210,7 @@ class CartController extends Controller
                 }
             }
         
-            return $this->stockController->insert($products);
+            return $this->stockController->insert($products,"1");
 
         } catch (\Throwable $th) {
             $result="gagal";

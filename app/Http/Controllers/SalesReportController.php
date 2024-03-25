@@ -148,7 +148,7 @@ class SalesReportController extends Controller
             }
 
             //loop for payment step
-            if($value->paid_at[strlen($value->paid_at)-1]=="|"){
+            if(strlen($value->paid_at)>0 && $value->paid_at[strlen($value->paid_at)-1]=="|"){
                 $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
             }
             if($value->paid_at != ""){
