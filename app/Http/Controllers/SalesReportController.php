@@ -44,7 +44,7 @@ class SalesReportController extends Controller
 
     public function getAll(Request $request){
 
-        dd("W(O");
+        // dd("W(O");
         $input = $request->all();
 
         $products = $this->item->GetAll();

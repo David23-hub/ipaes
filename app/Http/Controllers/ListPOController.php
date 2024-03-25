@@ -644,6 +644,26 @@ class ListPOController extends Controller
       }
     }
 
+    public function editPaymentOrder(Request $request) {
+      try {
+          $input = $request->all();
+          $input['data']['paid_at'] = strtotime($input['data']['paid_at']);
+          $input['data']['paid_at'] = date('Y-m-d', $input['data']['paid_at']);
+          $input['data']['paid_by'] = Auth::user()->name;
+          $this->cart->UpdateItem($input['data']['id'], $input['data']);
+          $data['message'] = "sukses";
+          $data['paid_by'] = $input['data']['paid_by'];
+          $data['paid_at'] = $input['data']['paid_at'];
+          $data['paid_bank_name'] = $input['data']['paid_bank_name'];
+          $data['paid_account_bank_name'] = $input['data']['paid_account_bank_name'];
+          return $data;
+      }catch(\Throwable $th) {
+          Log::error("error di throwable");
+          Log::error($th);
+          return "gagal";
+      }
+    }
+
     public function stepPaymentOrder(Request $request) {
       try {
         $input = $request->all();
