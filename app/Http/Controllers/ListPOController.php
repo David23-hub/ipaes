@@ -541,6 +541,7 @@ class ListPOController extends Controller
             $input['data']['cancel_at'] = date('Y-m-d H:i:s');
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
             $res = $this->stockController->cancelPO($request['data']['id']);
+            print_r($res);die();
             return $res;
         }catch(\Throwable $th) {
             Log::error("error di throwable");

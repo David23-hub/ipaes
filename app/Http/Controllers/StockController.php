@@ -108,7 +108,7 @@ class StockController extends Controller
             foreach ($datas as $value) {
                 $res = 0;
 
-                $res = $this->item->UpdateQtyStock($value['id_product'],($value["stock_out"]));
+                $res = $this->item->UpdateQtyStockPlus($value['id_product'],($value["stock_out"]));
 
                 if ($res != 1){
                     $result .= $value["product_id"].", ";

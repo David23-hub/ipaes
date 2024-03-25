@@ -111,7 +111,6 @@ Route::post('/incentive/getReport/download', [App\Http\Controllers\IncentiveRepo
 
 Route::get('/stock/report', [App\Http\Controllers\StockController::class, 'index'])->middleware('auth');
 Route::post('/stock/getReport', [App\Http\Controllers\StockController::class, 'getAll'])->middleware('auth');
-Route::post('/stock/cancelPO', [App\Http\Controllers\StockController::class, 'cancelPO'])->middleware('auth');
 Route::post('/stock/getReport/download', [App\Http\Controllers\StockController::class, 'download'])->middleware('auth');
 Route::post('/stock/getReport/summary', [App\Http\Controllers\StockController::class, 'getSummary'])->middleware('auth');
 
