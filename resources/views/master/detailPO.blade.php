@@ -2070,12 +2070,15 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          if(data=="sukses"){
+          if(data['res']=="sukses"){
             $(`#modalCancel${key}`).modal("hide")
             dataCartDokter[key].status = 4
+            dataCartDokter[key]['cancel_reason'] = cancel_reason
+            dataCartDokter[key]['cancel_by'] = data['cancel_by']
+            dataCartDokter[key]['cancel_at'] = data['cancel_at']
             checkForButtonStatus()
             AlertSuccess()
-          }else if(data!='gagal'&& data!="gagal2"){
+          }else if(data['res']!='gagal'&& data['res']!="gagal2"){
             AlertWarningWithMsg(data)
           }else{
             AlertError()
