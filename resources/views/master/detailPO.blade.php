@@ -205,7 +205,7 @@
                     </tfoot>
                   </table>
                   @if ($user['role'] == "superuser" || $user['role'] == "admin")
-                    <div class="d-flex justify-content-end">
+                    <div class="d-flex justify-content-end" id="button-extra-charge{{ $key }}">
                         <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
                         Add Extra Charges
                         </button>
@@ -216,8 +216,8 @@
                     <p class="text-start">{{ $itemDokter->notes }}</p>
                   </div>
                   @if ($user['role'] == "superuser" || $user['role'] == "admin")
-                    <div class="form-group">
-                        <button class="btn me-3 btn-outline-success" id="edit_product" onclick="EditProductShow({{ $key }})">
+                    <div class="form-group" id="button-edit-product{{ $key }}">
+                        <button class="btn me-3 btn-outline-success" id="edit_product{{ $key }}" onclick="EditProductShow({{ $key }})">
                         Edit Product
                         </button>
                     </div>
@@ -948,6 +948,16 @@
           `
 
           if(user['role'] == "superuser" || user['role'] == "admin") {
+              let edit_product_button = document.querySelector(`#button-edit-product${i}`)
+              if(edit_product_button) {
+                edit_product_button.innerHTML = ""
+              }
+
+              let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
+              if(extra_charge_button) {
+                extra_charge_button.innerHTML = ""
+              }
+
               document.querySelector(`#column_sent${i}`).innerHTML = `
               <div class="card">
                     <div class="card-body">
@@ -1299,12 +1309,24 @@
           }
 
           if (dataCartDokter[i]['total_paid_sum'] == "0") {
+            if(user['role'] == "superuser" || user['role'] == "admin") {
+              let edit_product_button = document.querySelector(`#button-edit-product${i}`)
+              if(edit_product_button) {
+                edit_product_button.innerHTML = ""
+              }
+  
+              let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
+              if(extra_charge_button) {
+                extra_charge_button.innerHTML = ""
+              }
+            }
             document.querySelector(`#button_status_update${i}`).innerHTML = ``
             document.querySelector(`#span_status${i}`).innerHTML = `
             <span class="badge bg-success text-wrap fs-2">
               Paid (Completed)
             </span>
             `
+
 
             let queryCancel = document.querySelector(`#button-status-canceled${i}`)
             if(queryCancel) {
@@ -1681,7 +1703,7 @@
             } else if(status == 5) {
               dataCartDokter[key]['paid_bank_name'] = data['paid_bank_name']
               dataCartDokter[key]['paid_account_bank_name'] = data['paid_account_bank_name']
-              dataCartDokter[key]['nominal'] = data['nominal_step']
+              dataCartDokter[key]['nominal'] = data['nominal_step'] + "|"
               dataCartDokter[key]['paid_by'] = data['paid_by']
               dataCartDokter[key]['paid_at'] = data['paid_at']
               var paid_at = data['paid_at'].split('|')[0]
@@ -1699,10 +1721,10 @@
               dataCartDokter[key]['total_paid'] = data['total_paid']
               dataCartDokter[key]['total_paid_sum'] = data['total_paid_sum']
               dataCartDokter[key]['total_num_paid_sum'] = data['total_num_paid_sum']
-              dataCartDokter[key]['total_num_paid'] = data['nominal_step']
+              dataCartDokter[key]['total_num_paid'] = Number(data['nominal_step'])
             }
             dataCartDokter[key].status = status
-            // console.log(dataCartDokter[key], "data cart dokter")
+            console.log(dataCartDokter[key], "data cart dokter")
             $(`#modalPayment${key}`).modal("hide")
             clearModalPayment(key)
             checkForButtonStatus()
