@@ -91,7 +91,12 @@ class DashboardController extends Controller
         ];
 
         foreach ($doctorAll as $value) {
-            if(strtotime($value['dob']) == strtotime($newDate)) {
+            $date = date_create($value['dob']);  
+            date_sub($date, date_interval_create_from_date_string('1 days'));  
+            $substractOneDay = date_format($date, 'Y-m-d');
+            // $newDate1 = date('Y-m-d H:i:s');
+            // Log::info('date', [($value['dob']), ($newDate), ($substractOneDay), ($newDate1)]);
+            if(strtotime($value['dob']) == strtotime($newDate) || strtotime($substractOneDay) == strtotime($newDate)) {
                 array_push($mapDoktor, [
                     'name' => $value['name'],
                 ]);
@@ -371,7 +376,12 @@ class DashboardController extends Controller
         ];
 
         foreach ($doctorAll as $value) {
-            if(strtotime($value['dob']) == strtotime($newDate)) {
+            $date = date_create($value['dob']);  
+            date_sub($date, date_interval_create_from_date_string('1 days'));  
+            $substractOneDay = date_format($date, 'Y-m-d');
+            // $newDate1 = date('Y-m-d H:i:s');
+            // Log::info('date', [($value['dob']), ($newDate), ($substractOneDay), ($newDate1)]);
+            if(strtotime($value['dob']) == strtotime($newDate) || strtotime($substractOneDay) == strtotime($newDate)) {
                 array_push($mapDoktor, [
                     'name' => $value['name'],
                 ]);

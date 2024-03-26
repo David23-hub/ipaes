@@ -74,6 +74,7 @@
               <div class="d-flex justify-content-between">
                 Shipping Cost <p class="text-danger" id="total_shipping">IDR {{ $result['total_shipping'] }}</p>
               </div>
+              @if ($user['role'] != "manager")
               <hr />
               <div class="d-flex justify-content-between">
                 Total Salary <p class="text-danger" id="total_salary">IDR {{ $result['total_salary'] }}</p>
@@ -82,6 +83,7 @@
               <div class="d-flex justify-content-between">
                 Total Other Cost <p class="text-danger" id="total_other_cost">IDR {{ $result['total_other_cost'] }}</p>
               </div>
+              @endif
               <hr />
               <div class="d-flex justify-content-between">
                 Total Revenue <p class="text-success" id="total_revenue">IDR {{ $result['total_revenue'] }}</p>
@@ -317,7 +319,7 @@
   result = @json($result);
 
   // console.log(data)
-  console.log({result})
+  // console.log({result})
   //options
 
   var options = {
@@ -355,7 +357,7 @@
       afterSend:$.LoadingOverlay("hide"),
       data: { "_token": "{{ csrf_token() }}","end_date": endDate, "start_date": startDate},
       success: function (data) {
-        console.log({data}, "dataaa1")
+        // console.log({data}, "dataaa1")
         document.querySelector(`#total_sales`).innerHTML = `IDR ${data['result']['total_sales']}`
         document.querySelector(`#total_insentive`).innerHTML = `IDR ${data['result']['total_insentive']}`
         document.querySelector(`#total_shipping`).innerHTML = `IDR ${data['result']['total_shipping']}`
