@@ -193,13 +193,13 @@
       e.preventDefault();
       var spanText = $('#reportrange span').text();
       var dateArray = spanText.split(' - '); // Split text by hyphen
-      console.log(dateArray, "date array")
+      // console.log(dateArray, "date array")
       var startDate = formatDate(dateArray[0]);
 
       // Format end date
       var endDate = formatDate(dateArray[1]);
       var selectStatus = $('#status-select').val();
-      console.log(selectStatus, "select status")
+      // console.log(selectStatus, "select status")
       if(selectStatus != "all") {
         if(selectStatus == 3) {
           selectStatus = [3, 5]
@@ -217,7 +217,7 @@
         afterSend:$.LoadingOverlay("hide"),
         data: { "_token": "{{ csrf_token() }}", "startDate": startDate, "endDate": endDate, "status": selectStatus },
         success: function (data) {
-          console.log({data}, "dataaa1")
+          // console.log({data}, "dataaa1")
           dataTable.clear();
           dataTable.draw();
           no = 0
@@ -264,7 +264,7 @@
       // Format end date
       var endDate = formatDate(dateArray[1]);
       var selectStatus = $('#status-select-transaction').val();
-      console.log(selectStatus, "select status")
+      // console.log(selectStatus, "select status")
       if(selectStatus != "all") {
         if(selectStatus == 3) {
           selectStatus = [3, 5]
@@ -282,7 +282,7 @@
         afterSend:$.LoadingOverlay("hide"),
         data: { "_token": "{{ csrf_token() }}", "startDate": startDate, "endDate": endDate, "status": selectStatus },
         success: function (data) {
-          console.log({data}, "dataaa2")
+          // console.log({data}, "dataaa2")
           dataTable2.clear();
           dataTable2.draw();
           no = 0
@@ -398,7 +398,7 @@
       afterSend:$.LoadingOverlay("hide"),
       data: { "_token": "{{ csrf_token() }}"},
       success: function (data) {
-        console.log({data}, "dataaa")
+        // console.log({data}, "dataaa")
         dataTable.clear();
         dataTable.draw();
         no = 0

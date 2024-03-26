@@ -2043,7 +2043,7 @@
       var paidAccountBankNameSplit = paid_account_bank_name_before.split("|")
       var paidNominalSplit = nominal_before.split("|")
       var paidBySplit = paid_by_before.split("|")
-      console.log({paidNominalSplit})
+      // console.log({paidNominalSplit})
       paidSplit[indexEdit] = paid_at
       paidBankNameSplit[indexEdit] = bank_name
       paidAccountBankNameSplit[indexEdit] = bank_account_name
@@ -2054,7 +2054,7 @@
       paidAccountBankNameSplit = paidAccountBankNameSplit.join('|')
       paidNominalSplit = paidNominalSplit.join('|')
       paidBySplit = paidBySplit.join('|')
-      console.log({paidNominalSplit})
+      // console.log({paidNominalSplit})
   
       $.ajax({
       type: "POST",
