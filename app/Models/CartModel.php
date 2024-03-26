@@ -41,6 +41,7 @@ class CartModel extends Model
                 ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.role as role','users.name as user_name')
                 ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
                 ->where('cart.deleted_by',null)
+                ->orderBy('cart.created_at', 'desc')
                 ->get();
             } else {
                 return $this
@@ -51,6 +52,7 @@ class CartModel extends Model
                 ->where('cart.management_order', '=', '0')
                 ->where('cart.created_by', '=', $email)
                 ->where('cart.deleted_by',null)
+                ->orderBy('cart.created_at', 'desc')
                 ->get();
             }
         } else {
@@ -62,6 +64,7 @@ class CartModel extends Model
                 ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
                 ->whereIn('cart.status', $status)
                 ->where('cart.deleted_by',null)
+                ->orderBy('cart.created_at', 'desc')
                 ->get();
             } else {
                 return $this
@@ -73,6 +76,7 @@ class CartModel extends Model
                 ->where('cart.management_order', '=', '0')
                 ->whereIn('cart.status', $status)
                 ->where('cart.deleted_by',null)
+                ->orderBy('cart.created_at', 'desc')
                 ->get();
             }
         }
@@ -147,14 +151,14 @@ class CartModel extends Model
     }
 
     public function GetListJoinDoctorWithDoctorId($id) {
-        return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->where()->select('cart.*' )->get();
+        return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->select('cart.*' )->get();
     }
 
     public function GetListJoinDoctorWithDoctorIdAndEmail($id, $role, $email) {
         if($role == "superuser" || $role == "admin" || $role == "manager") {
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->select('cart.*' )->get();        
         } else {
-            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->where('cart.created_by', '=', $email)->select('cart.*' )->get();
+            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->where('cart.created_by', '=', $email)->where('cart.management_order', '==', '0')->select('cart.*' )->get();
         }
     }
 

@@ -599,6 +599,7 @@ class ListPOController extends Controller
               $input['data']['sent_at'] = date('Y-m-d H:i:s');
             }
             $this->cart->UpdateItem($input['data']['id'], $input['data']);
+            $data['nominal'] = number_format($input['data']['nominal'],0,',','.');
             $data['message'] = "sukses";
             return $data;
         }catch(\Throwable $th) {

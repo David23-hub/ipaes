@@ -110,8 +110,6 @@
 <script>
   dokter = @json($data);
   user = @json($user);
-  console.log(dokter, 'current_page')
-  console.log({user}, 'user')
   var dataTable = $("#tableList").DataTable({
             "ordering": true,
             "destroy": true,
@@ -130,6 +128,7 @@
             //to turn off pagination
             paging: true,
             responsive: true,
+            order: [[0, 'desc']]
             // "bFilter": true,
             //turn off info current page data index
             // "bInfo": false,
