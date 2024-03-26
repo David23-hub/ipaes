@@ -303,7 +303,7 @@
                 htmlStatus = `<span class="badge bg-primary">SUBMITED</span>`
                 break;
               case 1:
-                htmlStatus = `<span class="badge bg-waring">PURCHASE</span>`
+                htmlStatus = `<span class="badge bg-warning">PACKING</span>`
                 break;
               case 2:
                 htmlStatus = `<span class="badge bg-info">SENT</span>`
