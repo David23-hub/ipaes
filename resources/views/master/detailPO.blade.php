@@ -923,6 +923,12 @@
           if(queryStatus) {
             queryStatus.innerHTML = ""
           }
+
+          let queryStatusEdit = document.querySelector(`#span-edit-status${i}`)
+          if(queryStatusEdit) {
+            queryStatusEdit.innerHTML = ""
+          }
+
           let queryCancel = document.querySelector(`#button-status-canceled${i}`)
           if(queryCancel) {
             queryCancel.innerHTML = ""
@@ -1324,6 +1330,11 @@
               let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
               if(extra_charge_button) {
                 extra_charge_button.innerHTML = ""
+              }
+
+              let queryStatus = document.querySelector(`#span-edit-status${i}`)
+              if(queryStatus) {
+                queryStatus.innerHTML = ""
               }
             }
             document.querySelector(`#button_status_update${i}`).innerHTML = ``
