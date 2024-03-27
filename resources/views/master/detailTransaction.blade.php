@@ -1350,6 +1350,36 @@
             if(queryCancel) {
               queryCancel.innerHTML = ""
             }
+          } else {
+            if(user['role'] == "superuser" || user['role'] == "admin") {
+              let queryCancel = document.querySelector(`#button-status-canceled${i}`)
+              if(queryCancel) {
+                queryCancel.innerHTML = `
+                <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
+                  Cancel Purchase Order
+                </button>
+                `
+              }
+  
+              let edit_product_button = document.querySelector(`#button-edit-product${i}`)
+              if(edit_product_button) {
+                  edit_product_button.innerHTML = `
+                  <button class="btn me-3 btn-outline-success" id="edit_product{{ $key }}" onclick="EditProductShow(${i})">
+                      Edit Product
+                  </button>
+                  `
+              }
+  
+              let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
+              if(extra_charge_button) {
+                extra_charge_button.innerHTML = `
+                <button class="btn btn-outline-success" data-target="#modalExtraCharge${i}" data-toggle="modal">
+                  Add Extra Charges
+                </button>
+                `
+              }
+            }
+
           }
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
 
