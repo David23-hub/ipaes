@@ -97,11 +97,13 @@
                       <span class="p-2">
                       </span>                          
                       @else
+                      <div id="span-edit-status{{ $key }}">
                         @if ($user['role'] == "superuser" || $user['role'] == "admin")
                             <span class="p-2">
                                 <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{ $key }}">Edit Status</button>
                             </span>
                         @endif
+                      </div>
                       @endif
                     </div>
                     <div class="col" style="text-align: right">
@@ -922,6 +924,12 @@
           if(queryStatus) {
             queryStatus.innerHTML = ""
           }
+
+          let queryStatusEdit = document.querySelector(`#span-edit-status${i}`)
+          if(queryStatusEdit) {
+            queryStatusEdit.innerHTML = ""
+          }
+
           let queryCancel = document.querySelector(`#button-status-canceled${i}`)
           if(queryCancel) {
             queryCancel.innerHTML = ""
@@ -1323,6 +1331,11 @@
               let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
               if(extra_charge_button) {
                 extra_charge_button.innerHTML = ""
+              }
+
+              let queryStatus = document.querySelector(`#span-edit-status${i}`)
+              if(queryStatus) {
+                queryStatus.innerHTML = ""
               }
             }
             document.querySelector(`#button_status_update${i}`).innerHTML = ``
