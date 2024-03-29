@@ -647,7 +647,6 @@
     dataCartDokter = @json($dataCartDokter);
     dataEkspedisi = @json($dataEkspedisi);
     extraChargeAll = @json($extraChargeAll);
-    console.log({dataCartDokter})
     window.onload = function() {
       checkForButtonStatus()
     };
@@ -1200,7 +1199,6 @@
                 </div>
               </div>`
           
-              console.log(`dropaddstatus${i}`)
           document.querySelector(`#dropaddstatus${i}`).innerHTML = `
           <select class="form-select form-control" id="status_select${i}" required>
             <option value="0">SUBMITED</option>
@@ -1345,7 +1343,6 @@
               }
           }
 
-          console.log({total_paid_sum: dataCartDokter[i]['total_paid_sum']})
           if (dataCartDokter[i]['total_paid_sum'] == "0") {
             if(user['role'] == "superuser" || user['role'] == "admin") {
               let edit_product_button = document.querySelector(`#button-edit-product${i}`)
@@ -1430,7 +1427,7 @@
     function EditSentButton(key) {
       document.getElementById(`ekspedisi_select${key}`).value = dataCartDokter[key].expedition_id
       document.getElementById(`shipping_cost_input${key}`).value = dataCartDokter[key].shipping_cost_number.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.')
-      console.log({shipping})
+      // console.log({shipping})
       document.getElementById(`receipt_number_input${key}`).value = dataCartDokter[key].recepient_number
       $(`#modalSent${key}`).modal("show")
     }
