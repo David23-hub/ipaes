@@ -94,10 +94,10 @@
                         Status  | 
                       </strong>
                       <span id="span_status{{ $key }}"></span>
-                      {{-- @if ($itemDokter['status'] == 4 || $itemDokter['status'] == 3 || $itemDokter['status'] == 5 ) --}}
+                      @if ($itemDokter['status'] == 4 || $itemDokter['status'] == 3 || $itemDokter['status'] == 5 )
                       <span class="p-2">
                       </span>                          
-                      {{-- @else --}}
+                      @else
                       <div id="span-edit-status{{ $key }}">
                       @if ($user['role'] == "superuser" || $user['role'] == "admin")
                         <span class="p-2">
@@ -105,7 +105,7 @@
                         </span>
                       @endif
                       </div>
-                      {{-- @endif --}}
+                      @endif
                     </div>
                     <div class="col" style="text-align: right">
                       <a class="btn btn-primary" href="{{ route('generate.pdf.one', $itemDokter['id']) }}">
