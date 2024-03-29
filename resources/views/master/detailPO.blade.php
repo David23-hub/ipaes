@@ -98,11 +98,13 @@
                       <span class="p-2">
                       </span>                          
                       @else
+                      <div id="span-edit-status{{ $key }}">
                         @if ($user['role'] == "superuser" || $user['role'] == "admin")
                             <span class="p-2">
                                 <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{ $key }}">Edit Status</button>
                             </span>
                         @endif
+                      </div>
                       @endif
                     </div>
                     <div class="col" style="text-align: right">
@@ -301,7 +303,7 @@
               </div>
               <div class="form-group p-2">
                 <label for="extra_charge">Price *</label>
-                <input type="text" class="form-control" id="extra_charge_price{{ $key }}"  placeholder="price" required>
+                <input type="text" class="form-control" id="extra_charge_price{{ $key }}"  placeholder="price" oninput="addDotPrice(this)" required>
               </div>
             </div>
           <div class="modal-footer">
@@ -344,7 +346,7 @@
                 <label for="shipping-cost">Shipping Cost</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="text" class="form-control" placeholder="Masukan Cost" aria-label="Username" aria-describedby="basic-addon1" value="" id="shipping_cost_input{{ $key }}" required>
+                  <input type="text" class="form-control" placeholder="Masukan Cost" aria-label="Username" aria-describedby="basic-addon1" value="" id="shipping_cost_input{{ $key }}" oninput="addDotPrice(this)" required>
                 </div>
               </div>
             </div>
@@ -650,6 +652,15 @@
       checkForButtonStatus()
     };
 
+    function addDotPrice(input) {
+      
+      input.value = input.value.replace(/[^0-9]/g, '')
+      
+      if (input.value > 3) {
+            input.value = input.value.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+          }
+    }
+
     function OnePaymentToggle(key) {
       var x = document.getElementById(`container_nominal_input${key}`);
       x.style.display = "none"
@@ -682,28 +693,41 @@
     }
 
     function SetInputStepPayment(e, key) {
-      let val = e.target.value;
-      if(dataCartDokter[key]['total_num_paid_sum'] < val) {
-        e.target.value = dataCartDokter[key]['total_num_paid_sum']
+      e.target.value = e.target.value.replace(/[^0-9]/g, '')
+
+      if(e.target.value > 3) {
+        let val = e.target.value;
+        if(dataCartDokter[key]['total_num_paid_sum'] < val) {
+          val = dataCartDokter[key]['total_num_paid_sum']
+        }
+
+        val = e.target.value.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
       }
     }
 
     function SetInputEditStepPayment(e, key) {
-      let val = e.target.value;
-      let indexEdit = document.getElementById(`key_edit_step_payment${key}`).value
-
-      let num = 0
-      for (let i = 0; i < dataCartDokter[key]['step_payment'].length; i++) {
-        const element = dataCartDokter[key]['step_payment'][i];
-        if(i != indexEdit) {
-          num += Number(element['nominal'])
+      e.target.value = e.target.value.replace(/[^0-9]/g, '')
+      
+      if(e.target.value > 3) {
+        let val = e.target.value;
+        val = val.split(".").join("")
+        let indexEdit = document.getElementById(`key_edit_step_payment${key}`).value
+  
+        let num = 0
+        for (let i = 0; i < dataCartDokter[key]['step_payment'].length; i++) {
+          const element = dataCartDokter[key]['step_payment'][i];
+          if(i != indexEdit) {
+            num += Number(element['nominal'])
+          }
         }
+  
+        let sum = num + Number(val)
+        if(dataCartDokter[key]['total_price'] < sum) {
+          val = dataCartDokter[key]['total_price'] - num
+        } 
+        e.target.value = val.replace(/(\d)(?=(\d{3})+$)/g, '$1.')
       }
-
-      let sum = num + Number(val)
-      if(dataCartDokter[key]['total_price'] < sum) {
-        e.target.value = dataCartDokter[key]['total_price'] - num
-      } 
+      
     }
 
     function resetModalInput() {
@@ -871,7 +895,7 @@
                         </tr>
                         <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
                         </tr>
                         <tr>
                           <td class="border">Sent by</td>
@@ -902,7 +926,7 @@
                         </tr>
                         <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
                         </tr>
                         <tr>
                           <td class="border">Sent by</td>
@@ -923,6 +947,12 @@
           if(queryStatus) {
             queryStatus.innerHTML = ""
           }
+
+          let queryStatusEdit = document.querySelector(`#span-edit-status${i}`)
+          if(queryStatusEdit) {
+            queryStatusEdit.innerHTML = ""
+          }
+
           let queryCancel = document.querySelector(`#button-status-canceled${i}`)
           if(queryCancel) {
             queryCancel.innerHTML = ""
@@ -985,7 +1015,7 @@
                         </tr>
                         <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
                         </tr>
                         <tr>
                           <td class="border">Sent by</td>
@@ -1016,7 +1046,7 @@
                         </tr>
                         <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
                         </tr>
                         <tr>
                           <td class="border">Sent by</td>
@@ -1199,7 +1229,7 @@
                       </tr>
                       <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
                       </tr>
                       <tr>
                           <td class="border">Sent by</td>
@@ -1229,7 +1259,7 @@
                           </tr>
                           <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
                           </tr>
                           <tr>
                           <td class="border">Sent by</td>
@@ -1325,6 +1355,11 @@
               if(extra_charge_button) {
                 extra_charge_button.innerHTML = ""
               }
+
+              let queryStatus = document.querySelector(`#span-edit-status${i}`)
+              if(queryStatus) {
+                queryStatus.innerHTML = ""
+              }
             }
             document.querySelector(`#button_status_update${i}`).innerHTML = ``
             document.querySelector(`#span_status${i}`).innerHTML = `
@@ -1338,6 +1373,36 @@
             if(queryCancel) {
               queryCancel.innerHTML = ""
             }
+          } else {
+            if(user['role'] == "superuser" || user['role'] == "admin") {
+              let queryCancel = document.querySelector(`#button-status-canceled${i}`)
+              if(queryCancel) {
+                queryCancel.innerHTML = `
+                <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
+                  Cancel Purchase Order
+                </button>
+                `
+              }
+  
+              let edit_product_button = document.querySelector(`#button-edit-product${i}`)
+              if(edit_product_button) {
+                  edit_product_button.innerHTML = `
+                  <button class="btn me-3 btn-outline-success" id="edit_product{{ $key }}" onclick="EditProductShow(${i})">
+                      Edit Product
+                  </button>
+                  `
+              }
+  
+              let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
+              if(extra_charge_button) {
+                extra_charge_button.innerHTML = `
+                <button class="btn btn-outline-success" data-target="#modalExtraCharge${i}" data-toggle="modal">
+                  Add Extra Charges
+                </button>
+                `
+              }
+            }
+
           }
           document.querySelector(`#column_payment${i}`).innerHTML = checkNominal
 
@@ -1362,7 +1427,7 @@
 
     function EditSentButton(key) {
       document.getElementById(`ekspedisi_select${key}`).value = dataCartDokter[key].expedition_id
-      document.getElementById(`shipping_cost_input${key}`).value = dataCartDokter[key].shipping_cost_number
+      document.getElementById(`shipping_cost_input${key}`).value = dataCartDokter[key].shipping_cost_number.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
       document.getElementById(`receipt_number_input${key}`).value = dataCartDokter[key].recepient_number
       $(`#modalSent${key}`).modal("show")
     }
@@ -1378,7 +1443,7 @@
       document.getElementById(`step_edit_paid_at${key}`).value = dataCartDokter[key]['step_payment'][index].paid_at
       document.getElementById(`step_edit_bank_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_bank_name
       document.getElementById(`step_edit_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
-      document.getElementById(`nominal_edit_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal
+      document.getElementById(`nominal_edit_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
       document.getElementById(`key_edit_step_payment${key}`).value = index
       $(`#modalEditStepPayment${key}`).modal("show")
     }
@@ -1528,6 +1593,7 @@
     function ExtraCharge(id, key) {
       var desc = $(`#extra_charge_desc${key}`).val()
       var price = $(`#extra_charge_price${key}`).val()
+      price = price.split(".").join("")
       price = Number(price)
       $.ajax({
         type: "POST",
@@ -1828,6 +1894,7 @@
       var bank_name = $(`#step_bank_name${key}`).val();
       var bank_account_name = $(`#step_bank_account_name${key}`).val();
       var nominal_payment_input = $(`#nominal_step_payment_input${key}`).val();
+      nominal_payment_input = nominal_payment_input.split(".").join("")
       var paid_at_before = dataCartDokter[key]['paid_at']
       var paid_bank_name_before = dataCartDokter[key]['paid_bank_name']
       var paid_account_bank_name_before = dataCartDokter[key]['paid_account_bank_name']
@@ -1957,6 +2024,7 @@
       var bank_name = $(`#step_edit_bank_name${key}`).val();
       var bank_account_name = $(`#step_edit_bank_account_name${key}`).val();
       var nominal_payment_input = $(`#nominal_edit_step_payment_input${key}`).val();
+      nominal_payment_input = nominal_payment_input.split(".").join("")
       var paid_at_before = dataCartDokter[key]['paid_at']
       var paid_bank_name_before = dataCartDokter[key]['paid_bank_name']
       var paid_account_bank_name_before = dataCartDokter[key]['paid_account_bank_name']

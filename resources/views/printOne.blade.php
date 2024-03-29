@@ -157,14 +157,14 @@ table.products {
     font-size: 0.875rem;
 }
 table.products tr {
-    background-color: rgb(96 165 250);
+    /*background-color: rgb(96 165 250);*/
 }
 table.products th {
     color: #ffffff;
     padding: 0.5rem;
 }
 table tr.items {
-    background-color: rgb(241 245 249);
+    /*background-color: rgb(241 245 249);*/
 }
 table tr.items td {
     padding: 0.5rem;
