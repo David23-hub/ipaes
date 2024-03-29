@@ -1169,6 +1169,10 @@
             Paid
           </span>
           `
+          let queryStatus = document.querySelector(`#span-edit-status${i}`)
+          if(queryStatus) {
+            queryStatus.innerHTML = ""
+          }
 
           $(`#nominal_step_payment_input${i}`).attr({
               "max": dataCartDokter[i]['total_num_paid_sum'],
@@ -1353,11 +1357,6 @@
               if(extra_charge_button) {
                 extra_charge_button.innerHTML = ""
               }
-
-              let queryStatus = document.querySelector(`#span-edit-status${i}`)
-              if(queryStatus) {
-                queryStatus.innerHTML = ""
-              }
             }
             document.querySelector(`#button_status_update${i}`).innerHTML = ``
             document.querySelector(`#span_status${i}`).innerHTML = `
@@ -1417,6 +1416,7 @@
           `
         }
 
+        
         if (dataCartDokter[i]['status_due_date'] && dataCartDokter[i].status != 5 && dataCartDokter[i].status != 3) {
           document.querySelector(`#button_status_update${i}`).innerHTML = ``
         }
