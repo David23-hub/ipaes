@@ -738,11 +738,8 @@
       e.target.value = e.target.value.replace(/[^0-9]/g, '')      
       let val = e.target.value;
       
-      console.log({num: dataCartDokter[key]['total_num_paid_sum']})
-      console.log(dataCartDokter[key]['total_num_paid_sum'] < Number(val))
       if(dataCartDokter[key]['total_num_paid_sum'] < Number(val)) {
         val = dataCartDokter[key]['total_num_paid_sum'] + ""
-        console.log({val})
         e.target.value = val.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.');
         return
       }

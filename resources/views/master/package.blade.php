@@ -297,7 +297,6 @@
       afterSend:$.LoadingOverlay("hide"),
       data: { "_token": "{{ csrf_token() }}"},
       success: function (data) {
-        console.log(data, "dataaa")
         dataTable.clear();
         dataTable.draw();
         no = 0
@@ -355,7 +354,6 @@
     $('#add_btn').on('click', function(e) {
       name = $("#nama_add").val()
       status = ""
-      console.log($('#status_add').is(":checked"), "checked")
       // return
       if ($('#status_add').is(":checked")){
         // it is checked
@@ -402,7 +400,6 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          console.log(data, "data")
           if(data=="sukses"){
             getAllData()
             $('#modaladd').modal("hide")
@@ -427,7 +424,6 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          console.log({data})
           $('#id_detail').val(data.id)
           $('#nama_detail').val(data.name)
           $('#qty_detail').val(data.qty)
@@ -488,7 +484,6 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          console.log(data)
           if(data=="sukses"){
             getAllData()
             AlertSuccess()
