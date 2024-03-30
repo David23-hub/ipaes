@@ -213,7 +213,6 @@ class SalesReportController extends Controller
             $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
             $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
             $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
-            
             $count++;
         }
 
