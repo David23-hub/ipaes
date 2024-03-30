@@ -816,11 +816,13 @@
           </select>
           `
 
-          document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-          <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
-            Cancel Purchase Order
-          </button>
-          `
+          if (user['role'] == "superuser" || user['role'] == "admin") {
+            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+              Cancel Purchase Order
+            </button>
+            `
+          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = ""
           document.querySelector(`#column_sent${i}`).innerHTML = ""
@@ -847,11 +849,13 @@
           </select>
           `
 
-          document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-          <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
-            Cancel Purchase Order
-          </button>
-          `
+          if (user['role'] == "superuser" || user['role'] == "admin") {
+            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+              Cancel Purchase Order
+            </button>
+            `
+          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = `
           <div class="card">
@@ -897,12 +901,13 @@
             <option value="2" selected>SENT</option>
           </select>
           `
-
-          document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-          <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
-            Cancel Purchase Order
-          </button>
-          `
+          if (user['role'] == "superuser" || user['role'] == "admin") {
+            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+              Cancel Purchase Order
+            </button>
+            `
+          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = `
           <div class="card">
