@@ -199,8 +199,8 @@ class CartController extends Controller
                     foreach ($tempProd as $valuePackage) {
                         $temp = explode("|",$valuePackage);
                         $obj = [];
-                        $obj["id_product"] = $temp[0];
-                        $obj['stock_out'] = $temp[1];
+                        $obj["id_product"] = $temp[1];
+                        $obj['stock_out'] = $temp[0];
                         $obj['cart_id'] = $input["id_cart"];
                         $obj['status'] = "1";
                         $obj['desc'] = "Dari PAKET ".$listProd[0]["name"]." Pesanan PO ".$po_id;

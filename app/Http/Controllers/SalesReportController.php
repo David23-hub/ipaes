@@ -161,8 +161,9 @@ class SalesReportController extends Controller
             $counter=0;
             //if there's only 1 payment
             if(count($payments)!=0){
-                $value->nominal = substr($value->nominal,0,strlen($value->nominal)-1);
-
+                if($value->nominal[strlen($value->nominal)-1]=="|"){
+                    $value->nominal = substr($value->nominal,0,strlen($value->nominal)-1);
+                }
                 $nominals = explode("|", $value->nominal);
 
                 foreach ($payments as $pay) {
@@ -382,7 +383,9 @@ class SalesReportController extends Controller
             $counter=0;
             //if there's only 1 payment
             if(count($payments)!=0){
-                $value->nominal = substr($value->nominal,0,strlen($value->nominal)-1);
+                if($value->nominal[strlen($value->nominal)-1]=="|"){
+                    $value->nominal = substr($value->nominal,0,strlen($value->nominal)-1);
+                }
                 $nominals = explode("|", $value->nominal);
                 foreach ($payments as $pay) {
                     $i++;
