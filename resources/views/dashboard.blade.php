@@ -366,8 +366,6 @@
   data = @json($data);
   result = @json($result);
 
-  // console.log(data)
-  console.log({result})
   //options
 
   var options = {
