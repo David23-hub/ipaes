@@ -240,24 +240,7 @@ class AppServiceProvider extends ServiceProvider
                         ],
                     ]
                 ]);
-                $event->menu->add([
-                    'text' => 'Additional Total',
-                    'icon'    => 'fas fa-fw fa-landmark',
-                    'submenu' => [
-                        [
-                            'text' => "Salary",
-                            'icon'    => 'fas fa-fw fa-wallet',
-                            // 'icon_color' => 'red',
-                            'url' => "listSalary",
-                        ],
-                        [
-                            'text' => "Other Cost",
-                            'icon'    => 'fas fa-fw fa-money-bill',
-                            // 'icon_color' => 'red',
-                            'url' => "listCost",
-                        ],
-                    ]
-                ]);
+               
             }else if(Auth::user()->role=="manager"){
                 $event->menu->add('MAIN MENU');
                 $event->menu->add([
