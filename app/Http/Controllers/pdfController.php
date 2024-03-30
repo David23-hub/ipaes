@@ -92,7 +92,10 @@ class PDFController extends Controller
         $totalExtraCharge = 0;
         $cart['dokter'] = $dokter;
         $cart['user'] = $usersCreate[0];
-        $cart['po_id'] = str_replace("INV", "PO", $cart['po_id']);
+        $cart['po_id'] = str_replace("PO", "INV", $cart['po_id']);
+        Log::info("po_id", [
+          "po_id" => $cart['po_id']
+        ]);
         foreach ($carts as $valueCart) {
             $temp = explode("|", $valueCart);
 
@@ -199,7 +202,7 @@ class PDFController extends Controller
           $totalExtraCharge = 0;
           $usersCreate = $this->user->GetUserWithEmail($data['created_by']);
           $data['user'] = $usersCreate[0];
-          $data['po_id'] = str_replace("INV", "PO", $data['po_id']);
+          $data['po_id'] = str_replace("PO", "INV", $data['po_id']);
 
           if (strlen($data->cart)!=0){
 

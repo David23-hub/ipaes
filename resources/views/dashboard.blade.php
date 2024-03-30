@@ -52,8 +52,31 @@
     <div style="text-align: end">
       Set Period
       <div>
-        <input type="month" id="datepicker1" onchange="GetAll(event)" value="<?=date('Y-m')?>">
+        <label for="month">Select a month:</label>
+        <select id="month" name="month" onchange="GetAll(event)">
+            @for ($i = 1; $i <= 12; $i++)
+                @if ($i == $result['month_now'])
+                  <option value="{{ $i }}" selected>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+                @else
+                  <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>        
+                @endif
+            @endfor
+        </select>
       </div>
+      <div>
+        <select id="year" name="year" onchange="GetAll(event)">
+          @for ($year = date("Y"); $year >= 1900; $year--)
+              @if ($year == $result['year_now'])
+               <option value="{{ $year }}" selected>{{ $year }}</option>    
+              @else
+                <option value="{{ $year }}">{{ $year }}</option>   
+              @endif
+          @endfor
+        </select>
+      </div>
+      {{-- <div>
+        <input type="month" id="datepicker1" onchange="GetAll(event)" value="<?=date('Y-m')?>">
+      </div> --}}
     </div>
 
     <div class="container">
@@ -74,7 +97,7 @@
               <div class="d-flex justify-content-between">
                 Shipping Cost <p class="text-danger" id="total_shipping">IDR {{ $result['total_shipping'] }}</p>
               </div>
-              @if ($user['role'] != "manager")
+              @if ($user['role'] == "superuser")
               <hr />
               <div class="d-flex justify-content-between">
                 Total Salary <p class="text-danger" id="total_salary">IDR {{ $result['total_salary'] }}</p>
@@ -319,7 +342,7 @@
   result = @json($result);
 
   // console.log(data)
-  // console.log({result})
+  console.log({result})
   //options
 
   var options = {
@@ -343,11 +366,20 @@
   
   const xValues = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober", "November", "Desember"];
 
+  function CobaSelect(e) {
+    // console.log()
+    alert(e.target.value);
+  }
 
   function GetAll(e) {
-    // alert(e.target.value);
-    let val = e.target.value;
-    let [startDate, endDate] = formatDate(val)
+    // let val = e.target.value;
+    let month = document.getElementById("month")
+    let year = document.getElementById("year")
+    month = month.value
+    year = year.value
+    let [startDate, endDate] = formatDate2(month, year)
+    // alert(`${startDate}-${endDate}`)
+    // return
     // return
     e.preventDefault();
     $.ajax({
@@ -538,7 +570,19 @@
     // let endDate = moment(startDate).endOf('month');
     endDate = endDate.getDate();
     endDate = `${year}-${month}-${endDate}`
-    let startDate = `${year}-01-01`
+    let startDate = `${year}-${month}-01`
+    return [startDate, endDate]
+  }
+
+  function formatDate2(month, year) {
+    // let splitString = dateString.split('-')
+    // let year = +splitString[0]
+    // let month = +splitString[1]
+    let endDate = new Date(year, month + 1, 0);
+    // let endDate = moment(startDate).endOf('month');
+    endDate = endDate.getDate();
+    endDate = `${year}-${month}-${endDate}`
+    let startDate = `${year}-${month}-01`
     return [startDate, endDate]
   }
   
