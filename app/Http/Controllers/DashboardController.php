@@ -58,7 +58,7 @@ class DashboardController extends Controller
         $formattedSalary = date('Y F');
 
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
-        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['admin'], $user['email']);
+        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'admin', $user['email']);
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -217,9 +217,9 @@ class DashboardController extends Controller
         Log::info("data carousel", [
             "data" => $dataCarousel
         ]);
-        if(count($dataCarousel) > 0) {
+        if(count($data) > 0) {
 
-            foreach ($dataCarousel as $valueCarousel) {
+            foreach ($data as $valueCarousel) {
                 // $i=0;
                 $totalPerorang = 0;
                 $revenuePerorang = 0;
@@ -395,7 +395,7 @@ class DashboardController extends Controller
         $formattedDateStart = date("Y-m-d H:i:s", $startDate);
         $formattedSalaryDate = date("Y F", $startDate);
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
-        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['admin'], $user['email']);
+        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'admin', $user['email']);
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -558,9 +558,9 @@ class DashboardController extends Controller
             $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
         }
 
-        if(count($dataCarousel) > 0) {
+        if(count($data) > 0) {
 
-            foreach ($dataCarousel as $valueCarousel) {
+            foreach ($data as $valueCarousel) {
                 // $i=0;
                 $totalPerorang = 0;
                 $revenuePerorang = 0;

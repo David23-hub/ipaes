@@ -127,7 +127,7 @@ class CartModel extends Model
             ->where('cart.deleted_by',null)
             ->orderBy('cart.created_by', 'desc')
             ->get();
-        }else if($roleUser=="superuser" || $roleUser == "admin"){
+        }else if($roleUser=="superuser" || $roleUser == "admin" || $roleUser=="finance"){
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
             ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
             ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
