@@ -47,9 +47,8 @@
     @endforeach
 
     <div style="text-align: end">
-      Set Period
-      <div>
-        <label for="month">Select a month:</label>
+      <p style="font-weight: bold;font-size: 20px">Set Period</p>
+      <div style="margin-bottom: 20px">
         <select id="month" name="month" onchange="GetAll(event)">
             @for ($i = 1; $i <= 12; $i++)
                 @if ($i == $result['month_now'])
@@ -59,8 +58,6 @@
                 @endif
             @endfor
         </select>
-      </div>
-      <div>
         <select id="year" name="year" onchange="GetAll(event)">
           @for ($year = date("Y"); $year >= 1900; $year--)
               @if ($year == $result['year_now'])
@@ -71,9 +68,6 @@
           @endfor
         </select>
       </div>
-      {{-- <div>
-        <input type="month" id="datepicker1" onchange="GetAll(event)" value="<?=date('Y-m')?>">
-      </div> --}}
     </div>
 
     <div class="container">
