@@ -10,21 +10,18 @@
     <h4><b>Home</b></h4>
     <p>Welcome back <b>{{ $user['name'] }}</b></p>
     <div class="card">
-      <div class="container">
+      <div class="container" style="margin-bottom: 20px;margin-top:20px;">
         <div class="row">
-          <div class="col">
-            <img src="..." alt="">
-              <div><b>{{ $user['name'] }}</b></div>
-              <div>{{ $user['role'] }}</div>
-              <a class="btn-primary" id="edit-profile" href="{{route('users.edit', $user)}}">Edit Profil</a>
-          </div>
-          <div class="col">
-            <img src="..." alt="">
-          </div>
+          <div class="col text-center">
+            <div class="d-flex flex-column align-items-center">
+                <div class="initials mb-2" id="initials"></div>
+                <div><b>{{ $user['name'] }}</b></div>
+                <div>{{ $user['role'] }}</div>
+                <a class="btn btn-primary" id="edit-profile" href="{{ route('users.edit', $user) }}">Edit Profil</a>
+            </div>
+        </div>
           <div class="col">
             <div class="col">
-              <div><h4>Good Morning, <b>{{ $user['name'] }}</b></h4></div>
-              <hr/>
               <div><h5>Usename      :{{ $user['name'] }}</h5></div>
               <div><h5>Email        : {{ $user['email'] }}</h5></div>
               <div><h5>Phone        : {{ $user['name'] }}</h5></div>
@@ -302,6 +299,19 @@
         </div>
       </div>
     </div>
+
+    <style>
+    .initials {
+      width: 50px; /* Set the width of the initials circle */
+      height: 50px; /* Set the height of the initials circle */
+      border-radius: 50%;
+      background-color: #007bff; /* Change this to the desired color */
+      color: white;
+      font-size: 20px; /* Adjust the font size as needed */
+      line-height: 50px; /* Ensure the initials are vertically centered */
+      text-transform: uppercase;
+    }
+    </style>
     
 @stop
 
@@ -311,8 +321,23 @@
   //   $("#datepicker1").datetimepicker({ dateFormat: 'yy' });
   // });
 
+
   window.onload = function() {
-    // $('datepicker1').val = 
+    var user = @json($user);
+
+    // Function to get initials from a name
+    function getInitials(name) {
+      return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
+    }
+
+    // Get the name from somewhere, e.g., from a variable or an input field
+    var name = user.name;
+
+    // Get the initials
+    var initials = getInitials(name);
+
+    // Update the initials div
+    document.getElementById('initials').innerText = initials;
   };
 
   data = @json($data);
