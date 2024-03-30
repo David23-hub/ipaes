@@ -99,11 +99,11 @@
                       </span>                          
                       @else
                       <div id="span-edit-status{{ $key }}">
-                        @if ($user['role'] == "superuser" || $user['role'] == "admin")
-                            <span class="p-2">
-                                <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{ $key }}">Edit Status</button>
-                            </span>
-                        @endif
+                      @if ($user['role'] == "superuser" || $user['role'] == "admin")
+                        <span class="p-2">
+                            <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{ $key }}">Edit Status</button>
+                        </span>
+                      @endif
                       </div>
                       @endif
                     </div>
@@ -647,7 +647,6 @@
     dataCartDokter = @json($dataCartDokter);
     dataEkspedisi = @json($dataEkspedisi);
     extraChargeAll = @json($extraChargeAll);
-    // console.log({dataCartDokter})
     window.onload = function() {
       checkForButtonStatus()
     };
@@ -701,7 +700,7 @@
           val = dataCartDokter[key]['total_num_paid_sum']
         }
 
-        val = e.target.value.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+        e.target.value = val.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.');
       }
     }
 
@@ -725,7 +724,7 @@
         if(dataCartDokter[key]['total_price'] < sum) {
           val = dataCartDokter[key]['total_price'] - num
         } 
-        e.target.value = val.replace(/(\d)(?=(\d{3})+$)/g, '$1.')
+        e.target.value = val.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.')
       }
       
     }
@@ -895,7 +894,7 @@
                         </tr>
                         <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.')}</td>
                         </tr>
                         <tr>
                           <td class="border">Sent by</td>
@@ -926,7 +925,7 @@
                         </tr>
                         <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.')}</td>
                         </tr>
                         <tr>
                           <td class="border">Sent by</td>
@@ -1015,7 +1014,7 @@
                         </tr>
                         <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.')}</td>
                         </tr>
                         <tr>
                           <td class="border">Sent by</td>
@@ -1046,7 +1045,7 @@
                         </tr>
                         <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.')}</td>
                         </tr>
                         <tr>
                           <td class="border">Sent by</td>
@@ -1171,6 +1170,10 @@
             Paid
           </span>
           `
+          let queryStatus = document.querySelector(`#span-edit-status${i}`)
+          if(queryStatus) {
+            queryStatus.innerHTML = ""
+          }
 
           $(`#nominal_step_payment_input${i}`).attr({
               "max": dataCartDokter[i]['total_num_paid_sum'],
@@ -1229,7 +1232,7 @@
                       </tr>
                       <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
                       </tr>
                       <tr>
                           <td class="border">Sent by</td>
@@ -1259,7 +1262,7 @@
                           </tr>
                           <tr>
                           <td class="border">Shipping Cost</td>
-                          <td class="border">IDR ${dataCartDokter[i].shipping_cost.replace(/(\d)(?=(\d{3})+$)/g, '$1.');}</td>
+                          <td class="border">IDR ${dataCartDokter[i].shipping_cost}</td>
                           </tr>
                           <tr>
                           <td class="border">Sent by</td>
@@ -1303,7 +1306,7 @@
                             </tr>
                             <tr>
                             <td class="border">Nominal</td>
-                            <td class="border" id="paid_nominal_${i}_${j}"> <p>IDR ${element.nominal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</p></td>
+                            <td class="border" id="paid_nominal_${i}_${j}"> <p>IDR ${element.nominal.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.')}</p></td>
                           </tr>
                           </table>
                           <button type="button" class="btn btn-block btn-outline-success" onclick="EditStepPaymentButton(${i}, ${j})">Edit Payment Information</button>
@@ -1336,7 +1339,7 @@
                             </tr>
                             <tr>
                             <td class="border">Nominal</td>
-                            <td class="border" id="paid_nominal_${i}_${j}"> <p>IDR ${element.nominal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</p></td>
+                            <td class="border" id="paid_nominal_${i}_${j}"> <p>IDR ${element.nominal.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.')}</p></td>
                           </tr>
                           </table>
                         </div>
@@ -1354,11 +1357,6 @@
               let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
               if(extra_charge_button) {
                 extra_charge_button.innerHTML = ""
-              }
-
-              let queryStatus = document.querySelector(`#span-edit-status${i}`)
-              if(queryStatus) {
-                queryStatus.innerHTML = ""
               }
             }
             document.querySelector(`#button_status_update${i}`).innerHTML = ``
@@ -1419,6 +1417,7 @@
           `
         }
 
+        
         if (dataCartDokter[i]['status_due_date'] && dataCartDokter[i].status != 5 && dataCartDokter[i].status != 3) {
           document.querySelector(`#button_status_update${i}`).innerHTML = ``
         }
@@ -1427,7 +1426,8 @@
 
     function EditSentButton(key) {
       document.getElementById(`ekspedisi_select${key}`).value = dataCartDokter[key].expedition_id
-      document.getElementById(`shipping_cost_input${key}`).value = dataCartDokter[key].shipping_cost_number.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+      document.getElementById(`shipping_cost_input${key}`).value = dataCartDokter[key].shipping_cost_number.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.')
+      // console.log({shipping})
       document.getElementById(`receipt_number_input${key}`).value = dataCartDokter[key].recepient_number
       $(`#modalSent${key}`).modal("show")
     }
@@ -1443,7 +1443,7 @@
       document.getElementById(`step_edit_paid_at${key}`).value = dataCartDokter[key]['step_payment'][index].paid_at
       document.getElementById(`step_edit_bank_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_bank_name
       document.getElementById(`step_edit_bank_account_name${key}`).value = dataCartDokter[key]['step_payment'][index].paid_account_bank_name
-      document.getElementById(`nominal_edit_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal.replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+      document.getElementById(`nominal_edit_step_payment_input${key}`).value = dataCartDokter[key]['step_payment'][index].nominal.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.');
       document.getElementById(`key_edit_step_payment${key}`).value = index
       $(`#modalEditStepPayment${key}`).modal("show")
     }
@@ -1692,6 +1692,9 @@
     function SentButton(id, key) {
       var ekspedisi = $(`#ekspedisi_select${key}`).val()
       var shippingCost = $(`#shipping_cost_input${key}`).val()
+      shippingCost = shippingCost.split('.').join('')
+      // console.log({shippingCost})
+      // return
       var receipt_number_input = $(`#receipt_number_input${key}`).val()
       $.ajax({
         type: "POST",
@@ -1734,6 +1737,7 @@
       var bank_name = $(`#bank_name${key}`).val();
       var bank_account_name = $(`#bank_account_name${key}`).val();
       var nominal_payment_input = $(`#nominal_payment_input${key}`).val();
+      nominal_payment_input = nominal_payment_input.split(".").join("")
       var nominal_input = document.getElementById(`container_nominal_input${key}`);
 
       var status = 5
