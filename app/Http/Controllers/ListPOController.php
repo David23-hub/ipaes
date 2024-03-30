@@ -71,7 +71,6 @@ class ListPOController extends Controller
     {
       $input = $request->all();
       $user = auth()->user();
-      // Log::info("input", $input);
       $dateParts = explode('/', str_replace('-', '/', $input["startDate"]));
 
       // Rearrange the parts to form the desired format
