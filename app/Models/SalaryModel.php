@@ -14,6 +14,10 @@ class SalaryModel extends Model
     public function GetList(){
         return SalaryModel::all()->where('deleted_by',null);
     }
+
+    public function GetListFilter($date){
+        return $this->where('date', '=', $date)->where('deleted_by',null)->get();
+    }
     
     public function GetItem($id){
         return $this
