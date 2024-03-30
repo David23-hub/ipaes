@@ -231,20 +231,30 @@ table {
 }
 table.products {
     font-size: 0.875rem;
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 table.products tr {
     /*background-color: rgb(96 165 250); */
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 table.products th {
-    color: #ffffff;
+    /* color: #ffffff; */
     padding: 0.5rem;
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 table tr.items {
     /*background-color: rgb(241 245 249); */
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 table tr.items td {
     padding: 0.5rem;
     text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
 }
 .total {
     text-align: right;

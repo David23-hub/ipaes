@@ -156,9 +156,9 @@ class CartModel extends Model
 
     public function GetListJoinDoctorWithDoctorIdAndEmail($id, $role, $email) {
         if($role == "superuser" || $role == "admin" || $role == "manager") {
-            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->select('cart.*' )->get();        
+            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->orderBy('cart.created_at', 'desc')->select('cart.*' )->get();        
         } else {
-            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->where('cart.created_by', '=', $email)->where('cart.management_order', '==', '0')->select('cart.*' )->get();
+            return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)->where('cart.created_by', '=', $email)->where('cart.management_order', '==', '0')->orderBy('cart.created_at', 'desc')->select('cart.*' )->get();
         }
     }
 
