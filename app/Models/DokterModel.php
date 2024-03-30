@@ -15,6 +15,10 @@ class DokterModel extends Model
     public function GetList(){
         return DokterModel::all()->where('deleted_by',null);
     }
+    
+    public function GetListBaseOnRole(string $created){
+            return DokterModel::all()->where('created_by',$created)->where('deleted_by',null);
+    }
 
     public function GetListWhereIn($in){
         $arr = [];

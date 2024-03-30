@@ -31,7 +31,23 @@ class DokterController extends Controller
     }
 
     public function getAll(Request $request){
-        $data = $this->model->GetList();
+
+        if(Auth::user()->role=="superuser"||Auth::user()->role=="admin"||Auth::user()->role=="manager"){
+            $data = $this->model->GetList();
+        }else{
+            $data = $this->model->GetListBaseOnRole(Auth::user()->name);
+        }
+
+        foreach ($data as $key=> $value) {
+            if(Auth::user()->role=="superuser"||Auth::user()->role=="admin" ||Auth::user()->role=="marketing"){
+                $data[$key]['btn'] = '
+                <button class="btn btn-info" onclick="getItem(' . $value['id'] . ')">Detail</button>
+                <button class="btn btn-primary" onclick="getItemUpdate(' . $value['id'] . ')">Update</button>
+                <button class="btn btn-danger" onclick="deleteItem(' . $value['id'] . ')">Delete</button>';
+            } else  {
+                $data[$key]['btn'] = 'Cannot Do Action';
+            }
+        }
         return $data;
     }
 

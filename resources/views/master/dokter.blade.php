@@ -283,9 +283,7 @@
               item['no_hp'],
               item['created_by'],
               stat,
-              `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
-              <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
-              <button class="btn btn-danger" onclick="deleteItem(`+item['id']+`)">Delete</button>`,
+              item['btn'],
           ])
             dataTable.draw();
         }
