@@ -37,6 +37,26 @@ class SalesReportController extends Controller
         $this->extraCharge = new ExtraChargeModel;
     }
 
+    private function getStatus($status, $totalpaid, $nominal){
+        if ($status==0){
+            return "Submitted";
+        }else if($status==1){
+            return "Packing";
+        }else if($status==2){
+            return "Send";
+        }else if($status==3){
+            return "Paid (Completed)";
+        }else if($status==4){
+            return "Canceled";
+        }else if($status==5){
+            if ($totalpaid==$nominal){
+                return "Paid (Completed)";
+            }else{
+                return "Paid";
+            }
+        }
+        return "error get status";
+    }
     public function index()
     {
         return view('master.salesReport');
@@ -157,6 +177,7 @@ class SalesReportController extends Controller
                 $payments = [];
             }
             $stepPayment = "";
+            $stepPaymentNominal = 0;
             $i=0;
             $counter=0;
             //if there's only 1 payment
@@ -173,6 +194,7 @@ class SalesReportController extends Controller
                     }else{
                         $stepPayment .= $pay."  =>  IDR ".number_format($nominals[$counter],0,',','.').'<hr class="split-line">';
                     }
+                    $stepPaymentNominal += $nominals[$counter];
                     $counter++;
                     $value["paid_at"]=$pay;
                 }
@@ -190,6 +212,7 @@ class SalesReportController extends Controller
             $data[$count]["stepPayment"]=($stepPayment);
             $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
             $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
             
             $count++;
         }
@@ -379,6 +402,8 @@ class SalesReportController extends Controller
                 $payments = [];
             }
             $stepPayment = "";
+            $stepPaymentNominal = 0;
+
             $i=0;
             $counter=0;
             //if there's only 1 payment
@@ -394,6 +419,8 @@ class SalesReportController extends Controller
                     }else{
                         $stepPayment .= $pay."  =>  IDR ".number_format($nominals[$counter],0,',','.').'<hr class="split-line">';
                     }
+                    $stepPaymentNominal += $nominals[$counter];
+
                     $counter++;
                     $value["paid_at"]=$pay;
                 }
@@ -411,6 +438,8 @@ class SalesReportController extends Controller
             $data[$count]["stepPayment"]=($stepPayment);
             $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
             $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
+
             $count++;
         }
 
