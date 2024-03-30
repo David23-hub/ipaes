@@ -117,7 +117,6 @@ class DashboardController extends Controller
         }
 
         foreach ($otherCost as $valueOtherCost) {
-            // $extraVal += $valueOtherCost['price'];
             $totalOtherCost += $valueOtherCost['price'];
         }
 
@@ -463,7 +462,6 @@ class DashboardController extends Controller
         }
 
         foreach ($otherCost as $valueOtherCost) {
-            $extraVal += $valueOtherCost['price'];
             $totalOtherCost += $valueOtherCost['price'];
         }
 
