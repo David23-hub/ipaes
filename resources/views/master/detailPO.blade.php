@@ -739,11 +739,8 @@
       e.target.value = e.target.value.replace(/[^0-9]/g, '')      
       let val = e.target.value;
       
-      console.log({num: dataCartDokter[key]['total_num_paid_sum']})
-      console.log(dataCartDokter[key]['total_num_paid_sum'] < Number(val))
       if(dataCartDokter[key]['total_num_paid_sum'] < Number(val)) {
         val = dataCartDokter[key]['total_num_paid_sum'] + ""
-        console.log({val})
         e.target.value = val.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.');
         return
       }
@@ -817,11 +814,13 @@
           </select>
           `
 
-          document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-          <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
-            Cancel Purchase Order
-          </button>
-          `
+          if (user['role'] == "superuser" || user['role'] == "admin") {
+            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+              Cancel Purchase Order
+            </button>
+            `
+          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = ""
           document.querySelector(`#column_sent${i}`).innerHTML = ""
@@ -848,11 +847,13 @@
           </select>
           `
 
-          document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-          <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
-            Cancel Purchase Order
-          </button>
-          `
+          if (user['role'] == "superuser" || user['role'] == "admin") {
+            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+              Cancel Purchase Order
+            </button>
+            `
+          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = `
           <div class="card">
@@ -898,12 +899,13 @@
             <option value="2" selected>SENT</option>
           </select>
           `
-
-          document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-          <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
-            Cancel Purchase Order
-          </button>
-          `
+          if (user['role'] == "superuser" || user['role'] == "admin") {
+            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+              Cancel Purchase Order
+            </button>
+            `
+          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = `
           <div class="card">

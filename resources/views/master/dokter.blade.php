@@ -308,8 +308,6 @@
       information = $("#information_add").val()
       dob = $("#dob_add").val()
       billing_no_hp = $("#billing_no_hp_add").val()
-
-      console.log(dob, "dobbb")
       
       $.ajax({
         type: "POST",
@@ -318,7 +316,6 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          console.log(data, "on success")
           if(data=="sukses"){
             getAllData()
             $('#modaladd').modal("hide")
@@ -359,7 +356,6 @@
           $('#information_detail').val(data.information)
 
 
-          console.log("view"+data.created_at)
           $('#created_by_detail').val(FormatTimeStamp(data.created_by,data.created_at))
           $('#updated_by_detail').val(FormatTimeStamp(data.updated_by,data.updated_at))
           $('#modalDetail').modal("show")
@@ -447,7 +443,6 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          console.log(data)
           if(data=="sukses"){
             getAllData()
             AlertSuccess()

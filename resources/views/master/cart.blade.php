@@ -328,8 +328,6 @@ function removeLeadingZero(input) {
         }
       }
 
-      console.log({productJoin})
-
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/updateCart",

@@ -263,7 +263,6 @@
             $('#status_detail').val("Active")
           }
 
-          console.log("view"+data.created_at)
           $('#created_by_detail').val(FormatTimeStamp(data.created_by,data.created_at))
           $('#updated_by_detail').val(FormatTimeStamp(data.updated_by,data.updated_at))
           $('#modalDetail').modal("show")
@@ -337,7 +336,6 @@
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
         success: function (data) {
-          console.log(data)
           if(data=="sukses"){
             getAllData()
             AlertSuccess()
