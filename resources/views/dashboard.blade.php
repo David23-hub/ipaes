@@ -50,12 +50,16 @@
       <p style="font-weight: bold;font-size: 20px">Set Period</p>
       <div style="margin-bottom: 20px">
         <select id="month" name="month" onchange="GetAll(event)">
+          <option value="all" selected>All Months</option>        
+
             @for ($i = 1; $i <= 12; $i++)
-                @if ($i == $result['month_now'])
+                {{-- @if ($i == $result['month_now'])
                   <option value="{{ $i }}" selected>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
                 @else
                   <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>        
-                @endif
+                @endif --}}
+                <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>        
+
             @endfor
         </select>
         <select id="year" name="year" onchange="GetAll(event)">
@@ -394,6 +398,7 @@
     let year = document.getElementById("year")
     month = month.value
     year = year.value
+
     let [startDate, endDate] = formatDate2(month, year)
     // alert(`${startDate}-${endDate}`)
     // return
@@ -577,30 +582,19 @@
           }
       }
     });
-  
-  
-  function formatDate(dateString) {
-    let splitString = dateString.split('-')
-    let year = +splitString[0]
-    let month = +splitString[1]
-    let endDate = new Date(year, month + 1, 0);
-    // let endDate = moment(startDate).endOf('month');
-    endDate = endDate.getDate();
-    endDate = `${year}-${month}-${endDate}`
-    let startDate = `${year}-${month}-01`
-    return [startDate, endDate]
-  }
 
   function formatDate2(month, year) {
-    // let splitString = dateString.split('-')
-    // let year = +splitString[0]
-    // let month = +splitString[1]
-    let endDate = new Date(year, month + 1, 0);
-    // let endDate = moment(startDate).endOf('month');
-    endDate = endDate.getDate();
-    endDate = `${year}-${month}-${endDate}`
-    let startDate = `${year}-${month}-01`
-    return [startDate, endDate]
+    if(month!="all"){
+      let endDate = new Date(year, month + 1, 0);
+      endDate = endDate.getDate();
+      endDate = `${year}-${month}-${endDate}`
+      let startDate = `${year}-${month}-01`
+      return [startDate, endDate]
+    }else{
+      endDate = `${year}-12-31`
+      startDate = `${year}-01-01`
+      return [startDate, endDate]
+    }
   }
   
   var ctx1 = $("#pie-chart1");

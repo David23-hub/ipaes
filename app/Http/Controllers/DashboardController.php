@@ -52,9 +52,11 @@ class DashboardController extends Controller
         $user = auth()->user();
         $products = $this->model->GetAll();
         $bundle=$this->bundle->GetAll();
-        $formattedDateEnd = date("Y-m-d H:i:s");
-        $formattedDateStart = mktime(0, 0, 0, date("m"), 1, date("Y"));
+        $formattedDateEnd = mktime(0, 0, 0, 12, 31, date("Y"));
+        $formattedDateEnd = date("Y-m-d H:i:s", $formattedDateEnd);
+        $formattedDateStart = mktime(0, 0, 0, 1, 1, date("Y"));
         $formattedDateStart = date("Y-m-d H:i:s", $formattedDateStart);
+
         $formattedSalary = date('Y F');
 
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
