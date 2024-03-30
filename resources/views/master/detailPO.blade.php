@@ -359,6 +359,50 @@
       </div>
     </div>
 
+    <!-- Modal Sent-->
+    <div class="modal fade" id="modalEditSent{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Sent Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form id="formUpdate" role="form">
+            <div class="modal-body">
+              <input type="hidden" class="form-control" id="id_update">
+              <div class="form-group">
+                <label for="category_product_add">Category Kurir</label>
+                <div id="dropadd" name="dropadd" class="form-group">
+                  <select class="form-select form-control" id="ekspedisi_edit_select{{ $key }}">
+                    @foreach($dataEkspedisi as $item)
+                      <option value={{$item->id}}>{{$item->name}}</option>
+                    @endforeach
+                  </select> 
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="receipt-number">Receipt Number</label>
+                <input type="receipt-number" class="form-control" id="receipt_edit_number_input{{ $key }}"  placeholder="Masukkan Receipt Number" required>
+              </div>
+              <div class="form-group">
+                <label for="shipping-cost">Shipping Cost</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">IDR</span>
+                  <input type="text" class="form-control" placeholder="Masukan Cost" aria-label="Username" aria-describedby="basic-addon1" value="" id="shipping_edit_cost_input{{ $key }}" oninput="addDotPrice(this)" required>
+                </div>
+              </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="sent_btn{{ $key }}" class="btn btn-primary" onclick="EditApiSentButton({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal Edit Status-->
     <div class="modal fade" id="modalEditStatus{{ $key }}" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
@@ -436,7 +480,7 @@
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" value="" id="nominal_payment_input{{ $key }}" oninput="SetInputStepPayment(event, {{ $key }})" required>
+                  <input type="text" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" value="" id="nominal_payment_input{{ $key }}" oninput="SetInputStepPayment(event, {{ $key }})" required>
                 </div>
               </div>
             </div>
@@ -518,7 +562,7 @@
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" oninput="SetInputStepPayment(event, {{ $key }})" max="{{ $itemDokter['total_paid_sum'] }}">
+                  <input type="text" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_step_payment_input{{ $key }}" oninput="SetInputStepPayment(event, {{ $key }})" max="{{ $itemDokter['total_paid_sum'] }}">
                 </div>
               </div>
             </div>
@@ -563,7 +607,7 @@
                 <label for="shipping-cost">Nominal *</label>
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="basic-addon1">IDR</span>
-                  <input type="number" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_edit_step_payment_input{{ $key }}" oninput="SetInputEditStepPayment(event, {{ $key }})" required>
+                  <input type="text" class="form-control" placeholder="Masukan Nominal" aria-label="Nominal" aria-describedby="basic-addon1" id="nominal_edit_step_payment_input{{ $key }}" oninput="SetInputEditStepPayment(event, {{ $key }})" required>
                 </div>
               </div>
             </div>
@@ -598,11 +642,11 @@
                     </div>
                     <div>
                       <span class="input-group-text">Stok</span>
-                      <input type="number" class="form-control" id="productQty-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0">
+                      <input type="text" class="form-control" id="productQty-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0">
                     </div>
                     <div>
                       <span class="input-group-text">Discount</span>
-                      <input type="number" class="form-control" id="productDiscount-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0">
+                      <input type="text" class="form-control" id="productDiscount-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0">
                     </div>
                   </div>
                 </div>
@@ -692,14 +736,19 @@
     }
 
     function SetInputStepPayment(e, key) {
-      e.target.value = e.target.value.replace(/[^0-9]/g, '')
+      e.target.value = e.target.value.replace(/[^0-9]/g, '')      
+      let val = e.target.value;
+      
+      console.log({num: dataCartDokter[key]['total_num_paid_sum']})
+      console.log(dataCartDokter[key]['total_num_paid_sum'] < Number(val))
+      if(dataCartDokter[key]['total_num_paid_sum'] < Number(val)) {
+        val = dataCartDokter[key]['total_num_paid_sum'] + ""
+        console.log({val})
+        e.target.value = val.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.');
+        return
+      }
 
       if(e.target.value > 3) {
-        let val = e.target.value;
-        if(dataCartDokter[key]['total_num_paid_sum'] < val) {
-          val = dataCartDokter[key]['total_num_paid_sum']
-        }
-
         e.target.value = val.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.');
       }
     }
@@ -1425,11 +1474,11 @@
     }
 
     function EditSentButton(key) {
-      document.getElementById(`ekspedisi_select${key}`).value = dataCartDokter[key].expedition_id
-      document.getElementById(`shipping_cost_input${key}`).value = dataCartDokter[key].shipping_cost_number.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.')
+      document.getElementById(`ekspedisi_edit_select${key}`).value = dataCartDokter[key].expedition_id
+      document.getElementById(`shipping_edit_cost_input${key}`).value = dataCartDokter[key].shipping_cost.toString().replace(/(\d)(?=(\d{3})+$)/g, '$1.')
       // console.log({shipping})
-      document.getElementById(`receipt_number_input${key}`).value = dataCartDokter[key].recepient_number
-      $(`#modalSent${key}`).modal("show")
+      document.getElementById(`receipt_edit_number_input${key}`).value = dataCartDokter[key].recepient_number
+      $(`#modalEditSent${key}`).modal("show")
     }
 
     function ModalEditPaymentButton(key) {
@@ -1462,7 +1511,7 @@
               </div>
               <div>
                 <span class="input-group-text">Price</span>
-                <input type="number" class="form-control" id="extraChargePrice-${key}-${i}"  aria-describedby="inputGroupPrepend2" required value="${element['price']}" min="0">
+                <input type="text" class="form-control" id="extraChargePrice-${key}-${i}"  aria-describedby="inputGroupPrepend2" required value="${element['price']}" min="0">
               </div>
             </div>
           </div>
@@ -1717,6 +1766,49 @@
             dataCartDokter[key]['sent_at'] = data['sent_at']
             dataCartDokter[key].status = 2
             $(`#modalSent${key}`).modal("hide")
+            checkForButtonStatus()
+            AlertSuccess()
+          }else if(data['message']!='gagal'|| data['message']!="gagal2"){
+            AlertWarningWithMsg(data)
+          }else{
+            AlertError()
+          }
+        },
+        error: function (result, status, err) {
+          $.LoadingOverlay("hide")
+          AlertError()
+        },
+      })
+    }
+
+    function EditApiSentButton(id, key) {
+      var ekspedisi = $(`#ekspedisi_edit_select${key}`).val()
+      var shippingCost = $(`#shipping_edit_cost_input${key}`).val()
+      shippingCost = shippingCost.split('.').join('')
+      // console.log({shippingCost})
+      // return
+      var receipt_number_input = $(`#receipt_edit_number_input${key}`).val()
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/sentPO",
+        data: { "_token": "{{ csrf_token() }}", data: {
+          // status: 2,
+          expedition_id: ekspedisi,
+          shipping_cost: shippingCost,
+          recepient_number: receipt_number_input,
+          id: id,
+        }},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data['message']=="sukses"){
+            dataCartDokter[key]['expedition_id'] = ekspedisi
+            dataCartDokter[key]['recepient_number'] = receipt_number_input
+            dataCartDokter[key]['shipping_cost'] = data['shipping_cost']
+            dataCartDokter[key]['sent_by'] = data['sent_by']
+            dataCartDokter[key]['sent_at'] = data['sent_at']
+            // dataCartDokter[key].status = 2
+            $(`#modalEditSent${key}`).modal("hide")
             checkForButtonStatus()
             AlertSuccess()
           }else if(data['message']!='gagal'|| data['message']!="gagal2"){
