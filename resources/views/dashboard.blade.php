@@ -247,7 +247,6 @@
                 <div>
                   #{{ $count++ }}
                   <div class=" d-flex justify-content-center card-profile-picture">
-                    <img src="..." alt="">
                   </div>
                   <div class="divider">
                     <div class="divider-text">
@@ -310,15 +309,10 @@
     </div>
 
     <div class="container">
-      <div class="row">
-        <div class="col-md-8">
           <div class="card">
             <div class="card-body">
-              <canvas id="pie-chart1" height="280" width="600"></canvas>
-            </div>
+                <canvas id="pie-chart1" style="display:block;width: 100%;" ></canvas></div>
           </div>
-        </div>
-      </div>
     </div>
 
     <style>
@@ -341,7 +335,7 @@
   // $(function() { 
   //   $("#datepicker1").datetimepicker({ dateFormat: 'yy' });
   // });
-
+  
 
   window.onload = function() {
     var user = @json($user);
@@ -466,7 +460,6 @@
               <div>
                 ${count}
                 <div class=" d-flex justify-content-center card-profile-picture">
-                  <img src="..." alt="">
                 </div>
                 <div class="divider">
                   <div class="divider-text">

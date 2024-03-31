@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use Illuminate\Http\Request;
 use App\Models\CartModel;
 use App\Models\OtherCostModel;
@@ -106,16 +107,29 @@ class DashboardController extends Controller
         }
 
         foreach ($doctorAll as $value) {
-            $date = date_create($value['dob']);  
-            date_sub($date, date_interval_create_from_date_string('1 days'));  
-            $substractOneDay = date_format($date, 'Y-m-d');
-            // $newDate1 = date('Y-m-d H:i:s');
-            // Log::info('date', [($value['dob']), ($newDate), ($substractOneDay), ($newDate1)]);
-            if(strtotime($value['dob']) == strtotime($newDate) || strtotime($substractOneDay) == strtotime($newDate)) {
+            $dateDoctor = new DateTime($value['dob']);  
+            $currentDate = new DateTime();
+
+            // Extract month and day from the dates
+            $month_day_1 = $dateDoctor->format('md');
+            $month_day_2 = $currentDate->format('md');
+
+            if ($month_day_1 == $month_day_2) {
                 array_push($mapDoktor, [
                     'name' => $value['name'],
                 ]);
+            } else {
+                $dateDoctor->modify('-1 day');
+                $tomorrow_month_day = $dateDoctor->format('md');
+                // Check if $date2 is tomorrow's date relative to $date1
+                if ($month_day_2 == $tomorrow_month_day) {
+                    array_push($mapDoktor, [
+                        'name' => $value['name'],
+                    ]);
+                }
             }
+
+            
         }
 
         foreach ($otherCost as $valueOtherCost) {

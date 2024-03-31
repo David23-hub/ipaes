@@ -16,35 +16,37 @@
                         Tambah
                     </a>
 
-                    <table class="table table-hover table-bordered table-stripped" id="example2">
-                        <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Opsi</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($users as $key => $user)
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered table-stripped" id="example2">
+                            <thead>
                             <tr>
-                                <td>{{$key+1}}</td>
-                                <td>{{$user->name}}</td>
-                                <td>{{$user->email}}</td>
-                                <td>{{$user->role}}</td>
-                                <td>
-                                    <a href="{{route('users.edit', $user)}}" class="btn btn-primary">
-                                        Edit
-                                    </a>
-                                    <a href="{{route('users.destroy', $user)}}" onclick="notificationBeforeDelete(event, this)" class="btn btn-danger">
-                                        Delete
-                                    </a>
-                                </td>
+                                <th>No.</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Opsi</th>
                             </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            @foreach($users as $key => $user)
+                                <tr>
+                                    <td>{{$key+1}}</td>
+                                    <td>{{$user->name}}</td>
+                                    <td>{{$user->email}}</td>
+                                    <td>{{$user->role}}</td>
+                                    <td>
+                                        <a href="{{route('users.edit', $user)}}" class="btn btn-primary">
+                                            Edit
+                                        </a>
+                                        <a href="{{route('users.destroy', $user)}}" onclick="notificationBeforeDelete(event, this)" class="btn btn-danger">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
             </div>

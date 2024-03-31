@@ -671,7 +671,8 @@ nav.mean-nav > ul > li:first-child > a {
 }
 
 .site-logo {
-  padding: 6px 0;
+  /* padding: 6px 0; */
+  padding: 15px;
 }
 
 .top-header-area.sepherate-header ul li > a, .top-header-area.sepherate-header .header-icons a {
@@ -2763,7 +2764,7 @@ table.order-details tbody td {
   width: 100%;
 }
 
-.floating-btn {
+.floating-btn a{
   position: fixed;
   bottom: 20px; /* Adjust the distance from the bottom */
   right: 20px; /* Adjust the distance from the right */
@@ -2778,6 +2779,33 @@ table.order-details tbody td {
   align-items: center; /* Center the icon vertically */
   text-decoration: none; /* Remove default underline */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for button */
+}
+
+@media screen and (max-width: 768px) {
+  .floating-btn a{
+    position: fixed;
+    bottom: 20px; /* Adjust the distance from the bottom */
+    right: 20px; /* Adjust the distance from the right */
+    background-color: #25D366; /* WhatsApp green color */
+    color: #fff; /* Text color */
+    width: auto; /* Allow button width to adjust based on content */
+    height: 30px; /* Button height */
+    padding: 0 10px; /* Adjust padding to create space around the icon */
+    border-radius: 30px; /* Set border radius to half of button height to maintain circular shape */
+    display: flex; /* Align icon vertically and horizontally */
+    justify-content: center; /* Center the icon horizontally */
+    align-items: center; /* Center the icon vertically */
+    text-decoration: none; /* Remove default underline */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for button */
+  }
+
+  .floating-btn a span{
+    display: none;
+  }
+
+  .floating-btn:hover {
+    background-color: #128C7E; /* Darker shade of WhatsApp green on hover */
+  }
 }
 
 /* Hover effect */

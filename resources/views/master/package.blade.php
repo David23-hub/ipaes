@@ -14,21 +14,23 @@
         </button>
       </div>
       <div class="card-body">
-        {{-- <table id="tableList" class="table table-striped table-bordered table-hover" >
-           --}}
-        <table id="tableList" class="table table-bordered" >
-          <thead>
-            <tr>
-                <th>Photo</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Commission Rate</th>
-                <th>Product</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-          </thead>
-        </table>
+       
+           <div class="table-responsive">
+              <table id="tableList" class="table table-bordered" >
+                <thead>
+                  <tr>
+                      <th>Photo</th>
+                      <th>Name</th>
+                      <th>Price</th>
+                      <th>Commission Rate</th>
+                      <th>Product</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                  </tr>
+                </thead>
+              </table>
+           </div>
+        
       </div>
     </div>
 

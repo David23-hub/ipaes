@@ -123,12 +123,11 @@
     });
 
     var dataTable2 = $("#tableListTransaction").DataTable({
-            "ordering": true,
+            "ordering": false,
             "destroy": true,
             //to turn off pagination
             paging: true,
             responsive: true,
-            order: [[0, 'desc']]
             // "bFilter": true,
             //turn off info current page data index
             // "bInfo": false,
