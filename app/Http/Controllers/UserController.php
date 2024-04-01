@@ -16,7 +16,7 @@ class UserController extends Controller
     }
 
     private function isAdmin(){
-        if(Auth::user()->role=="superuser"||Auth::user()->role=="admin"){
+        if(Auth::user()->role=="superuser"){
             return true;
         }
         return false;
@@ -47,15 +47,34 @@ class UserController extends Controller
             return redirect(RouteServiceProvider::HOME);
         }
 
+        $req = $request->all();
+
+        if ($request->hasFile('img')) {
+            // Image is uploaded
+            $image = $request->file('img');
+            $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
+            $image->move(public_path('images'), $imageName);
+        } else {
+            // Image is not uploaded
+            $imageName="";
+        }
+
         $request->validate([
             'name' => 'required|unique:users,name',
             'email' => 'required|email|unique:users,email',
             'role' => 'required',
             'password' => 'required|confirmed'
         ]);
-        $array = $request->only([
-            'name', 'email','role', 'password'
-        ]);
+        // $array = $request->only([
+        //     'name', 'email','role', 'password', 'img'
+        // ]);
+        $array = [
+            "name" => $req['name'],
+            "email" => $req['email'],
+            "role" => $req['role'],
+            "password" => $req['password'],
+            "img" => $imageName,
+        ];
         $array['password'] = bcrypt($array['password']);
         $user = User::create($array);
         return redirect()->route('users.index')
@@ -84,6 +103,17 @@ class UserController extends Controller
         //     return redirect(RouteServiceProvider::HOME);
         // }
 
+
+        if ($request->hasFile('img')) {
+            // Image is uploaded
+            $image = $request->file('img');
+            $imageName = time().'.'.$image->getClientOriginalExtension(); // Generate a unique name for the image
+            $image->move(public_path('images'), $imageName);
+        } else {
+            // Image is not uploaded
+            $imageName="";
+        }
+
         $request->validate([
             // 'name' => 'required',
             // 'email' => 'required|email|unique:users,email,'.$id,
@@ -95,6 +125,7 @@ class UserController extends Controller
         // $user->name = $request->name;
         // $user->email = $request->email;
         $user->role = $request->role;
+        $user->img = $imageName;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->save();
 

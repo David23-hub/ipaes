@@ -47,6 +47,7 @@ class ItemController extends Controller
         foreach ($result as $key => $value) {
             $result[$key]["price"] = number_format( $result[$key]["price"],0,',','.');
             $result[$key]["qty"] = number_format( $result[$key]["qty"],0,',','.');
+            $result[$key]["qty_min"] = number_format( $result[$key]["qty_min"],0,',','.');
         }
         return $result;
     }
@@ -57,6 +58,7 @@ class ItemController extends Controller
         $index = $this->model->GetItem($input['id']);
         $index[0]["price"] = number_format($index[0]["price"],0,',','.');
         $index[0]["qty"] = number_format($index[0]["qty"],0,',','.');
+        $index[0]["qty_min"] = number_format($index[0]["qty_min"],0,',','.');
 
         return $index[0];
     }
@@ -68,6 +70,8 @@ class ItemController extends Controller
             return "Nama Category Harus Diisi!";
         }else if ($input["qty"]=="" || trim($input['qty']=="")) {
             return "Jumlah Barang Harus Diisi!";
+        }else if ($input["qty_min"]=="" || trim($input['qty_min']=="")) {
+            return "Jumlah Minimum Barang Harus Diisi!";
         }else if ($input["price"]=="" || trim($input['price']=="")) {
             return "Harga Barang Harus Diisi!";
         }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["unit"])) {
@@ -83,6 +87,7 @@ class ItemController extends Controller
         }
 
         $input["qty"] = str_replace('.', '', $input["qty"]);
+        $input["qty_min"] = str_replace('.', '', $input["qty_min"]);
         $input["price"] = str_replace('.', '', $input["price"]);
 
         if ($request->hasFile('img')) {
@@ -99,6 +104,7 @@ class ItemController extends Controller
             'name' => $input['name'],
             'status' => $input['status'],
             'qty' => $input['qty'],
+            'qty_min' => $input['qty_min'],
 
             'unit' => $input['unit'],
             'price' => $input['price'],
@@ -149,6 +155,8 @@ class ItemController extends Controller
             return "Nama Category Harus Diisi!";
         }else if ($input["qty"]=="" || trim($input['qty']=="")) {
             return "Jumlah Barang Harus Diisi!";
+        }else if ($input["qty_min"]=="" || trim($input['qty_min']=="")) {
+            return "Jumlah Minimum Barang Harus Diisi!";
         }else if ($input["price"]=="" || trim($input['price']=="")) {
             return "Harga Barang Harus Diisi!";
         }else if (!preg_match('/^[a-zA-Z\s]+$/', $input["unit"])) {
@@ -164,6 +172,7 @@ class ItemController extends Controller
         }
         
         $input["qty"] = str_replace('.', '', $input["qty"]);
+        $input["qty_min"] = str_replace('.', '', $input["qty_min"]);
         $input["price"] = str_replace('.', '', $input["price"]);
 
         $index = $this->model->GetItem($input['id']);
@@ -189,6 +198,7 @@ class ItemController extends Controller
                 'name' => $input['name'],
                 'status' => $input['status'],
                 'qty' => $input['qty'],
+                'qty_min' => $input['qty_min'],
                 'unit' => $input['unit'],
                 'price' => $input['price'],
                 'presentation' => $input['presentation'],
@@ -206,6 +216,7 @@ class ItemController extends Controller
                 'name' => $input['name'],
                 'status' => $input['status'],
                 'qty' => $input['qty'],
+                'qty_min' => $input['qty_min'],
                 'unit' => $input['unit'],
                 'price' => $input['price'],
                 'presentation' => $input['presentation'],
