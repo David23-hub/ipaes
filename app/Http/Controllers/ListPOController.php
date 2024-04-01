@@ -30,7 +30,7 @@ class ListPOController extends Controller
 
         $this->middleware(function ($request, $next) {
           $role = auth()->user()->role;
-          if($role!="superuser"&&$role!="admin"&&$role!="marketing"&&$role!="manager"){
+          if($role!="superuser"&&$role!="admin"&&$role!="marketing"&&$role!="manager"&&$role!="finance"){
                   abort(403, 'Unauthorized access');
               }
           return $next($request);
