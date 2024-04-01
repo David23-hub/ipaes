@@ -33,7 +33,7 @@ class CartController extends Controller
 
         $this->middleware(function ($request, $next) {
             $role = auth()->user()->role;
-            if($role!="superuser"&&$role!="admin"&&$role!="marketing"){
+            if($role!="superuser"&&$role!="marketing"){
                     abort(403, 'Unauthorized access');
                 }
             return $next($request);

@@ -7,12 +7,19 @@
 @stop
 
 @section('content')
-    <form action="{{route('users.store')}}" method="post">
+    <form action="{{route('users.store')}}" method="post" enctype="multipart/form-data">
         @csrf
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    <div class="form-group" >
+                        <img id="preview" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0;">
+                    </div>
+                    <div class="form-group" >
+                        <label for="img">Image</label>
+                        <input type="file" name="img" accept="image/*" id="img"  placeholder="Masukkan Image" onchange="previewImage(event)">
+                    </div>
 
                     <div class="form-group">
                         <label for="exampleInputName">Nama</label>
@@ -63,4 +70,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function(){
+                var output = document.getElementById('preview');
+                output.src = reader.result;
+                output.style.display = 'block'; // Show the image preview
+            }
+            reader.readAsDataURL(event.target.files[0]);
+            
+        }
+
+        function previewImageUpdate(event) {
+            var reader = new FileReader();
+            reader.onload = function(){
+                var output = document.getElementById('preview_update');
+                console.log(reader.result)
+                output.src = reader.result;
+                output.style.display = 'block'; // Show the image preview
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
 @stop

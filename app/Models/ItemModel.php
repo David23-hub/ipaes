@@ -35,6 +35,7 @@ class ItemModel extends Model
         $d->name = $data['name'];
         $d->status = $data['status'];
         $d->qty = $data['qty'];
+        $d->qty_min = $data['qty_min'];
 
         $d->unit = $data['unit'];
         $d->price = $data['price'];

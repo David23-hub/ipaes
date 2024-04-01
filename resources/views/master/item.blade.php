@@ -22,6 +22,7 @@
                   <th>Image</th>
                   <th>Nama</th>
                   <th>Stock</th>
+                  <th>Stock Minimum</th>
                   <th>Price</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -69,6 +70,10 @@
           <div class="form-group">
             <label for="qty_add">Stock *</label>
             <input type="qty_add" class="form-control" id="qty_add"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);">
+          </div>
+          <div class="form-group">
+            <label for="qty_min_add">Stock Min (Untuk Peringatan di Dashboard) *</label>
+            <input type="qty_min_add" class="form-control" id="qty_min_add"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);">
           </div>
           <div class="form-group">
             <label for="price_add">Price *</label>
@@ -158,6 +163,10 @@
               <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);">
             </div>
             <div class="form-group">
+              <label for="qty_min_update">Stock Min (Untuk Peringatan di Dashboard) *</label>
+              <input type="qty_min_update" class="form-control" id="qty_min_update"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);">
+            </div>
+            <div class="form-group">
               <label for="price_update">Price *</label>
               <div class="input-group mb-2">
                 <div class="input-group-prepend">
@@ -230,6 +239,10 @@
           <div class="form-group">
             <label for="qty_detail">Stock</label>
             <input type="qty_detail" class="form-control" id="qty_detail"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
+          </div>
+          <div class="form-group">
+            <label for="qty_min_detail">Stock Min (Untuk Peringatan di Dashboard) *</label>
+            <input type="qty_min_detail" class="form-control" id="qty_min_detail"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);" disabled>
           </div>
           <div class="form-group">
             <label for="price_detail">Price</label>
@@ -360,6 +373,7 @@
     function resetModalInput() {
       document.getElementById('nama_add').value = '';
       document.getElementById('qty_add').value = '';
+      document.getElementById('qty_min_add').value = '';
       document.getElementById('price_add').value = '';
       document.getElementById('presentation_add').value = '';
       document.getElementById('commision_rate_add').value = '';
@@ -367,7 +381,7 @@
       document.getElementById('desc_add').value = '';
       document.getElementById('status_add').value = '0';
       document.getElementById('preview').src = '';
-    document.getElementById('image_add').value = '';
+      document.getElementById('image_add').value = '';
     }
 
     function getAllData(){
@@ -400,6 +414,7 @@
               img,
               item['name'],
               item['qty'] +" "+ item['unit'],
+              item['qty_min'] +" "+ item['unit'],
               "Rp "+item['price'],
               stat,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
@@ -424,6 +439,7 @@
       name = $("#nama_add").val()
       status = $("#status_add").val()
       qty = $("#qty_add").val()
+      qty_min = $("#qty_min_add").val()
       
       // var fileInput = document.getElementById('image_add');
       // img = fileInput.files[0]
@@ -444,6 +460,7 @@
       formData.append('_token', '{{ csrf_token() }}');
       formData.append('name', name);
       formData.append('qty', qty);
+      formData.append('qty_min', qty_min);
       formData.append('status', status);
       formData.append('unit', unit);
       formData.append('price', price);
@@ -489,6 +506,7 @@
           $('#id_detail').val(data.id)
           $('#nama_detail').val(data.name)
           $('#qty_detail').val(data.qty)
+          $('#qty_min_detail').val(data.qty_min)
           if (data.status==0){
             $('#status_detail').val("InActive")
           }else if (data.status==1){
@@ -533,6 +551,7 @@
           $('#id_update').val(data.id)
           $('#name_update').val(data.name)
           $('#qty_update').val(data.qty)
+          $('#qty_min_update').val(data.qty_min)
           // $('#status_update').val(data.status)
           if (data.status==1){
             $('#status_update').prop('checked', true);
@@ -560,6 +579,7 @@
       name = $("#name_update").val()
       status = $("#status_update").val()
       qty = $("#qty_update").val()
+      qty_min = $("#qty_min_update").val()
       id = $("#id_update").val()
       
       unit = $("#unit_update").val()
@@ -575,6 +595,7 @@
       formData.append('_token', '{{ csrf_token() }}');
       formData.append('name', name);
       formData.append('qty', qty);
+      formData.append('qty_min', qty_min);
       formData.append('status', status);
       formData.append('unit', unit);
       formData.append('price', price);

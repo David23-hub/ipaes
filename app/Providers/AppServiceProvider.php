@@ -167,18 +167,7 @@ class AppServiceProvider extends ServiceProvider
                     'text' => 'Sales',
                     'icon'=> 'fas fa-user-tie',
                     'submenu'=>[
-                        [
-                            'text'=>'Cart',
-                            'icon'=>'fas fa-shopping-cart',
-                            'icon_color'=>'cyan',
-                            'url'=>'viewCart',
-                        ],
-                        [
-                            'text'=>'List Product',
-                            'icon'=>'fas fa-boxes',
-                            'icon_color'=>'cyan',
-                            'url'=>'listProduct',
-                        ],
+                        
                         [
                             'text'=>'List PO',
                             'icon'=>'fas fa-boxes',
