@@ -334,6 +334,18 @@ class AppServiceProvider extends ServiceProvider
                     'icon' => 'fas fa-fw fa-user',
                 ]);
                 $event->menu->add([
+                    'text' => 'Sales',
+                    'icon'=> 'fas fa-user-tie',
+                'submenu'=>[
+                        [
+                            'text'=>'List PO',
+                            'icon'=>'fas fa-boxes',
+                            'icon_color'=>'cyan',
+                            'url'=>'listPO',
+                        ],
+                    ],
+                ]);
+                $event->menu->add([
                     'text' => 'User Management',
                     'icon'    => 'fas fa-fw fa-users',
                     'submenu' => [
