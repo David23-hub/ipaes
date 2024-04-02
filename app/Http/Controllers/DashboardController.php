@@ -65,6 +65,9 @@ class DashboardController extends Controller
         $formattedSalary = date('Y F');
         
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
+        Log::info("data", [
+            "list cart" => $data
+        ]);
 
         $incentiveIdr=0;
         $total =0;
@@ -98,6 +101,7 @@ class DashboardController extends Controller
             11 => 0,
             12 => 0
         ];
+        $mapMarketingStock = [];
 
         if ($user['role'] == "admin" || $user['role'] == "finance") {
             $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -180,6 +184,9 @@ class DashboardController extends Controller
         $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'superuser', $user['email']);
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
+        // if($user['role'] == "marketing") {
+        //     $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
+        // }
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
         $otherCost = $this->otherCost->GetAllByRange($formattedDateStart, $formattedDateEnd);
         $salaryAll = $this->salary->GetListFilter($formattedSalary);
@@ -229,35 +236,6 @@ class DashboardController extends Controller
         }
 
 
-        foreach ($stockAll as $valueStock) {
-            $stockIn += $valueStock['stock_in'];
-            $stockOut += $valueStock['stock_out'];
-            if($valueStock['stock_out'] != 0) {
-                if(isset($mapProduct[$valueStock['id_product']])) {
-                    $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
-                } else {
-                    $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
-                }
-            }
-        }
-
-        foreach ($products as $valueProduct) {
-            if(isset($mapProduct[$valueProduct['id']])) {
-                $mapProduct[$valueProduct['id']]['name'] = $valueProduct['name'];
-            }
-
-            if($valueProduct['qty'] <= $valueProduct['qty_min']) {
-                array_push($mapStock, [
-                    'name'=> $valueProduct['name'],
-                    'stock' => $valueProduct['qty']
-                ]);
-            }
-        }
-
-        usort($mapProduct, function($a, $b) {
-            return $a['stock_out'] < $b['stock_out'];
-        });
-
         foreach ($otherCost as $valueOtherCost) {
             $totalOtherCost += $valueOtherCost['price'];
         }
@@ -267,9 +245,13 @@ class DashboardController extends Controller
             $totalSalary += $valueSalary['price'];
         }
 
-        
+        // data product
         if(count($data) > 0) {
             foreach ($data as $value) {
+
+                if($user['role'] == "marketing") {
+                    array_push($mapMarketingStock, $value['id']);
+                }
                 // $i=0;
                 $totalPerorang = 0;
                 $carts = explode(",", $value->cart);
@@ -339,9 +321,7 @@ class DashboardController extends Controller
             $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
         }
 
-        Log::info("data carousel", [
-            "data" => $dataCarousel
-        ]);
+        // data carousel
         if(count($data) > 0) {
 
             foreach ($data as $valueCarousel) {
@@ -476,7 +456,53 @@ class DashboardController extends Controller
             }
         }
 
-        Log::info("other total paid", [$totalPaid]);
+        if($user['role'] == "marketing") {
+            foreach ($stockAll as $valueStock) {
+                $stockIn += $valueStock['stock_in'];
+                $stockOut += $valueStock['stock_out'];
+                foreach ($mapMarketingStock as $valueStockMarketing) {
+                    if($valueStock['stock_out'] != 0 && $valueStock['cart_id'] == $valueStockMarketing) {
+                        if(isset($mapProduct[$valueStock['id_product']])) {
+                            $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
+                        } else {
+                            $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($stockAll as $valueStock) {
+                $stockIn += $valueStock['stock_in'];
+                $stockOut += $valueStock['stock_out'];
+                if($valueStock['stock_out'] != 0) {
+                    if(isset($mapProduct[$valueStock['id_product']])) {
+                        $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
+                    } else {
+                        $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
+                    }
+                }
+            }
+        }
+
+
+        foreach ($products as $valueProduct) {
+            if(isset($mapProduct[$valueProduct['id']])) {
+                $mapProduct[$valueProduct['id']]['name'] = $valueProduct['name'];
+            }
+
+            if($valueProduct['qty'] <= $valueProduct['qty_min']) {
+                array_push($mapStock, [
+                    'name'=> $valueProduct['name'],
+                    'stock' => $valueProduct['qty']
+                ]);
+            }
+        }
+
+        usort($mapProduct, function($a, $b) {
+            return $a['stock_out'] < $b['stock_out'];
+        });
+
+        // Log::info("other total paid", [$totalPaid]);
 
         $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
@@ -571,54 +597,11 @@ class DashboardController extends Controller
             11 => 0,
             12 => 0
         ];
+        $mapMarketingStock = [];
 
         if ($user['role'] == "admin" || $user['role'] == "finance") {
             $doctorAll = $this->doctorModel->GetListDoctorAndDate();
             $dataTransaction = $this->cart->GetListJoinDoctorDashboard($formattedDateStart, $formattedDateEnd);
-
-            // foreach ($doctorAll as $value) {
-            //     $dateDoctor = new DateTime($value['dob']);  
-            //     $currentDate = new DateTime();
-    
-            //     // Extract month and day from the dates
-            //     $month_day_1 = $dateDoctor->format('md');
-            //     $month_day_2 = $currentDate->format('md');
-    
-            //     if ($month_day_1 == $month_day_2) {
-            //         $initial = explode(" ", $value['name']);
-            //         if(count($initial) >= 2) {
-            //             $initial1 = $initial[0][0];
-            //             $initial2 = $initial[1][0];
-            //             $initial = strtoupper($initial1) . strtoupper($initial2);
-            //         } else if (count($initial) == 1) {
-            //             $initial = strtoupper($initial[0][0]);
-            //         }
-            //         array_push($mapDoktor, [
-            //             'name' => $value['name'],
-            //             'dob' => 'today',
-            //             'initial' => $initial
-            //         ]);
-            //     } else {
-            //         $dateDoctor->modify('-1 day');
-            //         $tomorrow_month_day = $dateDoctor->format('md');
-            //         $initial = explode(" ", $value['name']);
-            //         if(count($initial) >= 2) {
-            //             $initial1 = $initial[0][0];
-            //             $initial2 = $initial[1][0];
-            //             $initial = strtoupper($initial1) . strtoupper($initial2);
-            //         } else if (count($initial) == 1) {
-            //             $initial = strtoupper($initial[0][0]);
-            //         }
-            //         // Check if $date2 is tomorrow's date relative to $date1
-            //         if ($month_day_2 == $tomorrow_month_day) {
-            //             array_push($mapDoktor, [
-            //                 'name' => $value['name'],
-            //                 'dob' => 'tomorrow',
-            //                 'initial' => $initial
-            //             ]);
-            //         }
-            //     }      
-            // }
 
             foreach ($products as $valueProduct) {
                 if($valueProduct['qty'] <= $valueProduct['qty_min']) {
@@ -670,30 +653,12 @@ class DashboardController extends Controller
             $totalOtherCost += $valueOtherCost['price'];
         }
 
-        foreach ($stockAll as $valueStock) {
-            $stockIn += $valueStock['stock_in'];
-            $stockOut += $valueStock['stock_out'];
-            if($valueStock['stock_out'] != 0) {
-                if(isset($mapProduct[$valueStock['id_product']])) {
-                    $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
-                } else {
-                    $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
-                }
-            }
-        }
-
-        foreach ($products as $valueProduct) {
-            if(isset($mapProduct[$valueProduct['id']])) {
-                $mapProduct[$valueProduct['id']]['name'] = $valueProduct['name'];
-            }
-        }
-
-        usort($mapProduct, function($a, $b) {
-            return $a['stock_out'] < $b['stock_out'];
-        });
-
+        // data product
         if(count($data) > 0) {
             foreach ($data as $value) {
+                if($user['role'] == "marketing") {
+                    array_push($mapMarketingStock, $value['id']);
+                }
                 // $i=0;
                 $totalPerorang = 0;
                 $carts = explode(",", $value->cart);
@@ -896,6 +861,44 @@ class DashboardController extends Controller
                 $totalMarketingUser++;
             }
         }
+
+        if($user['role'] == "marketing") {
+            foreach ($stockAll as $valueStock) {
+                $stockIn += $valueStock['stock_in'];
+                $stockOut += $valueStock['stock_out'];
+                foreach ($mapMarketingStock as $valueStockMarketing) {
+                    if($valueStock['stock_out'] != 0 && $valueStock['cart_id'] == $valueStockMarketing) {
+                        if(isset($mapProduct[$valueStock['id_product']])) {
+                            $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
+                        } else {
+                            $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($stockAll as $valueStock) {
+                $stockIn += $valueStock['stock_in'];
+                $stockOut += $valueStock['stock_out'];
+                if($valueStock['stock_out'] != 0) {
+                    if(isset($mapProduct[$valueStock['id_product']])) {
+                        $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
+                    } else {
+                        $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
+                    }
+                }
+            }
+        }
+
+        foreach ($products as $valueProduct) {
+            if(isset($mapProduct[$valueProduct['id']])) {
+                $mapProduct[$valueProduct['id']]['name'] = $valueProduct['name'];
+            }
+        }
+
+        usort($mapProduct, function($a, $b) {
+            return $a['stock_out'] < $b['stock_out'];
+        });
 
         $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);

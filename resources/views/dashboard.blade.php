@@ -518,8 +518,10 @@
           document.querySelector(`#total_sales`).innerHTML = `IDR ${data['result']['total_sales']}`
           document.querySelector(`#total_insentive`).innerHTML = `IDR ${data['result']['total_insentive']}`
           document.querySelector(`#total_shipping`).innerHTML = `IDR ${data['result']['total_shipping']}`
-          document.querySelector(`#total_salary`).innerHTML = `IDR ${data['result']['total_salary']}`
-          document.querySelector(`#total_other_cost`).innerHTML = `IDR ${data['result']['total_other_cost']}`
+          if(user['role'] == 'superuser') {
+            document.querySelector(`#total_salary`).innerHTML = `IDR ${data['result']['total_salary']}`
+            document.querySelector(`#total_other_cost`).innerHTML = `IDR ${data['result']['total_other_cost']}`
+          }
           document.querySelector(`#total_revenue`).innerHTML = `IDR ${data['result']['total_revenue']}`
           document.querySelector(`#total_paid`).innerHTML = `IDR ${data['result']['total_paid']}`
           document.querySelector(`#total_po`).innerHTML = `${data['result']['total_po']}`

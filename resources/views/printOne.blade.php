@@ -12,7 +12,7 @@
         <tr>
             <td class="w-half">
                 <h2>INVOICE</h2>
-                <h5>{{ $data['po_id'] }}</h5>
+                <h5>{{ $data['inv_no'] }}</h5>
                 <h5>{{ $data['created_at'] }}</h5>
             </td>
             <td class="w-quarter" style="text-align: start">
