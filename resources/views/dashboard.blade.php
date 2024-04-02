@@ -336,8 +336,11 @@
                 <div class="card-body px-4 py-4-0">
                   <div>
                     #{{ $count++ }}
+                    @if ($item['img'])
                     <div class=" d-flex justify-content-center card-profile-picture">
+                        <img src="images/{{ $item['img'] }}" class="rounded-image img-fluid" width="50px" height="50px">
                     </div>
+                    @endif
                     <div class="divider">
                       <div class="divider-text">
                         <h4 class="mt-2">{{ $item['name'] }}</h4>

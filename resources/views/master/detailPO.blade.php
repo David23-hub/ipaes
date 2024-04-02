@@ -99,7 +99,7 @@
                       </span>                          
                       @else
                       <div id="span-edit-status{{ $key }}">
-                      @if ($user['role'] == "superuser" || $user['role'] == "admin")
+                      @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
                         <span class="p-2">
                             <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{ $key }}">Edit Status</button>
                         </span>
@@ -116,7 +116,7 @@
                   <br>
                   <div class="d-flex justify-content-end">
                     <div class="p-2" id="button-status-canceled{{ $key }}">
-                    @if ($user['role'] == "superuser" || $user['role'] == "admin")
+                    @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
                       <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
                           Cancel Purchase Order
                       </button>
@@ -207,7 +207,7 @@
                     </tfoot>
                   </table>
                   <div class="d-flex justify-content-end" id="button-extra-charge{{ $key }}">
-                  @if ($user['role'] == "superuser" || $user['role'] == "admin")
+                  @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
                     <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
                     Add Extra Charges
                     </button>
@@ -218,7 +218,7 @@
                     <p class="text-start">{{ $itemDokter->notes }}</p>
                   </div>
                   <div class="form-group" id="button-edit-product{{ $key }}">
-                  @if ($user['role'] == "superuser" || $user['role'] == "admin")
+                  @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
                     <button class="btn me-3 btn-outline-success" id="edit_product{{ $key }}" onclick="EditProductShow({{ $key }})">
                     Edit Product
                     </button>
@@ -800,7 +800,7 @@
           </span>
           `
 
-          if (user['role'] == "superuser" || user['role'] == "admin") {
+          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button_status_update${i}`).innerHTML = `
             <button type="button" class="btn btn-outline-warning" id="packing_btn" onclick="packing_btn(${dataCartDokter[i].id}, ${i})">
             Packing Purchase Order
@@ -814,7 +814,7 @@
           </select>
           `
 
-          if (user['role'] == "superuser" || user['role'] == "admin") {
+          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button-status-canceled${i}`).innerHTML = `
             <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
               Cancel Purchase Order
@@ -833,7 +833,7 @@
           </span>
           `
 
-          if (user['role'] == "superuser" || user['role'] == "admin") {
+          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button_status_update${i}`).innerHTML = `
             <button class="btn btn-outline-info" id="sent_btn_modal" data-toggle="modal" data-target="#modalSent${i}">
             Sent Order
@@ -847,7 +847,7 @@
           </select>
           `
 
-          if (user['role'] == "superuser" || user['role'] == "admin") {
+          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button-status-canceled${i}`).innerHTML = `
             <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
               Cancel Purchase Order
@@ -885,7 +885,7 @@
           document.querySelector(`#column_payment${i}`).innerHTML = ""
           document.querySelector(`#column_cancel${i}`).innerHTML = ""
 
-          if(user['role'] == "superuser" || user['role'] == "admin") {
+          if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button_status_update${i}`).innerHTML = `
             <button class="btn btn-outline-success" id="payment_btn_modal" data-toggle="modal" data-target="#modalPayment${i}" onclick="clearModalPayment(${i})">
             Submit Payment
@@ -899,7 +899,7 @@
             <option value="2" selected>SENT</option>
           </select>
           `
-          if (user['role'] == "superuser" || user['role'] == "admin") {
+          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button-status-canceled${i}`).innerHTML = `
             <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
               Cancel Purchase Order
@@ -925,7 +925,7 @@
               </div>
           `
         
-          if(user['role'] == "superuser" || user['role'] == "admin") {
+          if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
               document.querySelector(`#column_sent${i}`).innerHTML = `
               <div class="card">
                     <div class="card-body">
@@ -1035,7 +1035,7 @@
           </select>
           `
 
-          if(user['role'] == "superuser" || user['role'] == "admin") {
+          if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
               let edit_product_button = document.querySelector(`#button-edit-product${i}`)
               if(edit_product_button) {
                 edit_product_button.innerHTML = ""
@@ -1109,7 +1109,7 @@
           }
 
           let checkNominal = ``
-          if (user['role'] == "superuser" || user['role'] == "admin") {
+          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             checkNominal = `
             <div class="card">
                 <div class="card-body">
@@ -1230,7 +1230,7 @@
               "max": dataCartDokter[i]['total_num_paid_sum'],
           })
 
-          if(user['role'] == "superuser" || user['role'] == "admin") {
+          if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button_status_update${i}`).innerHTML = `
             <button class="btn btn-outline-success" id="payment_btn_modal" data-toggle="modal" data-target="#modalStepPayment${i}" onclick="clearModalPayment(${i})">
             Submit Payment
@@ -1263,7 +1263,7 @@
           </select>
           `
 
-          if(user['role'] == "superuser" || user['role'] == "admin") {
+          if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
               document.querySelector(`#column_sent${i}`).innerHTML = `
               <div class="card">
                   <div class="card-body">
@@ -1330,7 +1330,7 @@
                 continue
               }
 
-              if(user['role'] == "superuser" || user['role'] == "admin") {
+              if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
                   checkNominal += `
                     <div class="card">
                         <div class="card-body">
@@ -1399,7 +1399,7 @@
           }
 
           if (dataCartDokter[i]['total_paid_sum'] == "0") {
-            if(user['role'] == "superuser" || user['role'] == "admin") {
+            if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
               let edit_product_button = document.querySelector(`#button-edit-product${i}`)
               if(edit_product_button) {
                 edit_product_button.innerHTML = ""
@@ -1423,7 +1423,7 @@
               queryCancel.innerHTML = ""
             }
           } else {
-            if(user['role'] == "superuser" || user['role'] == "admin") {
+            if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
               let queryCancel = document.querySelector(`#button-status-canceled${i}`)
               if(queryCancel) {
                 queryCancel.innerHTML = `
@@ -1600,7 +1600,7 @@
                   IDR ${dataCartDokter[key]['total_paid_sum']}
                 </div>
               `
-              if(user['role'] == "superuser" || user['role'] == "admin") {
+              if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
                 let edit_product_button = document.querySelector(`#button-edit-product${key}`)
                 if(edit_product_button) {
                   edit_product_button.innerHTML = `

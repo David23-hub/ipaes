@@ -93,6 +93,8 @@ class PDFController extends Controller
         $cart['dokter'] = $dokter;
         $cart['user'] = $usersCreate[0];
         $cart['po_id'] = str_replace("PO", "INV", $cart['po_id']);
+        $cart['created_at'] = date("d F Y", strtotime($cart['created_at']));
+        $cart['due_date'] = date("d F Y", strtotime($cart['due_date']));
         Log::info("po_id", [
           "po_id" => $cart['po_id']
         ]);
@@ -308,7 +310,10 @@ class PDFController extends Controller
               $data['total_num_paid_sum'] = $data['total_price'];
               $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
             }
-          } 
+          }
+          
+          $data['created_at'] = date("d F Y", strtotime($data['created_at']));
+          $data['due_date'] = date("d F Y", strtotime($data['due_date']));
         }
         $datas['data'] = $dataCartDokter;
         $pdf = PDF::loadView('printAll', ['data' => $datas]);

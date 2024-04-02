@@ -177,7 +177,7 @@ class DashboardController extends Controller
             return view('dashboard')->with('user', $user)->with('result', $result)->with('data', $data);
         }
 
-        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'admin', $user['email']);
+        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'superuser', $user['email']);
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -459,6 +459,8 @@ class DashboardController extends Controller
                     $mapUser[$valueUser['email']]['total_sent_idr'] = number_format($mapUser[$valueUser['email']]['total_sent_idr'],0,',','.');
     
                     $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
+
+                    $mapUser[$valueUser['email']]['img'] = $valueUser['img'];
                 }
             }
             if($valueUser['role'] == "superuser") {
@@ -521,7 +523,7 @@ class DashboardController extends Controller
         $formattedDateStart = date("Y-m-d H:i:s", $startDate);
         $formattedSalaryDate = date("Y F", $startDate);
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
-        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'admin', $user['email']);
+        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'superuser', $user['email']);
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -878,6 +880,8 @@ class DashboardController extends Controller
                     $mapUser[$valueUser['email']]['total_sent_idr'] = number_format($mapUser[$valueUser['email']]['total_sent_idr'],0,',','.');
     
                     $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
+
+                    $mapUser[$valueUser['email']]['img'] = $valueUser['img'];
                 }
             }
             if($valueUser['role'] == "superuser") {
