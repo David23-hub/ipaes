@@ -50,6 +50,10 @@ class DashboardController extends Controller
 
     public function index()
     {
+        // finance dan admin cuma tampil list po bentuk card list ul
+        // isi nya itu berarti user profile, map doktor untuk ultah, map stock untuk product
+        // else role nya tampil kayak biasa
+
         $user = auth()->user();
         $products = $this->model->GetAll();
         $bundle=$this->bundle->GetAll();
@@ -57,18 +61,11 @@ class DashboardController extends Controller
         $formattedDateEnd = date("Y-m-d H:i:s", $formattedDateEnd);
         $formattedDateStart = mktime(0, 0, 0, 1, 1, date("Y"));
         $formattedDateStart = date("Y-m-d H:i:s", $formattedDateStart);
-
+        
         $formattedSalary = date('Y F');
-
+        
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
-        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'admin', $user['email']);
-        $userAll = $this->user->GetUserAll();
-        $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
-        $doctorAll = $this->doctorModel->GetListDoctorAndDate();
-        $otherCost = $this->otherCost->GetAllByRange($formattedDateStart, $formattedDateEnd);
-        $salaryAll = $this->salary->GetListFilter($formattedSalary);
 
-        $newDate = date('Y-m-d');
         $incentiveIdr=0;
         $total =0;
         $totalShippingCost = 0;
@@ -86,6 +83,7 @@ class DashboardController extends Controller
         $mapProduct = [];
         $mapUser = [];
         $mapDoktor = [];
+        $mapStock = [];
         $mapTotalPerMonth = [
             1 => 0,
             2 => 0,
@@ -101,10 +99,90 @@ class DashboardController extends Controller
             12 => 0
         ];
 
-        foreach ($salaryAll as $valueSalary) {
-            # code...
-            $totalSalary += $valueSalary['price'];
+        if ($user['role'] == "admin" || $user['role'] == "finance") {
+            $doctorAll = $this->doctorModel->GetListDoctorAndDate();
+            $dataTransaction = $this->cart->GetListJoinDoctorDashboard($formattedDateStart, $formattedDateEnd);
+
+            foreach ($doctorAll as $value) {
+                $dateDoctor = new DateTime($value['dob']);  
+                $currentDate = new DateTime();
+    
+                // Extract month and day from the dates
+                $month_day_1 = $dateDoctor->format('md');
+                $month_day_2 = $currentDate->format('md');
+
+                Log::info("dob", [
+                    "day1" => $month_day_1,
+                    "day2" => $month_day_2
+                ]);
+    
+                if ($month_day_1 == $month_day_2) {
+                    $initial = explode(" ", $value['name']);
+                    if(count($initial) >= 2) {
+                        $initial1 = $initial[0][0];
+                        $initial2 = $initial[1][0];
+                        $initial = strtoupper($initial1) . strtoupper($initial2);
+                    } else if (count($initial) == 1) {
+                        $initial = strtoupper($initial[0][0]);
+                    }
+                    array_push($mapDoktor, [
+                        'name' => $value['name'],
+                        'dob' => 'today',
+                        'initial' => $initial
+                    ]);
+                } else {
+                    $dateDoctor->modify('-1 day');
+                    $tomorrow_month_day = $dateDoctor->format('md');
+                    $initial = explode(" ", $value['name']);
+                    if(count($initial) >= 2) {
+                        $initial1 = $initial[0][0];
+                        $initial2 = $initial[1][0];
+                        $initial = strtoupper($initial1) . strtoupper($initial2);
+                    } else if (count($initial) == 1) {
+                        $initial = strtoupper($initial[0][0]);
+                    }
+                    // Check if $date2 is tomorrow's date relative to $date1
+                    if ($month_day_2 == $tomorrow_month_day) {
+                        array_push($mapDoktor, [
+                            'name' => $value['name'],
+                            'dob' => 'tomorrow',
+                            'initial' => $initial
+                        ]);
+                    }
+                }      
+            }
+
+            foreach ($products as $valueProduct) {
+                if($valueProduct['qty'] <= $valueProduct['qty_min']) {
+                    array_push($mapStock, [
+                        'name'=> $valueProduct['name'],
+                        'stock' => $valueProduct['qty']
+                    ]);
+                }
+            }
+
+            foreach ($dataTransaction as $valueTransaction) {
+                # code...
+                $timestamp = $this->getTimeAgo($valueTransaction['created_at']);
+                $valueTransaction['timestamp'] = $timestamp;
+            }
+
+            $result['month_now'] = (int)date("m");
+            $result['year_now'] = (int)date("Y");
+            $result['mapDoktor'] = $mapDoktor;
+            $result['mapStock'] = $mapStock;
+            $result['mapTransaction'] = $dataTransaction;
+            $result['map_month'] = $mapTotalPerMonth;
+
+            return view('dashboard')->with('user', $user)->with('result', $result)->with('data', $data);
         }
+
+        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'admin', $user['email']);
+        $userAll = $this->user->GetUserAll();
+        $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
+        $doctorAll = $this->doctorModel->GetListDoctorAndDate();
+        $otherCost = $this->otherCost->GetAllByRange($formattedDateStart, $formattedDateEnd);
+        $salaryAll = $this->salary->GetListFilter($formattedSalary);
 
         foreach ($doctorAll as $value) {
             $dateDoctor = new DateTime($value['dob']);  
@@ -115,26 +193,41 @@ class DashboardController extends Controller
             $month_day_2 = $currentDate->format('md');
 
             if ($month_day_1 == $month_day_2) {
+                $initial = explode(" ", $value['name']);
+                if(count($initial) >= 2) {
+                    $initial1 = $initial[0][0];
+                    $initial2 = $initial[1][0];
+                    $initial = strtoupper($initial1) . strtoupper($initial2);
+                } else if (count($initial) == 1) {
+                    $initial = strtoupper($initial[0][0]);
+                }
                 array_push($mapDoktor, [
                     'name' => $value['name'],
+                    'dob' => 'today',
+                    'initial' => $initial
                 ]);
             } else {
                 $dateDoctor->modify('-1 day');
                 $tomorrow_month_day = $dateDoctor->format('md');
+                $initial = explode(" ", $value['name']);
+                if(count($initial) >= 2) {
+                    $initial1 = $initial[0][0];
+                    $initial2 = $initial[1][0];
+                    $initial = strtoupper($initial1) . strtoupper($initial2);
+                } else if (count($initial) == 1) {
+                    $initial = strtoupper($initial[0][0]);
+                }
                 // Check if $date2 is tomorrow's date relative to $date1
                 if ($month_day_2 == $tomorrow_month_day) {
                     array_push($mapDoktor, [
                         'name' => $value['name'],
+                        'dob' => 'tomorrow',
+                        'initial' => $initial
                     ]);
                 }
-            }
-
-            
+            }      
         }
 
-        foreach ($otherCost as $valueOtherCost) {
-            $totalOtherCost += $valueOtherCost['price'];
-        }
 
         foreach ($stockAll as $valueStock) {
             $stockIn += $valueStock['stock_in'];
@@ -152,11 +245,27 @@ class DashboardController extends Controller
             if(isset($mapProduct[$valueProduct['id']])) {
                 $mapProduct[$valueProduct['id']]['name'] = $valueProduct['name'];
             }
+
+            if($valueProduct['qty'] <= $valueProduct['qty_min']) {
+                array_push($mapStock, [
+                    'name'=> $valueProduct['name'],
+                    'stock' => $valueProduct['qty']
+                ]);
+            }
         }
 
         usort($mapProduct, function($a, $b) {
             return $a['stock_out'] < $b['stock_out'];
         });
+
+        foreach ($otherCost as $valueOtherCost) {
+            $totalOtherCost += $valueOtherCost['price'];
+        }
+
+        foreach ($salaryAll as $valueSalary) {
+            # code...
+            $totalSalary += $valueSalary['price'];
+        }
 
         
         if(count($data) > 0) {
@@ -394,6 +503,7 @@ class DashboardController extends Controller
         $count = 1;
         $result['map_month'] = $mapTotalPerMonth;
         $result['mapDoktor'] = $mapDoktor;
+        $result['mapStock'] = $mapStock;
 
 
         return view('dashboard')->with('user', $user)->with('data', $data)->with('result', $result)->with('count', $count);
@@ -444,6 +554,7 @@ class DashboardController extends Controller
         $mapProduct = [];
         $mapUser = [];
         $mapDoktor = [];
+        $mapStock = [];
         $mapTotalPerMonth = [
             1 => 0,
             2 => 0,
@@ -458,6 +569,82 @@ class DashboardController extends Controller
             11 => 0,
             12 => 0
         ];
+
+        if ($user['role'] == "admin" || $user['role'] == "finance") {
+            $doctorAll = $this->doctorModel->GetListDoctorAndDate();
+            $dataTransaction = $this->cart->GetListJoinDoctorDashboard($formattedDateStart, $formattedDateEnd);
+
+            // foreach ($doctorAll as $value) {
+            //     $dateDoctor = new DateTime($value['dob']);  
+            //     $currentDate = new DateTime();
+    
+            //     // Extract month and day from the dates
+            //     $month_day_1 = $dateDoctor->format('md');
+            //     $month_day_2 = $currentDate->format('md');
+    
+            //     if ($month_day_1 == $month_day_2) {
+            //         $initial = explode(" ", $value['name']);
+            //         if(count($initial) >= 2) {
+            //             $initial1 = $initial[0][0];
+            //             $initial2 = $initial[1][0];
+            //             $initial = strtoupper($initial1) . strtoupper($initial2);
+            //         } else if (count($initial) == 1) {
+            //             $initial = strtoupper($initial[0][0]);
+            //         }
+            //         array_push($mapDoktor, [
+            //             'name' => $value['name'],
+            //             'dob' => 'today',
+            //             'initial' => $initial
+            //         ]);
+            //     } else {
+            //         $dateDoctor->modify('-1 day');
+            //         $tomorrow_month_day = $dateDoctor->format('md');
+            //         $initial = explode(" ", $value['name']);
+            //         if(count($initial) >= 2) {
+            //             $initial1 = $initial[0][0];
+            //             $initial2 = $initial[1][0];
+            //             $initial = strtoupper($initial1) . strtoupper($initial2);
+            //         } else if (count($initial) == 1) {
+            //             $initial = strtoupper($initial[0][0]);
+            //         }
+            //         // Check if $date2 is tomorrow's date relative to $date1
+            //         if ($month_day_2 == $tomorrow_month_day) {
+            //             array_push($mapDoktor, [
+            //                 'name' => $value['name'],
+            //                 'dob' => 'tomorrow',
+            //                 'initial' => $initial
+            //             ]);
+            //         }
+            //     }      
+            // }
+
+            foreach ($products as $valueProduct) {
+                if($valueProduct['qty'] <= $valueProduct['qty_min']) {
+                    array_push($mapStock, [
+                        'name'=> $valueProduct['name'],
+                        'stock' => $valueProduct['qty']
+                    ]);
+                }
+            }
+
+            foreach ($dataTransaction as $valueTransaction) {
+                # code...
+                $timestamp = $this->getTimeAgo($valueTransaction['created_at']);
+                $valueTransaction['timestamp'] = $timestamp;
+            }
+
+            $result['month_now'] = (int)date("m");
+            $result['year_now'] = (int)date("Y");
+            $result['mapStock'] = $mapStock;
+            $result['mapTransaction'] = $dataTransaction;
+            $result['map_month'] = $mapTotalPerMonth;
+
+            $returned = [
+                'result' => $result,
+                'data' => $data
+            ];
+            return $returned;
+        }
 
         foreach ($salaryAll as $valueSalary) {
             # code...
@@ -739,5 +926,25 @@ class DashboardController extends Controller
         ];
         
         return $returned;
+    }
+
+    private function getTimeAgo($timestamp) {
+        $currentTime = new DateTime();
+        $givenTime = new DateTime($timestamp);
+        $interval = $givenTime->diff($currentTime);
+    
+        if ($interval->y > 0) {
+            return $interval->y == 1 ? "a year ago" : $interval->y . " years ago";
+        } elseif ($interval->m > 0) {
+            return $interval->m == 1 ? "a month ago" : $interval->m . " months ago";
+        } elseif ($interval->d > 0) {
+            return $interval->d == 1 ? "a day ago" : $interval->d . " days ago";
+        } elseif ($interval->h > 0) {
+            return $interval->h == 1 ? "an hour ago" : $interval->h . " hours ago";
+        } elseif ($interval->i > 0) {
+            return $interval->i == 1 ? "a minute ago" : $interval->i . " minutes ago";
+        } else {
+            return "just now";
+        }
     }
 }
