@@ -26,11 +26,15 @@
                         <input type="text" class="form-control @error('name') is-invalid @enderror" id="exampleInputName" placeholder="Nama lengkap" name="name" value="{{old('name')}}">
                         @error('name') <span class="text-danger">{{$message}}</span> @enderror
                     </div>
-
                     <div class="form-group">
                         <label for="exampleInputEmail">Email address</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" id="exampleInputEmail" placeholder="Masukkan Email" name="email" value="{{old('email')}}">
                         @error('email') <span class="text-danger">{{$message}}</span> @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPhoneNumber">Phone Number</label>
+                        <input type="no_hp" class="form-control @error('no_hp') is-invalid @enderror" id="exampleInputPhoneNumber" placeholder="Masukkan Nomor HP" name="no_hp" value="{{old('no_hp')}}" oninput="addDotPrice(this);">
+                        @error('no_hp') <span class="text-danger">{{$message}}</span> @enderror
                     </div>
                     <div class="form-group">
                         <label for="exampleInputRole">Role</label>
@@ -93,5 +97,12 @@
             }
             reader.readAsDataURL(event.target.files[0]);
         }
+
+        function addDotPrice(input) {
+      
+            input.value = input.value.replace(/[^0-9]/g, '')
+        
+        }
+        
     </script>
 @stop
