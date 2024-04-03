@@ -379,12 +379,10 @@ class DashboardController extends Controller
                 $countPaid = 0;
                 if($valueCarousel['status'] == 3) {
                     $totalpaidItem = $valueCarousel['nominal'];
-                    // $totalPaid += $valueCarousel['nominal'];
                     $countPaid++;
                 } else if($valueCarousel['status'] == 5) {
                     $paidArray = explode('|', $valueCarousel['nominal']);
                     $totalpaidItem = array_sum($paidArray);
-                    // $totalPaid += $totalpaidItem;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 0) {
                     $totalpoIdr = $totalPerorang;
@@ -445,6 +443,15 @@ class DashboardController extends Controller
                     $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
 
                     $mapUser[$valueUser['email']]['img'] = $valueUser['img'];
+                    if(!$valueUser['img']) {
+                        $named = explode(",", $valueUser['name']);
+                        $initialsName = "";
+                        foreach ($named as $valueInitial) {
+                            # code...
+                            $initialsName .= $valueInitial[0];
+                        }
+                        $mapUser[$valueUser['email']]['initial'] = $initialsName;
+                    }                    
                 }
             }
             if($valueUser['role'] == "superuser") {
@@ -852,6 +859,15 @@ class DashboardController extends Controller
                     $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
 
                     $mapUser[$valueUser['email']]['img'] = $valueUser['img'];
+                    if(!$valueUser['img']) {
+                        $named = explode(",", $valueUser['name']);
+                        $initialsName = "";
+                        foreach ($named as $valueInitial) {
+                            # code...
+                            $initialsName .= $valueInitial[0];
+                        }
+                        $mapUser[$valueUser['email']]['initial'] = $initialsName;
+                    } 
                 }
             }
             if($valueUser['role'] == "superuser") {

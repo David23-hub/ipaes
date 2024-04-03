@@ -350,15 +350,12 @@
                     #{{ $count++ }}
                     @if ($item['img'])
                     <div class=" d-flex justify-content-center card-profile-picture">
-                        <img src="images/{{ $item['img'] }}" class="rounded-image img-fluid" width="50px" height="50px">
+                        <img src="images/{{ $item['img'] }}" class="rounded-image img-thumbnail img-fluid">
                     </div>
                     @else
                     <div class=" d-flex justify-content-center card-profile-picture">
                       <div class="initials-carousel-user mb d-flex align-items-center justify-content-center">
-                        <script>
-                          var init = getInitials('{{ $item['name'] }}')
-                          document.write(init);
-                        </script>
+                        {{ $item['initial'] }}
                       </div>
                     </div>
                     @endif
@@ -465,13 +462,13 @@
     }
 
     .initials-carousel-user {
-      width: 100px; /* Set the width of the initials circle */
-      height: 100px; /* Set the height of the initials circle */
+      width: 250px; /* Set the width of the initials circle */
+      height: 250px; /* Set the height of the initials circle */
       border-radius: 50%;
       background-color: #afb7c0; /* Change this to the desired color */
       color: white;
-      font-size: 50px; /* Adjust the font size as needed */
-      line-height: 50px; /* Ensure the initials are vertically centered */
+      font-size: 200px; /* Adjust the font size as needed */
+      line-height: 200px; /* Ensure the initials are vertically centered */
       text-transform: uppercase;
     }
 
@@ -663,6 +660,14 @@
     let htmlElement = `<div class="owl-carousel owl-theme">`
     for(const user in result['map_user']) {
       const mapUser = result['map_user'][user]
+      let imgHtml = ""
+      if(mapUser['img']) {
+        imgHtml = `<img src="images/${mapUser['img']}" class="rounded-image img-fluid" width="10px" height="10px">`
+      } else {
+        imgHtml = `<div class="initials-carousel-user mb d-flex align-items-center justify-content-center">
+          ${mapUser['initial']}
+        </div>`
+      }
       htmlElement += `        
       <div class="item">
           <div class="card">
@@ -670,6 +675,7 @@
               <div>
                 ${count}
                 <div class=" d-flex justify-content-center card-profile-picture">
+                  ${imgHtml}
                 </div>
                 <div class="divider">
                   <div class="divider-text">
