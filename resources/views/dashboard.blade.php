@@ -490,7 +490,7 @@
   user = @json($user);
   data = @json($data);
   result = @json($result);
-  // console.log({result})
+  console.log({result})
   
 
   window.onload = function() {

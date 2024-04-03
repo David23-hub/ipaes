@@ -308,7 +308,7 @@ class DashboardController extends Controller
                     $totalShippingCost+= $value['shipping_cost'];
                 }
     
-                if($value['status'] == 5) {
+                if($value['status'] == 5 || $value['status'] == 3) {
                     if($value['nominal']) {
                         // $payment = explode("|", $value->nominal);
                         // foreach ($payment  as $valuePayment) {
@@ -317,14 +317,13 @@ class DashboardController extends Controller
                         $paidArray = explode('|', $value['nominal']);
                         $totalPaid += array_sum($paidArray);
                     }
-                } else if($value['status'] == 3 ) {
-                    if($value['nominal']) {
-                        $totalPaid += (int)$value['nominal'];
-                    }
                 }     
             }
-            $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
         }
+
+        Log::info('data all', [
+            "total paid" => $totalPaid
+        ]);
 
         // data carousel
         if(count($dataCarousel) > 0) {
@@ -720,7 +719,7 @@ class DashboardController extends Controller
                     $totalShippingCost+= $value['shipping_cost'];
                 }
     
-                if($value['status'] == 5) {
+                if($value['status'] == 5 || $value['status'] == 3) {
                     if($value['nominal']) {
                         // $payment = explode("|", $value->nominal);
                         // foreach ($payment  as $valuePayment) {
@@ -729,19 +728,14 @@ class DashboardController extends Controller
                         $paidArray = explode('|', $value['nominal']);
                         $totalPaid += array_sum($paidArray);
                     }
-                } else if($value['status'] == 3 ) {
-                    if($value['nominal']) {
-                        $totalPaid += (int)$value['nominal'];
-                    }
                 }
     
             }
-            $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
         }
 
-        if(count($data) > 0) {
+        if(count($dataCarousel) > 0) {
 
-            foreach ($data as $valueCarousel) {
+            foreach ($dataCarousel as $valueCarousel) {
                 // $i=0;
                 $totalPerorang = 0;
                 $revenuePerorang = 0;
@@ -792,12 +786,12 @@ class DashboardController extends Controller
                 $countPaid = 0;
                 if($valueCarousel['status'] == 3) {
                     $totalpaidItem = $valueCarousel['nominal'];
-                    $totalPaid += $valueCarousel['nominal'];
+                    // $totalPaid += $valueCarousel['nominal'];
                     $countPaid++;
                 } else if($valueCarousel['status'] == 5) {
                     $paidArray = explode('|', $valueCarousel['nominal']);
                     $totalpaidItem = array_sum($paidArray);
-                    $totalPaid += $totalpaidItem;
+                    // $totalPaid += $totalpaidItem;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 0) {
                     $totalpoIdr = $totalPerorang;
