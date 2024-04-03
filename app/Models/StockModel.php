@@ -28,6 +28,7 @@ class StockModel extends Model
             ->get();
         }
     }
+    
 
     public function AddItem($data){
         $d = new StockModel;

@@ -23,7 +23,7 @@
     @foreach ($data['data'] as $key => $item)
     @if ($key == 0)
     <div class="first-page">
-        <h5>INVOICE NUMBER: {{ $item['po_id'] }}</h5>
+        <h5>INVOICE NUMBER: {{ $item['inv_no'] }}</h5>
         <h5>TANGGAL PO: {{ $item['created_at'] }}</h5>
         <h5>Jatuh Tempo: {{ $item['due_date'] }}</h5>
         <h5>M.R: {{ $item['user']['name'] }}</h5>
@@ -92,7 +92,7 @@
     </div>
     @else
     <div class="new-page">
-        <h5>INVOICE NUMBER: {{ $item['po_id'] }}</h5>
+        <h5>INVOICE NUMBER: {{ $item['inv_no'] }}</h5>
         <h5>TANGGAL PO: {{ $item['created_at'] }}</h5>
         <h5>Jatuh Tempo: {{ $item['due_date'] }}</h5>
         <h5>M.R: {{ $item['user']['name'] }}</h5>

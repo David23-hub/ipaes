@@ -83,6 +83,19 @@ class CartModel extends Model
         }
     }
 
+    public function GetListJoinDoctorDashboard($start,$end) {
+        return $this
+            ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
+            ->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.name as user_name')
+            ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+            ->where('cart.status', "0")
+            ->where('cart.deleted_by',null)
+            ->orderBy('cart.id', 'desc')
+            ->take(10)
+            ->get();
+    }
+
     // public function GetListJoinCartAndDateAndStatus($start,$end,$status) {
     //     if($status == "all") {
     //         return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
