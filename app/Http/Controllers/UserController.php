@@ -63,6 +63,7 @@ class UserController extends Controller
             'name' => 'required|unique:users,name',
             'email' => 'required|email|unique:users,email',
             'role' => 'required',
+            'no_hp' => 'required',
             'password' => 'required|confirmed'
         ]);
         // $array = $request->only([
@@ -73,6 +74,7 @@ class UserController extends Controller
             "email" => $req['email'],
             "role" => $req['role'],
             "password" => $req['password'],
+            "no_hp" => $req['no_hp'],
             "img" => $imageName,
         ];
         $array['password'] = bcrypt($array['password']);
