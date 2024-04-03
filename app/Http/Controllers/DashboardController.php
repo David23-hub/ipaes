@@ -308,23 +308,27 @@ class DashboardController extends Controller
                     $totalShippingCost+= $value['shipping_cost'];
                 }
     
-                // if($value['status'] == 3 || $value['status'] == 5) {
-                //     if($value->nominal) {
-                //         $payment = explode("|", $value->nominal);
-                //         foreach ($payment  as $valuePayment) {
-                //             $totalPaid += (int)$valuePayment;
-                //         }
-                //     }
-                // }
-    
+                if($value['status'] == 5 || $value['status'] == 3) {
+                    if($value['nominal']) {
+                        // $payment = explode("|", $value->nominal);
+                        // foreach ($payment  as $valuePayment) {
+                        //     $totalPaid += (int)$valuePayment;
+                        // }
+                        $paidArray = explode('|', $value['nominal']);
+                        $totalPaid += array_sum($paidArray);
+                    }
+                }     
             }
-            $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
         }
 
-        // data carousel
-        if(count($data) > 0) {
+        Log::info('data all', [
+            "total paid" => $totalPaid
+        ]);
 
-            foreach ($data as $valueCarousel) {
+        // data carousel
+        if(count($dataCarousel) > 0) {
+
+            foreach ($dataCarousel as $valueCarousel) {
                 // $i=0;
                 $totalPerorang = 0;
                 $revenuePerorang = 0;
@@ -375,12 +379,10 @@ class DashboardController extends Controller
                 $countPaid = 0;
                 if($valueCarousel['status'] == 3) {
                     $totalpaidItem = $valueCarousel['nominal'];
-                    $totalPaid += $valueCarousel['nominal'];
                     $countPaid++;
                 } else if($valueCarousel['status'] == 5) {
                     $paidArray = explode('|', $valueCarousel['nominal']);
                     $totalpaidItem = array_sum($paidArray);
-                    $totalPaid += $totalpaidItem;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 0) {
                     $totalpoIdr = $totalPerorang;
@@ -441,6 +443,15 @@ class DashboardController extends Controller
                     $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
 
                     $mapUser[$valueUser['email']]['img'] = $valueUser['img'];
+                    if(!$valueUser['img']) {
+                        $named = explode(",", $valueUser['name']);
+                        $initialsName = "";
+                        foreach ($named as $valueInitial) {
+                            # code...
+                            $initialsName .= $valueInitial[0];
+                        }
+                        $mapUser[$valueUser['email']]['initial'] = $initialsName;
+                    }                    
                 }
             }
             if($valueUser['role'] == "superuser") {
@@ -715,22 +726,23 @@ class DashboardController extends Controller
                     $totalShippingCost+= $value['shipping_cost'];
                 }
     
-                // if($value['status'] == 3 || $value['status'] == 5) {
-                //     if($value->nominal) {
-                //         $payment = explode("|", $value->nominal);
-                //         foreach ($payment  as $valuePayment) {
-                //             $totalPaid += (int)$valuePayment;
-                //         }
-                //     }
-                // }
+                if($value['status'] == 5 || $value['status'] == 3) {
+                    if($value['nominal']) {
+                        // $payment = explode("|", $value->nominal);
+                        // foreach ($payment  as $valuePayment) {
+                        //     $totalPaid += (int)$valuePayment;
+                        // }
+                        $paidArray = explode('|', $value['nominal']);
+                        $totalPaid += array_sum($paidArray);
+                    }
+                }
     
             }
-            $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
         }
 
-        if(count($data) > 0) {
+        if(count($dataCarousel) > 0) {
 
-            foreach ($data as $valueCarousel) {
+            foreach ($dataCarousel as $valueCarousel) {
                 // $i=0;
                 $totalPerorang = 0;
                 $revenuePerorang = 0;
@@ -781,12 +793,12 @@ class DashboardController extends Controller
                 $countPaid = 0;
                 if($valueCarousel['status'] == 3) {
                     $totalpaidItem = $valueCarousel['nominal'];
-                    $totalPaid += $valueCarousel['nominal'];
+                    // $totalPaid += $valueCarousel['nominal'];
                     $countPaid++;
                 } else if($valueCarousel['status'] == 5) {
                     $paidArray = explode('|', $valueCarousel['nominal']);
                     $totalpaidItem = array_sum($paidArray);
-                    $totalPaid += $totalpaidItem;
+                    // $totalPaid += $totalpaidItem;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 0) {
                     $totalpoIdr = $totalPerorang;
@@ -847,6 +859,15 @@ class DashboardController extends Controller
                     $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
 
                     $mapUser[$valueUser['email']]['img'] = $valueUser['img'];
+                    if(!$valueUser['img']) {
+                        $named = explode(",", $valueUser['name']);
+                        $initialsName = "";
+                        foreach ($named as $valueInitial) {
+                            # code...
+                            $initialsName .= $valueInitial[0];
+                        }
+                        $mapUser[$valueUser['email']]['initial'] = $initialsName;
+                    } 
                 }
             }
             if($valueUser['role'] == "superuser") {
