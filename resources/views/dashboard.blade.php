@@ -24,6 +24,12 @@
           <div class="col">
             <img src="images/{{ $user['img'] }}" class="rounded-image img-fluid" width="200px" height="200px">
           </div>
+          @else
+          <div class="col">
+            <div class="initials-foto-user mb d-flex align-items-center justify-content-center">
+              <div id="initials2"></div>
+            </div>
+          </div>
           @endif
           <div class="col">
             <div class="col">
@@ -328,6 +334,12 @@
         </div>
       </div>
 
+      <script>
+        function getInitials(name) {
+        return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
+      }
+      </script>
+
       <div id="map_user">
         <div class="owl-carousel owl-theme">
           @foreach ($result['map_user'] as $item)
@@ -339,6 +351,15 @@
                     @if ($item['img'])
                     <div class=" d-flex justify-content-center card-profile-picture">
                         <img src="images/{{ $item['img'] }}" class="rounded-image img-fluid" width="50px" height="50px">
+                    </div>
+                    @else
+                    <div class=" d-flex justify-content-center card-profile-picture">
+                      <div class="initials-carousel-user mb d-flex align-items-center justify-content-center">
+                        <script>
+                          var init = getInitials('{{ $item['name'] }}')
+                          document.write(init);
+                        </script>
+                      </div>
                     </div>
                     @endif
                     <div class="divider">
@@ -425,9 +446,31 @@
       width: 50px; /* Set the width of the initials circle */
       height: 50px; /* Set the height of the initials circle */
       border-radius: 50%;
-      background-color: #007bff; /* Change this to the desired color */
+      background-color: #afb7c0; /* Change this to the desired color */
       color: white;
       font-size: 20px; /* Adjust the font size as needed */
+      line-height: 50px; /* Ensure the initials are vertically centered */
+      text-transform: uppercase;
+    }
+
+    .initials-foto-user {
+      width: 200px; /* Set the width of the initials circle */
+      height: 200px; /* Set the height of the initials circle */
+      border-radius: 50%;
+      background-color: #afb7c0; /* Change this to the desired color */
+      color: white;
+      font-size: 100px; /* Adjust the font size as needed */
+      line-height: 50px; /* Ensure the initials are vertically centered */
+      text-transform: uppercase;
+    }
+
+    .initials-carousel-user {
+      width: 100px; /* Set the width of the initials circle */
+      height: 100px; /* Set the height of the initials circle */
+      border-radius: 50%;
+      background-color: #afb7c0; /* Change this to the desired color */
+      color: white;
+      font-size: 50px; /* Adjust the font size as needed */
       line-height: 50px; /* Ensure the initials are vertically centered */
       text-transform: uppercase;
     }
@@ -447,14 +490,13 @@
   user = @json($user);
   data = @json($data);
   result = @json($result);
-  console.log({result})
+  // console.log({result})
+  
 
   window.onload = function() {
 
     // Function to get initials from a name
-    function getInitials(name) {
-      return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
-    }
+    
 
     // Get the name from somewhere, e.g., from a variable or an input field
     var name = user.name;
@@ -464,6 +506,9 @@
 
     // Update the initials div
     document.getElementById('initials').innerText = initials;
+    document.getElementById('initials2').innerText = initials;
+
+    
   };
 
   //options
