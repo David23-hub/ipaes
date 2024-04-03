@@ -350,7 +350,7 @@
                     #{{ $count++ }}
                     @if ($item['img'])
                     <div class=" d-flex justify-content-center card-profile-picture">
-                        <img src="images/{{ $item['img'] }}" class="rounded-image img-thumbnail img-fluid">
+                        <img src="images/{{ $item['img'] }}" class="rounded-image img-fluid custom-img">
                     </div>
                     @else
                     <div class=" d-flex justify-content-center card-profile-picture">
@@ -438,6 +438,13 @@
       line-height: 50px; /* Ensure the initials are vertically centered */
       text-transform: uppercase;
     }
+
+    /* Custom CSS to set height and width */
+    .custom-img {
+      height: 250px; /* Set desired height */
+      width: 250px; /* Set desired width */
+    }
+
 
     .initials-doctor {
       width: 50px; /* Set the width of the initials circle */
