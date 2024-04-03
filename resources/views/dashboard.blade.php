@@ -24,6 +24,12 @@
           <div class="col">
             <img src="images/{{ $user['img'] }}" class="rounded-image img-fluid" width="200px" height="200px">
           </div>
+          @else
+          <div class="col">
+            <div class="initials-foto-user mb d-flex align-items-center justify-content-center">
+              {{ $user['name'][0] }}
+            </div>
+          </div>
           @endif
           <div class="col">
             <div class="col">
@@ -340,6 +346,12 @@
                     <div class=" d-flex justify-content-center card-profile-picture">
                         <img src="images/{{ $item['img'] }}" class="rounded-image img-fluid" width="50px" height="50px">
                     </div>
+                    @else
+                    <div class=" d-flex justify-content-center card-profile-picture">
+                      <div class="initials-carousel-user mb d-flex align-items-center justify-content-center">
+                        {{ $user['name'][0] }}
+                      </div>
+                    </div>
                     @endif
                     <div class="divider">
                       <div class="divider-text">
@@ -428,6 +440,28 @@
       background-color: #007bff; /* Change this to the desired color */
       color: white;
       font-size: 20px; /* Adjust the font size as needed */
+      line-height: 50px; /* Ensure the initials are vertically centered */
+      text-transform: uppercase;
+    }
+
+    .initials-foto-user {
+      width: 200px; /* Set the width of the initials circle */
+      height: 200px; /* Set the height of the initials circle */
+      border-radius: 50%;
+      background-color: #ff1900; /* Change this to the desired color */
+      color: white;
+      font-size: 100px; /* Adjust the font size as needed */
+      line-height: 50px; /* Ensure the initials are vertically centered */
+      text-transform: uppercase;
+    }
+
+    .initials-carousel-user {
+      width: 100px; /* Set the width of the initials circle */
+      height: 100px; /* Set the height of the initials circle */
+      border-radius: 50%;
+      background-color: #ff1900; /* Change this to the desired color */
+      color: white;
+      font-size: 50px; /* Adjust the font size as needed */
       line-height: 50px; /* Ensure the initials are vertically centered */
       text-transform: uppercase;
     }
