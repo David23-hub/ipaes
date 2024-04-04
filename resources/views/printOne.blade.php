@@ -94,10 +94,11 @@
     <table>
         <tr>
             <td class="w-half-bottom-left">
-                <div>HARAP MELAKUKAN PEMBAYARAN MELALUI:
-                    BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003234987 an Maggie Princilla Chandra
-                    intipratama@gmail.com
-                    (*) Harap cantumkan nomor invoice saat pembayaran</div>
+                <div><p>HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
+                    <p>BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003234987 an Maggie Princilla Chandra</p>
+                    <p>intipratama@gmail.com</p>
+                    <p>(*) Harap cantumkan nomor invoice saat pembayaran</p>
+                </div>
             </td>
             <td class="w-half-bottom-right">
                 <div>12 Maret 2024</div>

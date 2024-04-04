@@ -82,12 +82,12 @@ class CartModel extends Model
             }
         }
     }
-
+    
     public function GetListJoinDoctorDashboard($start,$end) {
         return $this
             ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
             ->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
-            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.name as user_name')
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.name as user_name', DB::raw('DATE(cart.created_at) as created'))
             ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
             ->where('cart.status', "0")
             ->where('cart.deleted_by',null)
@@ -137,7 +137,8 @@ class CartModel extends Model
     public function GetListJoinDoctorAndDateWithUserAndManagementOrder($start,$end,$roleUser, $listUser) {
         if($roleUser == "manager"){
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
-            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
+            ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.img as img')
             ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
             ->where('cart.management_order', '0')
             ->where('cart.deleted_by',null)
@@ -145,8 +146,7 @@ class CartModel extends Model
             ->get();
         }else if($roleUser=="superuser" || $roleUser == "admin" || $roleUser=="finance"){
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
-            ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
-            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.img as img')
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
             ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
             ->where('cart.deleted_by',null)
             ->orderBy('cart.created_by', 'desc')
@@ -180,9 +180,7 @@ class CartModel extends Model
     }
 
     public function GetListJoinDoctorWithCartId($id) {
-        return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('cart.id', '=', $id)
-        ->orderBy('cart.id', 'desc')
-        ->select('cart.*' )->get();
+        return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('cart.id', '=', $id)->orderBy('cart.id', 'desc')->select('cart.*' )->get();
     }
     
     public function GetItem($id,$email){

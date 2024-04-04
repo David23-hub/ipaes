@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DateTime;
+use DateTimeZone;
 use Illuminate\Http\Request;
 use App\Models\CartModel;
 use App\Models\OtherCostModel;
@@ -976,22 +977,26 @@ class DashboardController extends Controller
     }
 
     private function getTimeAgo($timestamp) {
-        $currentTime = new DateTime();
-        $givenTime = new DateTime($timestamp);
-        $interval = $givenTime->diff($currentTime);
-    
+        $timezone = 'Asia/Jakarta';
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $now->setTimezone(new DateTimeZone($timezone));
+        $time = new DateTime('@' . $timestamp);
+        $time->setTimezone(new DateTimeZone($timezone));
+
+        $interval = $now->diff($time);
+
         if ($interval->y > 0) {
-            return $interval->y == 1 ? "a year ago" : $interval->y . " years ago";
+            return $interval->format('%y years ago');
         } elseif ($interval->m > 0) {
-            return $interval->m == 1 ? "a month ago" : $interval->m . " months ago";
+            return $interval->format('%m months ago');
         } elseif ($interval->d > 0) {
-            return $interval->d == 1 ? "a day ago" : $interval->d . " days ago";
+            return $interval->format('%d days ago');
         } elseif ($interval->h > 0) {
-            return $interval->h == 1 ? "an hour ago" : $interval->h . " hours ago";
+            return $interval->format('%h hours ago');
         } elseif ($interval->i > 0) {
-            return $interval->i == 1 ? "a minute ago" : $interval->i . " minutes ago";
+            return $interval->format('%i minutes ago');
         } else {
-            return "just now";
+            return 'Just now';
         }
     }
 

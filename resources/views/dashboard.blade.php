@@ -12,31 +12,45 @@
     <div class="card">
       <div class="container" style="margin-bottom: 20px;margin-top:20px;">
         <div class="row">
-          <div class="col text-center align-items-center mt-3 mb-1">
+          <div class="col-sm-12 col-md-6 ">
             <div class="d-flex flex-column align-items-center">
-                <div class="initials mb-2" id="initials"></div>
-                <div><b>{{ $user['name'] }}</b></div>
+                @if ($user['img'])
+                  <div class="col-sm-12 col-md-4">
+                      <div class="d-flex flex-column align-items-center">
+                    <img src="images/{{ $user['img'] }}" class="rounded-image img-fluid" width="auto" >      
+                          </div>
+                    
+                  </div>
+                  @else
+                  <div class="col-sm-12 col-md-4">
+                      <div class="d-flex flex-column align-items-center">
+                    <div class="initials-foto-user mb d-flex align-items-center justify-content-center">
+                      <div id="initials2"></div>
+                    </div>
+                    </div>
+                  </div>
+              @endif
+                
+                <h1><div><b>{{ $user['name'] }}</b></div></h1>
                 <div>{{ $user['role'] }}</div>
                 <a class="btn btn-primary" id="edit-profile" href="{{ route('users.edit', $user) }}">Edit Profil</a>
             </div>
           </div>
-          @if ($user['img'])
-          <div class="col">
-            <img src="images/{{ $user['img'] }}" class="rounded-image img-fluid" width="200px" height="200px">
-          </div>
-          @else
-          <div class="col">
-            <div class="initials-foto-user mb d-flex align-items-center justify-content-center">
-              <div id="initials2"></div>
-            </div>
-          </div>
-          @endif
-          <div class="col">
-            <div class="col">
-              <div><h5>Usename      :{{ $user['name'] }}</h5></div>
+          
+          
+          <div class="col-sm-12 col-md-6">
+              <div class="d-flex flex-column" style="text-align:left">
+              
+              <h4 style="font-weight:bold;">User Profile</h5>
+              <hr class="w-100">
+              <div><h5>Username      :{{ $user['name'] }}</h5></div>
+              <hr class="w-100">
               <div><h5>Email        : {{ $user['email'] }}</h5></div>
-              <div><h5>Phone        : {{ $user['name'] }}</h5></div>
+              <hr class="w-100">
+              <div><h5>Phone        : {{ $user['no_hp'] }}</h5></div>
+              <hr class="w-100">
               <div><h5>Role         : {{ $user['role'] }}</h5></div>
+              <hr class="w-100">
             </div>
           </div>
         </div>
@@ -146,7 +160,7 @@
                               <div class="container">
                                 <div class="row">
                                   <div class="col d-flex justify-content-end">
-                                    <p>Created at {{ $itemTransaction['created_at'] }} | {{ $itemTransaction['timestamp'] }}</p>
+                                    <p>Created at {{ $itemTransaction['created'] }} | {{ $itemTransaction['timestamp'] }}</p>
                                   </div>
                                 </div>
                                 <div class="row align-self-end">
@@ -437,6 +451,7 @@
       font-size: 20px; /* Adjust the font size as needed */
       line-height: 50px; /* Ensure the initials are vertically centered */
       text-transform: uppercase;
+      text-align: center;
     }
 
     /* Custom CSS to set height and width */
@@ -500,7 +515,6 @@
   user = @json($user);
   data = @json($data);
   result = @json($result);
-  console.log({result})
   
 
   window.onload = function() {
@@ -515,7 +529,7 @@
     var initials = getInitials(name);
 
     // Update the initials div
-    document.getElementById('initials').innerText = initials;
+    
     if(!user['img']) {
       document.getElementById('initials2').innerText = initials;
     }

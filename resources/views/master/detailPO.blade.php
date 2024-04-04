@@ -115,14 +115,23 @@
                   </div>
                   <br>
                   <div class="d-flex justify-content-end">
-                    <div class="p-2" id="button-status-canceled{{ $key }}">
-                    @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
-                      <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
-                          Cancel Purchase Order
-                      </button>
-                    @endif
-                    </div>
-                    <div class="p-2" id="button_status_update{{ $key }}">
+                    <div>
+                      <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                          <div class="p-2" id="button-status-canceled{{ $key }}">
+                            @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
+                              <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+                                  Cancel Purchase Order
+                              </button>
+                            @endif
+                          </div>
+                          
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                          <div class="p-2" id="button_status_update{{ $key }}">
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
