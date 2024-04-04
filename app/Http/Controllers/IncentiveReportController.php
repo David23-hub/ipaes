@@ -39,6 +39,28 @@ class IncentiveReportController extends Controller
         $this->bundle = new PackageModel;
         $this->extraCharge = new ExtraChargeModel;
     }
+    
+    private function getStatus($status, $totalpaid, $nominal){
+        if ($status==0){
+            return "Submitted";
+        }else if($status==1){
+            return "Packing";
+        }else if($status==2){
+            return "Send";
+        }else if($status==3){
+            return "Paid (Completed)";
+        }else if($status==4){
+            return "Canceled";
+        }else if($status==5){
+            if ($totalpaid==$nominal){
+                return "Paid (Completed)";
+            }else{
+                return "Paid";
+            }
+        }
+        return "error get status";
+    }
+
 
     public function index()
     {
@@ -156,13 +178,17 @@ class IncentiveReportController extends Controller
                 }
             }
 
+            $stepPaymentNominal = 0;
             //loop for payment step
+            if($value->paid_at!=null && $value->paid_at[strlen($value->paid_at)-1]=="|"){
+                $value->paid_at = substr($value->paid_at, 0, strlen($value->paid_at)-2);
+            }
             $payments = explode("|", $value->paid_at);
             $stepPayment = "";
             $i=0;
             $counter=0;
             //if there's only 1 payment
-            if(count($payments)!=0){
+            if($value->paid_at!=null && count($payments)!=0){
                 $nominals = explode("|", $value->nominal);
                 foreach ($payments as $pay) {
                     $i++;
@@ -171,6 +197,7 @@ class IncentiveReportController extends Controller
                     }else{
                         $stepPayment .= $pay."  =>  IDR ".$nominals[$counter].'<hr class="split-line">';
                     }
+                    $stepPaymentNominal += $nominals[$counter];
                     $counter++;
                     $value["paid_at"]=$pay;
                 }
@@ -186,8 +213,14 @@ class IncentiveReportController extends Controller
             $data[$count]["revenue"]="IDR ".($total-$value["shipping_cost"]);
             $data[$count]["total"]="IDR ".number_format($total,0,',','.');
             $data[$count]["stepPayment"]=($stepPayment);
+            
+            if($value['status']!=3 && $value['status']!=5){
+                $incentiveIdr = 0;
+            }
+            
             $data[$count]["incentiveIdr"]="IDR ".number_format($incentiveIdr,0,',','.');
             $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
             $count++;
         }
 
@@ -521,13 +554,18 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
             }
         }
 
+        $stepPaymentNominal = 0;
+        
         //loop for payment step
+        if($value->paid_at!=null && $value->paid_at[strlen($value->paid_at)-1]=="|"){
+                $value->paid_at = substr($value->paid_at, 0, strlen($value->paid_at)-2);
+            }
         $payments = explode("|", $value->paid_at);
         $stepPayment = "";
         $i=0;
         $counter=0;
         //if there's only 1 payment
-        if(count($payments)!=0){
+        if($value->paid_at!=null && count($payments)!=0){
             $nominals = explode("|", $value->nominal);
             foreach ($payments as $pay) {
                 $i++;
@@ -536,6 +574,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                 }else{
                     $stepPayment .= $pay."  =>  IDR ".$nominals[$counter].'<hr class="split-line">';
                 }
+                $stepPaymentNominal += $nominals[$counter];
                 $counter++;
                 $value["paid_at"]=$pay;
             }
@@ -551,8 +590,12 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
         $data[$count]["revenue"]="IDR ".($total-$value["shipping_cost"]);
         $data[$count]["total"]="IDR ".number_format($total,0,',','.');
         $data[$count]["stepPayment"]=($stepPayment);
+        if($value['status']!=3 && $value['status']!=5){
+                $incentiveIdr = 0;
+            }
         $data[$count]["incentiveIdr"]="IDR ".number_format($incentiveIdr,0,',','.');
         $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+        $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
         $count++;
     }
 
