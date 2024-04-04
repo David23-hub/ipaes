@@ -422,7 +422,7 @@
       <div class="container">
             <div class="card">
               <div class="card-body">
-                  <canvas id="pie-chart1" style="display:block;width: 100%;" ></canvas></div>
+                  <canvas id="pie-chart1" style="width: 400px;" ></canvas></div>
             </div>
       </div>
     @endif
@@ -481,6 +481,12 @@
 
     .rounded-image {
       border-radius: 50%;
+    }
+
+    canvas {
+        width: 100%;
+        height: auto; /* Maintain aspect ratio */
+        max-width: 500px; /* Optional: limit maximum width */
     }
     </style>
     
