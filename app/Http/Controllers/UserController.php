@@ -144,7 +144,11 @@ class UserController extends Controller
         $user = User::find($id);
         if ($id == $request->user()->id) return redirect()->route('users.index')
             ->with('error_message', 'Anda tidak dapat menghapus diri sendiri.');
-        if ($user) $user->delete();
+        
+        $user->deleted_at = date('Y-m-d H:i:s');
+        $user->deleted_by = Auth::user()->name;
+        $user->save();
+
         return redirect()->route('users.index')
             ->with('success_message', 'Berhasil menghapus user');
     }
