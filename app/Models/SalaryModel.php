@@ -16,6 +16,9 @@ class SalaryModel extends Model
     }
 
     public function GetListFilter($date){
+        if($date=="all" || $date==""){
+            return $this->where('deleted_by',null)->get();    
+        }
         return $this->where('date', '=', $date)->where('deleted_by',null)->get();
     }
     

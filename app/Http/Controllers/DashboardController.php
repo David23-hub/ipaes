@@ -62,7 +62,7 @@ class DashboardController extends Controller
         $formattedDateStart = mktime(0, 0, 0, 1, 1, date("Y"));
         $formattedDateStart = date("Y-m-d H:i:s", $formattedDateStart);
         
-        $formattedSalary = date('Y F');
+        $formattedSalary = "all";
         
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
         Log::info("data", [
@@ -567,7 +567,11 @@ class DashboardController extends Controller
         $startDate = strtotime($input['start_date']);
         $formattedDateEnd = date("Y-m-d H:i:s", $endDate);
         $formattedDateStart = date("Y-m-d H:i:s", $startDate);
-        $formattedSalaryDate = date("Y F", $startDate);
+        if($request->temp_mon=="all"){
+            $formattedSalaryDate = "all";
+        }else{
+            $formattedSalaryDate = date("Y F", $startDate);
+        }
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
 
         $newDate = date('Y-m-d');

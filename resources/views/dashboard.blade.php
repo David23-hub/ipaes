@@ -482,6 +482,7 @@
     .rounded-image {
       border-radius: 50%;
     }
+    
     canvas {
         width: 100%;
         height: auto; /* Maintain aspect ratio */
@@ -558,9 +559,11 @@
   function GetAll(e) {
     // let val = e.target.value;
     let month = document.getElementById("month")
+    
     let year = document.getElementById("year")
     month = month.value
     year = year.value
+    let temp = month
 
     let [startDate, endDate] = formatDate2(month, year)
     // alert(`${startDate}-${endDate}`)
@@ -573,7 +576,7 @@
         url: "{{url('/')}}"+"/dashboard/getlist",
         beforeSend: $.LoadingOverlay("show"),
         afterSend:$.LoadingOverlay("hide"),
-        data: { "_token": "{{ csrf_token() }}","end_date": endDate, "start_date": startDate},
+        data: { "_token": "{{ csrf_token() }}","end_date": endDate, "start_date": startDate, "temp_mon": temp},
         success: function (data) {
           // console.log({data}, "dataaa1")
           document.querySelector(`#total_sales`).innerHTML = `IDR ${data['result']['total_sales']}`
