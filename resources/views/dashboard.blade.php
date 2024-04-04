@@ -612,7 +612,7 @@
             const urlDetail = "detailTransaction/" + element["id"]
             htmlText += `
             <li class="list-group-item">
-              <a href="{{url('${urlDetail}')}}">
+              <a href="{{url('${urlDetail}')}}" style="color:black;">
                 <div class="container">
                   <div class="row">
                     <div class="col">
