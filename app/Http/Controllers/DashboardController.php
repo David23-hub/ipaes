@@ -569,20 +569,6 @@ class DashboardController extends Controller
         $formattedDateStart = date("Y-m-d H:i:s", $startDate);
         $formattedSalaryDate = date("Y F", $startDate);
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
-        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'superuser', $user['email']);
-        $userAll = $this->user->GetUserAll();
-        $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
-        $doctorAll = $this->doctorModel->GetListDoctorAndDate();
-        $otherCost = $this->otherCost->GetAllByRange($formattedDateStart, $formattedDateEnd);
-        $salaryAll = $this->salary->GetListFilter($formattedSalaryDate);
-
-        Log::info('data', [
-            'formated_start' => $formattedDateStart,
-            'formated_end' => $formattedDateEnd,
-            'stockAll' => $stockAll,
-            'data' => $data,
-            'otherCost' => $otherCost
-        ]);
 
         $newDate = date('Y-m-d');
         $incentiveIdr=0;
@@ -650,6 +636,22 @@ class DashboardController extends Controller
             ];
             return $returned;
         }
+
+        $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'superuser', $user['email']);
+        $userAll = $this->user->GetUserAll();
+        $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
+        $doctorAll = $this->doctorModel->GetListDoctorAndDate();
+        $otherCost = $this->otherCost->GetAllByRange($formattedDateStart, $formattedDateEnd);
+        $salaryAll = $this->salary->GetListFilter($formattedSalaryDate);
+
+        
+        Log::info('data', [
+            'formated_start' => $formattedDateStart,
+            'formated_end' => $formattedDateEnd,
+            'stockAll' => $stockAll,
+            'data' => $data,
+            'otherCost' => $otherCost
+        ]);
 
         foreach ($salaryAll as $valueSalary) {
             # code...
@@ -745,6 +747,8 @@ class DashboardController extends Controller
                         $totalPaid += array_sum($paidArray);
                     }
                 }
+
+
     
             }
         }
