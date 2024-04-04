@@ -292,8 +292,10 @@ class DashboardController extends Controller
                     }
 
                     
-    
-                    $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
+                    if($value['status']==3||$value['status']==5){
+                        $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
+                    }
+                    
                 }
 
                 $month = date("n", strtotime($value['created_at']));
@@ -311,10 +313,6 @@ class DashboardController extends Controller
     
                 if($value['status'] == 5 || $value['status'] == 3) {
                     if($value['nominal']) {
-                        // $payment = explode("|", $value->nominal);
-                        // foreach ($payment  as $valuePayment) {
-                        //     $totalPaid += (int)$valuePayment;
-                        // }
                         $paidArray = explode('|', $value['nominal']);
                         $totalPaid += array_sum($paidArray);
                     }
@@ -368,6 +366,8 @@ class DashboardController extends Controller
                         $totalPerorang += $tempTotal;
                     }
 
+                    
+                    
                     $incentivePerorang += ceil(($tempTotal * $tempCommisionRate)/100);
                 }
     
@@ -725,7 +725,9 @@ class DashboardController extends Controller
 
                     
     
-                    $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
+                    if($value['status']==3||$value['status']==5){
+                        $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
+                    }
                 }
 
                 $month = date("n", strtotime($value['created_at']));

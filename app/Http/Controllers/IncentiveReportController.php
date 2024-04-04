@@ -430,7 +430,10 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
             $incen=0;
         }
         $tot+=$value["total"];
-        $incen+=$value["incentiveIdr"];
+        
+        if($value['status']==3||$value['status']==5){
+            $incen+=$value["incentiveIdr"];
+        }
     };
     $tempBody .= $this->getBodySummary($name,"IDR ".number_format($tot,0,',','.'),"IDR ".number_format($incen,0,',','.'), $no);
 
