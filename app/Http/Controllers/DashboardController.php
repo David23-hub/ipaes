@@ -250,6 +250,10 @@ class DashboardController extends Controller
         // data product
         if(count($data) > 0) {
             foreach ($data as $value) {
+                
+                if($value['status'] == 4) {
+                    continue;
+                }
 
                 if($user['role'] == "marketing") {
                     array_push($mapMarketingStock, $value['id']);
@@ -329,6 +333,9 @@ class DashboardController extends Controller
         if(count($dataCarousel) > 0) {
 
             foreach ($dataCarousel as $valueCarousel) {
+                if($valueCarousel['status'] == 4) {
+                    continue;
+                }
                 // $i=0;
                 $totalPerorang = 0;
                 $revenuePerorang = 0;
@@ -489,6 +496,14 @@ class DashboardController extends Controller
                             $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
                         }
                     }
+                    
+                    if($valueStock['stock_in'] != 0 && $valueStock['cart_id'] == $valueStockMarketing && strpos($valueStock['desc'], "CANCEL") === 0) {
+                        if(isset($mapProduct[$valueStock['id_product']])) {
+                            $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_in'] * -1;
+                        } else {
+                            $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_in'] * -1;
+                        }
+                    }
                 }
             }
         } else {
@@ -500,6 +515,14 @@ class DashboardController extends Controller
                         $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
                     } else {
                         $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
+                    }
+                }
+                
+                if($valueStock['stock_in'] != 0 && strpos($valueStock['desc'], "CANCEL") === 0) {
+                    if(isset($mapProduct[$valueStock['id_product']]) ) {
+                        $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_in'] * -1;
+                    } else {
+                        $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_in'] * -1;
                     }
                 }
             }
@@ -683,6 +706,10 @@ class DashboardController extends Controller
         // data product
         if(count($data) > 0) {
             foreach ($data as $value) {
+                
+                if($value['status'] == 4) {
+                    continue;
+                }
                 if($user['role'] == "marketing") {
                     array_push($mapMarketingStock, $value['id']);
                 }
@@ -763,6 +790,9 @@ class DashboardController extends Controller
         if(count($dataCarousel) > 0) {
 
             foreach ($dataCarousel as $valueCarousel) {
+                if($valueCarousel['status'] == 4) {
+                    continue;
+                }
                 // $i=0;
                 $totalPerorang = 0;
                 $revenuePerorang = 0;
@@ -916,6 +946,13 @@ class DashboardController extends Controller
                         }
                     }
                 }
+                if($valueStock['stock_in'] != 0 && $valueStock['cart_id'] == $valueStockMarketing && strpos($valueStock['desc'], "CANCEL") === 0) {
+                        if(isset($mapProduct[$valueStock['id_product']])) {
+                            $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_in'] * -1;
+                        } else {
+                            $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_in'] * -1;
+                        }
+                    }
             }
         } else {
             foreach ($stockAll as $valueStock) {
@@ -926,6 +963,14 @@ class DashboardController extends Controller
                         $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_out'];
                     } else {
                         $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_out'];
+                    }
+                }
+                
+                if($valueStock['stock_in'] != 0 && strpos($valueStock['desc'], "CANCEL") === 0) {
+                    if(isset($mapProduct[$valueStock['id_product']]) ) {
+                        $mapProduct[$valueStock['id_product']]['stock_out'] += $valueStock['stock_in'] * -1;
+                    } else {
+                        $mapProduct[$valueStock['id_product']]['stock_out'] = $valueStock['stock_in'] * -1;
                     }
                 }
             }
@@ -977,27 +1022,26 @@ class DashboardController extends Controller
     }
 
     private function getTimeAgo($timestamp) {
-        $timezone = 'Asia/Jakarta';
-        $now = new DateTime('now', new DateTimeZone('UTC'));
-        $now->setTimezone(new DateTimeZone($timezone));
-        $time = new DateTime('@' . $timestamp);
-        $time->setTimezone(new DateTimeZone($timezone));
+    $timezone = 'Asia/Jakarta';
+    $now = new DateTime('now', new DateTimeZone('UTC'));
+    $now->setTimezone(new DateTimeZone($timezone));
+    $time = new DateTime($timestamp, new DateTimeZone($timezone));
 
-        $interval = $now->diff($time);
+    $interval = $now->diff($time);
 
-        if ($interval->y > 0) {
-            return $interval->format('%y years ago');
-        } elseif ($interval->m > 0) {
-            return $interval->format('%m months ago');
-        } elseif ($interval->d > 0) {
-            return $interval->format('%d days ago');
-        } elseif ($interval->h > 0) {
-            return $interval->format('%h hours ago');
-        } elseif ($interval->i > 0) {
-            return $interval->format('%i minutes ago');
-        } else {
-            return 'Just now';
-        }
+    if ($interval->y > 0) {
+        return $interval->format('%y years ago');
+    } elseif ($interval->m > 0) {
+        return $interval->format('%m months ago');
+    } elseif ($interval->d > 0) {
+        return $interval->format('%d days ago');
+    } elseif ($interval->h > 0) {
+        return $interval->format('%h hours ago');
+    } elseif ($interval->i > 0) {
+        return $interval->format('%i minutes ago');
+    } else {
+        return 'Just now';
+    }
     }
 
 }
