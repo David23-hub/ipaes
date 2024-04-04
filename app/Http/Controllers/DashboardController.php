@@ -236,6 +236,7 @@ class DashboardController extends Controller
         }
 
 
+
         foreach ($otherCost as $valueOtherCost) {
             $totalOtherCost += $valueOtherCost['price'];
         }
@@ -394,6 +395,7 @@ class DashboardController extends Controller
                     $totalpoIdr = $totalPerorang;
                     $countPo++;
                 }
+                
                 if(!isset($mapUser[$valueCarousel['created_by']])) {
                     $mapUser[$valueCarousel['created_by']] = [
                         'revenue' => $revenuePerorang,
@@ -405,6 +407,7 @@ class DashboardController extends Controller
                         'total_sent_idr' => $totalsentIdr,
                         'total_paid' => $countPaid,
                         'total_paid_idr' => $totalpaidItem,
+                        'img'=>$valueCarousel['img'],
                     ];
                 } else {
                     $arrTemp =[
@@ -417,6 +420,7 @@ class DashboardController extends Controller
                         'total_sent_idr' => $mapUser[$valueCarousel['created_by']]['total_sent_idr'] + $totalsentIdr,
                         'total_paid' => $mapUser[$valueCarousel['created_by']]['total_paid'] + $countPaid,
                         'total_paid_idr' => $mapUser[$valueCarousel['created_by']]['total_paid_idr'] + $totalpaidItem,
+                        'img'=>$valueCarousel['img'],
                     ];
                     $mapUser[$valueCarousel['created_by']] = $arrTemp;
                 }
@@ -424,10 +428,10 @@ class DashboardController extends Controller
             }
             $mapUser = collect($mapUser)->sortBy('incentive')->reverse()->toArray();
         }
-        
 
+        
         foreach ($userAll as $valueUser) {
-            if (count($data) > 0 ) {
+            if (count($dataCarousel) > 0 ) {
                 if(isset($mapUser[$valueUser['email']])) {
                     $mapUser[$valueUser['email']]['name'] = $valueUser['name'];
                     $mapUser[$valueUser['email']]['revenue'] = number_format($mapUser[$valueUser['email']]['revenue'],0,',','.');
@@ -443,17 +447,22 @@ class DashboardController extends Controller
                     $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
 
                     $mapUser[$valueUser['email']]['img'] = $valueUser['img'];
-                    if(!$valueUser['img']) {
-                        $named = explode(",", $valueUser['name']);
+
+                    $mapUser[$valueUser['email']]['initial'] = "";
+
+                    if($valueUser['img']=="" || $valueUser['img']==null) {
+                        $named = explode(" ", $valueUser['name']);
                         $initialsName = "";
                         foreach ($named as $valueInitial) {
                             # code...
                             $initialsName .= $valueInitial[0];
                         }
                         $mapUser[$valueUser['email']]['initial'] = $initialsName;
-                    }                    
+                    }
                 }
             }
+
+
             if($valueUser['role'] == "superuser") {
                 $totalSuperUser++;
             } else if($valueUser['role'] == "manager") {
@@ -859,7 +868,7 @@ class DashboardController extends Controller
                     $mapUser[$valueUser['email']]['total_paid_idr'] = number_format($mapUser[$valueUser['email']]['total_paid_idr'],0,',','.');
 
                     $mapUser[$valueUser['email']]['img'] = $valueUser['img'];
-                    if(!$valueUser['img']) {
+                    if($valueUser['img']=="") {
                         $named = explode(",", $valueUser['name']);
                         $initialsName = "";
                         foreach ($named as $valueInitial) {
