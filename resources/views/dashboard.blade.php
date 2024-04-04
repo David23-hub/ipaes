@@ -173,7 +173,7 @@
     @else
       <div class="container">
         <div class="row">
-          <div class="col">
+          <div class="col-sm-12 col-md-6">
             <div class="card">
               <div class="card-body">
                 <h4><b>Total Revenue This Period</b></h4>
@@ -210,7 +210,7 @@
               </div>
             </div>
           </div>
-          <div class="col">
+          <div class="col-sm-12 col-md-6">
             <div class="card">
               <div class="card-body" id="map_product">
                 <h4><b>Best Product of The Period</b></h4>
@@ -510,7 +510,9 @@
 
     // Update the initials div
     document.getElementById('initials').innerText = initials;
-    document.getElementById('initials2').innerText = initials;
+    if(!user['img']) {
+      document.getElementById('initials2').innerText = initials;
+    }
 
     
   };

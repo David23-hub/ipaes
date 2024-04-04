@@ -87,6 +87,7 @@ class DashboardController extends Controller
         $mapUser = [];
         $mapDoktor = [];
         $mapStock = [];
+        $mapMarketingStock = [];
         $mapTotalPerMonth = [
             1 => 0,
             2 => 0,
@@ -101,7 +102,6 @@ class DashboardController extends Controller
             11 => 0,
             12 => 0
         ];
-        $mapMarketingStock = [];
 
         if ($user['role'] == "admin" || $user['role'] == "finance") {
             $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -318,7 +318,7 @@ class DashboardController extends Controller
                         $paidArray = explode('|', $value['nominal']);
                         $totalPaid += array_sum($paidArray);
                     }
-                }     
+                }
             }
         }
 
@@ -988,4 +988,5 @@ class DashboardController extends Controller
             return "just now";
         }
     }
+
 }
