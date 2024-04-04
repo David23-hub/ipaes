@@ -145,7 +145,8 @@ class CartModel extends Model
             ->get();
         }else if($roleUser=="superuser" || $roleUser == "admin" || $roleUser=="finance"){
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
-            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
+            ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
+            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.img as img')
             ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
             ->where('cart.deleted_by',null)
             ->orderBy('cart.created_by', 'desc')
