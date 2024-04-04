@@ -227,11 +227,15 @@
               stat = "InActive"
             }
 
-            const urlDetail = "detailPO/" + item["id"]
-            // alert(urlDetail)
-            // console.log("detailPO/" + item["id"], "url")
-            let detailButton = ``
-            detailButton = `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
+            startDate = startDate.split('/').join('-')
+            endDate = endDate.split('/').join('-')
+
+            let urlDetail = "detailPO/" + item["id"] + "/" + startDate + "/" + endDate +"/" + selectStatus
+            console.log({urlDetail})
+            // let id = item['id']
+            // // alert(urlDetail)
+            // // console.log("detailPO/" + item["id"], "url")
+            let detailButton = `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
             
 
             dataTable.row.add([

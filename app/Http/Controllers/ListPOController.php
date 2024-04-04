@@ -170,10 +170,26 @@ class ListPOController extends Controller
       return $dataTransaction;
     }
 
-    public function detailPOIndex(string $id) {
+    public function detailPOIndex(string $id, string $start_date, string $end_date, string $status) {
         try {
             $user = auth()->user();
-            $dataCartDokter = $this->cart->GetListJoinDoctorWithDoctorIdAndEmail($id, $user['role'], $user['email']);
+            
+            $inputStatus = explode(',', $status);
+
+            $dateParts = explode('/', str_replace('-', '/', $start_date));
+
+            // Rearrange the parts to form the desired format
+            $formattedDateStart = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+
+            $dateParts = explode('/', str_replace('-', '/', $end_date));
+
+            // Rearrange the parts to form the desired format
+            $formattedDateEnd = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+            Log::info('request', [
+              $id, $start_date, $end_date, $inputStatus
+            ]);
+            $dataCartDokter = $this->cart->GetListJoinDoctorWithDoctorIdAndEmail($id, $user['role'], $user['email'], $inputStatus, $formattedDateStart, $formattedDateEnd);
+
             $dokter = $this->doctorModel->SingleItem($id);
             $items = $this->model->getAll();
             $bundles = $this->bundle->getAll();
