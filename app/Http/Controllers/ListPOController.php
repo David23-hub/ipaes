@@ -334,6 +334,7 @@ class ListPOController extends Controller
     public function detailTransaksiIndex(string $id) {
       try {
           $dataCartDokter = $this->cart->GetListJoinDoctorWithCartId($id);
+
           $dokter = $this->doctorModel->SingleItem($dataCartDokter[0]['doctor_id']);
           $items = $this->model->getAll();
           $bundles = $this->bundle->getAll();
@@ -342,6 +343,9 @@ class ListPOController extends Controller
           $user = auth()->user();
 
           foreach ($dataCartDokter as $data) {
+            if((Auth::user()->role == "marketing" && $data->created_by != Auth::user()->email) || $data->management_order==1) {
+              return redirect()->route('listPO');
+            }
             $totalan = 0;
             $products = [];
             $totalPaid = 0;
