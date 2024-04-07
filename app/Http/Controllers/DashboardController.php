@@ -15,6 +15,8 @@ use App\Models\ExtraChargeModel;
 use App\Models\PackageModel;
 use App\Models\SalaryModel;
 use App\Models\StockModel;
+use Illuminate\Support\Facades\Auth;
+
 // use App\Models\OtherCostModel;
 
 use Illuminate\Support\Facades\Log;
@@ -32,6 +34,8 @@ class DashboardController extends Controller
     private $stock;
     private $salary;
 
+    private $textDashboard; 
+    private $textWA; 
     public function __construct()
     {
         $this->middleware('auth');
@@ -47,7 +51,9 @@ class DashboardController extends Controller
         $this->stock = new StockModel;
         $this->otherCost = new OtherCostModel;
         $this->salary = new SalaryModel;
-    }
+        $this->textDashboard = "Pesanan <strong>#NAMA_DOKTER#</strong> TINGGAL <strong>#DUE_DATE#</strong> Hari lagi Sebelum Jatuh Tempo!";
+        $this->textWA = "Halo *#NAMA_DOKTER#*,%0A%0ASaat ini, anda memiliki tagihan yang belum dibayar. Masa Tenggak Waktu anda selama *#DUE_DATE#* hari lagi.%0ADimohon untuk melakukan pelunasan segera.%0A%0ATerima kasih, salam hormat%0A*IPAES*.";
+        }
 
     public function index()
     {
@@ -86,6 +92,7 @@ class DashboardController extends Controller
         $stockOut = 0;
         $mapProduct = [];
         $mapUser = [];
+        $mapReminderPO = [];
         $mapDoktor = [];
         $mapStock = [];
         $mapMarketingStock = [];
@@ -103,6 +110,48 @@ class DashboardController extends Controller
             11 => 0,
             12 => 0
         ];
+        $result['mapReminder'] = [];
+        foreach ($data as $value) {
+            if($value->status==3 || $value->status==5){
+                continue;
+            }
+
+
+            $temp = [];
+            if(Auth::user()->role=="marketing" && $value->management_order==0 && $value->created_by == Auth::user()->email){
+                $reminder = $this->getDayAgo($value['due_date']);
+                if ($reminder!=""){
+                    $text = $this->textDashboard;
+                    $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
+                    $text = str_replace("#DUE_DATE#", $reminder, $text);
+
+                    $link = $this->textWA;
+                    $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
+                    $link = str_replace("#DUE_DATE#", $reminder, $link);
+
+                    $temp['text'] = $text;
+                    $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 0, strlen($value['billing_no_hp'])-1)."/?text=".$link;
+                    array_push($mapReminderPO, $temp);
+                }
+            }else if (Auth::user()->role!="marketing"){
+                $reminder = $this->getDayAgo($value['due_date']);
+                if ($reminder!=""){
+                    $text = $this->textDashboard;
+                    $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
+                    $text = str_replace("#DUE_DATE#", $reminder, $text);
+                    $temp['text'] = $text;
+
+                    $link = $this->textWA;
+                    $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
+                    $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 1, strlen($value['billing_no_hp']))."/?text=".$link;
+
+                    array_push($mapReminderPO, $temp);
+                }
+            }
+        }
+        $result['mapReminder'] =  $mapReminderPO;
+
 
         if ($user['role'] == "admin" || $user['role'] == "finance") {
             $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -615,6 +664,7 @@ class DashboardController extends Controller
         $stockOut = 0;
         $mapProduct = [];
         $mapUser = [];
+        $mapReminderPO = [];
         $mapDoktor = [];
         $mapStock = [];
         $mapTotalPerMonth = [
@@ -631,7 +681,50 @@ class DashboardController extends Controller
             11 => 0,
             12 => 0
         ];
+
+
         $mapMarketingStock = [];
+        $result['mapReminder'] = [];
+
+        foreach ($data as $value) {
+            if($value->status==3 || $value->status==5){
+                continue;
+            }
+            
+            $temp = [];
+            if(Auth::user()->role=="marketing" && $value->management_order==0 && $value->created_by == Auth::user()->email){
+                $reminder = $this->getDayAgo($value['due_date']);
+                if ($reminder!=""){
+                    $text = $this->textDashboard;
+                    $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
+                    $text = str_replace("#DUE_DATE#", $reminder, $text);
+
+                    $link = $this->textWA;
+                    $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
+                    $link = str_replace("#DUE_DATE#", $reminder, $link);
+
+                    $temp['text'] = $text;
+                    $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 0, strlen($value['billing_no_hp'])-1)."/?text=".$link;
+                    array_push($mapReminderPO, $temp);
+                }
+            }else if (Auth::user()->role!="marketing"){
+                $reminder = $this->getDayAgo($value['due_date']);
+                if ($reminder!=""){
+                    $text = $this->textDashboard;
+                    $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
+                    $text = str_replace("#DUE_DATE#", $reminder, $text);
+                    $temp['text'] = $text;
+
+                    $link = $this->textWA;
+                    $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
+                    $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 1, strlen($value['billing_no_hp']))."/?text=".$link;
+
+                    array_push($mapReminderPO, $temp);
+                }
+            }
+        }
+        $result['mapReminder'] =  $mapReminderPO;
 
         if ($user['role'] == "admin" || $user['role'] == "finance") {
             $doctorAll = $this->doctorModel->GetListDoctorAndDate();
@@ -1042,6 +1135,25 @@ class DashboardController extends Controller
     } else {
         return 'Just now';
     }
+    }
+
+    private function getDayAgo($timestamp) {
+        $timezone = 'Asia/Jakarta';
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $now->setTimezone(new DateTimeZone($timezone));
+        $now->setTime(0, 0, 0);
+
+        $time = new DateTime($timestamp, new DateTimeZone($timezone));
+        $time->setTime(0, 0, 0);
+    
+        $interval = $now->diff($time);
+
+
+        if ($interval->d <= 4 && $interval->invert==0) {
+            return $interval->format('%d');
+        }
+
+        return "";
     }
 
 }

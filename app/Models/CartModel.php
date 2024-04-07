@@ -57,7 +57,7 @@ class CartModel extends Model
                 ->get();
             }
         } else {
-            if($role == "superuser" || $role == "admin") {
+            if($role == "superuser" || $role == "admin" || $role == "manager") {
                 return $this
                 ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
                 ->join('dokter', 'cart.doctor_id', '=', 'dokter.id')

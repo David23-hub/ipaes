@@ -109,6 +109,29 @@
       </div>
     @endforeach
 
+    {{-- looping buat reminder PO --}}
+    @foreach ($result['mapReminder'] as $itemPO)
+      <a href="{{$itemPO['link']}}" target="_blank">
+        <div class="row">
+          <div class="col">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center justify-content-center">
+                  <i class="fas fa-exclamation-circle text-light mr-2"></i>
+                </div>
+                <span class="ml-2"> {!!$itemPO['text']!!} </span>
+              </div>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </a>
+    @endforeach
+
+
+
     <div style="text-align: end">
       <p style="font-weight: bold;font-size: 20px">Set Period</p>
       <div style="margin-bottom: 20px">
