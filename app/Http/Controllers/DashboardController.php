@@ -112,7 +112,7 @@ class DashboardController extends Controller
         ];
         $result['mapReminder'] = [];
         foreach ($data as $value) {
-            if($value->status==3 || $value->status==5){
+            if($value->status==3 || $value->status==5 || $value->status==4){
                 continue;
             }
 
@@ -687,7 +687,7 @@ class DashboardController extends Controller
         $result['mapReminder'] = [];
 
         foreach ($data as $value) {
-            if($value->status==3 || $value->status==5){
+            if($value->status==3 || $value->status==5 || $value->status==4){
                 continue;
             }
             

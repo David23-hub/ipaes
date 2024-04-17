@@ -242,10 +242,18 @@ class ListProductController extends Controller
             }
             $tempProd.=$value.",";
         }
+
+        if($tempProd==""){
+            //delete cart
+            $res = $this->cartDetail->DeleteCart($input["id"]);
+            if ($input["id"]==$res || $res == true){
+                $res = "sukses";
+            }
+        }else{
+            $res = $this->updateCart($input["id"], substr($tempProd,0,strlen($tempProd)-1));
+        }
         
 
-
-        $res = $this->updateCart($input["id"], substr($tempProd,0,strlen($tempProd)-1));
         return $res;
     }
 

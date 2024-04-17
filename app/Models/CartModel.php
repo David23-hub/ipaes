@@ -257,4 +257,8 @@ class CartModel extends Model
         ->where('id', '=', $id)
         ->update( $data);
     }
+
+    public function DeleteCart($id){
+        return CartModel::destroy($id);
+    }   
 }
