@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
   
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use PDF;
 
 /**
@@ -34,7 +35,6 @@ class PDFController extends Controller
     private $user;
     public function __construct()
     {
-        $this->middleware('auth');
         $this->model = new ItemModel;
 
         $this->cart = new CartModel;
@@ -74,10 +74,19 @@ class PDFController extends Controller
         return $pdf->stream();
     }
 
-    public function generatePDFOneTransaction(string $id)
+    private function generatePDFOneTransaction(string $id, int $access=0)
     {
         $cart = $this->cart->GetItemWithoutEmail($id);
         $cart = $cart[0];
+        $user = auth()->user();
+        if($access==1){
+          if (($user['email'] != $cart['created_by'] && $user['role'] == "marketing")||
+          ($cart['management_order']==1 && $user['role'] != "superuser" && $user['role'] != "finance")){
+            
+            return redirect()->route('listPO');
+          }
+        }
+        
         $dokter = $this->doctorModel->SingleItem($cart['doctor_id']);
         $items = $this->model->getAll();
         $usersCreate = $this->user->GetUserWithEmail($cart['created_by']);
@@ -161,30 +170,80 @@ class PDFController extends Controller
 
         // step payment
         if($cart['status'] == 5) {
-            $cartPaidBy = explode("|", $cart['paid_by']);
-            $cartPaidAt = explode("|", $cart['paid_at']);
-            $cartPaidBankName = explode("|", $cart['paid_bank_name']);
-            $cartPaidAccountBankName = explode("|", $cart['paid_account_bank_name']);
-            $cartNominal = explode("|", $cart['nominal']);
-            foreach ($cartPaidBy as $key => $value) {
-                $cartStepPayment['paid_by'] = $value;
-                $cartStepPayment['paid_at'] = $cartPaidAt[$key];
-                $cartStepPayment['paid_bank_name'] = $cartPaidBankName[$key];
-                $cartStepPayment['paid_account_bank_name'] = $cartPaidAccountBankName[$key];
-                $cartStepPayment['nominal'] = $cartNominal[$key];
-                array_push($stepPayment, $cartStepPayment);
+          $dataPaidBy = explode("|", $cart['paid_by']);
+          $dataPaidAt = explode("|", $cart['paid_at']);
+          $dataPaidBankName = explode("|", $cart['paid_bank_name']);
+          $dataPaidAccountBankName = explode("|", $cart['paid_account_bank_name']);
+          $dataNominal = explode("|", $cart['nominal']);
+          $sum = array_sum(explode("|", $cart['nominal']));
+          foreach ($dataPaidBy as $key => $value) {
+            if($value != "") {
+              $dataStepPayment['paid_by'] = $value;
+              $dataStepPayment['paid_at'] = $dataPaidAt[$key];
+              $dataStepPayment['paid_bank_name'] = $dataPaidBankName[$key];
+              $dataStepPayment['paid_account_bank_name'] = $dataPaidAccountBankName[$key];
+              $dataStepPayment['nominal'] = $dataNominal[$key];
+              // $totalPaid += $dataStepPayment['nominal'];
+              array_push($stepPayment, $dataStepPayment);
             }
-
-            $cart['step_payment'] = $stepPayment;
+          }
+          $cart['total_num_paid'] = $sum;
+          $cart['total_paid'] = number_format($sum,0,',','.');
+          $cart['total_num_paid_sum'] = $cart['total_price'] - $sum;
+          $cart['total_paid_sum'] = number_format($cart['total_price'] - $sum,0,',','.');
+          $cart['step_payment'] = $stepPayment;
+        } else if($cart['status'] == 3) {
+          $cart['total_num_paid'] = $cart['total_price'];
+          $cart['total_paid'] = number_format($cart['total_price'],0,',','.');
+          $cart['total_num_paid_sum'] = $cart['total_price'] - $cart['total_num_paid'];
+          $cart['total_paid_sum'] = number_format($cart['total_num_paid_sum'],0,',','.');
+        } else {
+          $sum = 0;
+          $cart['total_num_paid'] = $sum;
+          $cart['total_paid'] = number_format($sum,0,',','.');
+          $cart['total_num_paid_sum'] = $cart['total_price'];
+          $cart['total_paid_sum'] = number_format($cart['total_price'],0,',','.');
         }
+
+        $newDate = date('d F Y');
+        $cart['new_date'] = $newDate;
+
         $pdf = PDF::loadView('printOne', ['data' => $cart]);
+
+        return $pdf->stream('document.pdf');
+        // return $pdf->download($cart['po_id'] . '.pdf');
+    }
     
-        return $pdf->download($cart['po_id'] . '.pdf');
+    public function generatePDFOneTransactionEncrypt(string $ids)
+    {
+        $value = $decryptedUrl = Crypt::decryptString($ids);
+        $val = explode("/", $value);
+        if($val[1]==""){
+          $val=0;
+        }
+        return $this->generatePDFOneTransaction($val[0],$val[1]);
     }
 
-    public function generatePDFAllTransaction(string $id)
+    private function generatePDFAllTransaction(string $id, string $start_date, string $end_date, string $status)
     {
-        $dataCartDokter = $this->cart->GetListJoinDoctorWithDoctorId($id);
+      $user = auth()->user();
+
+        $inputStatus = explode(',', $status);
+
+        $dateParts = explode('/', str_replace('-', '/', $start_date));
+
+        // Rearrange the parts to form the desired format
+        $formattedDateStart = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+
+        $dateParts = explode('/', str_replace('-', '/', $end_date));
+
+        // Rearrange the parts to form the desired format
+        $formattedDateEnd = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+        Log::info('request', [
+          $id, $start_date, $end_date, $inputStatus
+        ]);
+        $dataCartDokter = $this->cart->GetListJoinDoctorWithDoctorIdAndEmail($id, $user['role'], $user['email'], $inputStatus, $formattedDateStart, $formattedDateEnd);
+
         $dokter = $this->doctorModel->SingleItem($id);
         $items = $this->model->getAll();
         $bundles = $this->bundle->getAll();
@@ -217,7 +276,7 @@ class PDFController extends Controller
                 foreach ($items as $item) {
                   if($temp[0]==$item["id"]){
                     $product["name_product"]=$item["name"];
-                    $product["price_product"]=$item["price"];
+                    // $product["price_product"]=$item["price"];
                     break;
                   }                      
                 }
@@ -225,13 +284,15 @@ class PDFController extends Controller
                 foreach ($bundles as $bundle) {
                   if($temp[0]==$bundle["id"]){
                     $product["name_product"]=$bundle["name"];
-                    $product["price_product"]=$bundle["price"];
+                    // $product["price_product"]=$bundle["price"];
                     break;
                   }                      
                 }
               }
 
               
+              $product['price_product'] = $temp[4];
+              $product['price_product_real'] = $temp[4];
               $product["type"] = $temp[1];
               $product["id"] = $temp[0];
               $product["qty"]=$temp[2];
@@ -315,9 +376,33 @@ class PDFController extends Controller
           $data['created_at'] = date("d F Y", strtotime($data['created_at']));
           $data['due_date'] = date("d F Y", strtotime($data['due_date']));
         }
+
+        $newDate = date('d F Y');
         $datas['data'] = $dataCartDokter;
+        $datas['new_date'] = $newDate;
+
+        $datas['data'] = $dataCartDokter;
+
         $pdf = PDF::loadView('printAll', ['data' => $datas]);
+
+        return $pdf->stream('document.pdf');
     
-        return $pdf->download($datas['dokter']['name'] . " all transaksi" . ".pdf");
+        // return $pdf->download($datas['dokter']['name'] . " all transaksi" . ".pdf");
+    }
+    
+    public function generatePDFAllTransactionEncrypt(string $ids, string $start_date, string $end_date, string $status)
+    {
+        $id = $decryptedUrl = Crypt::decryptString($ids);
+        return $this->generatePDFAllTransaction($id, $start_date,  $end_date,  $status);
+    }
+
+    public function generatePDFAllWithEncrypt(string $encrypt) {
+      $decryptedUrl = Crypt::decryptString($encrypt);
+      return $this->generatePDFOneTransaction($decryptedUrl,0);
+    }
+
+    public function encryptUrl(string $url) {
+      $encryptedUrl = Crypt::encryptString($url);
+      return $encryptedUrl;
     }
 }

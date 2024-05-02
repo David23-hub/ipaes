@@ -16,8 +16,13 @@ class DokterModel extends Model
         return DokterModel::all()->where('deleted_by',null);
     }
     
-    public function GetListBaseOnRole(string $created){
+    public function GetListBaseOnRole(string $created, string $role){
+        
+        if($role=="manager"){
+            return DokterModel::all()->where('visible_lower',0)->where('deleted_by',null);
+        }else if($role=="marketing"){
             return DokterModel::all()->where('created_by',$created)->where('deleted_by',null);
+        }
     }
 
     public function GetListWhereIn($in){
@@ -30,8 +35,15 @@ class DokterModel extends Model
         return $arr;
     }
 
-    public function GetListActive(){
-        return DokterModel::all()->where('deleted_by',null)->where('status',1);
+    public function GetListActive(string $email, string $role){
+        
+        if($role=="superuser"||$role=="admin"){
+            return DokterModel::all()->where('deleted_by',null)->where('status',1);
+        }else if($role=="manager"){
+            return DokterModel::all()->where("visible_lower",0)->where('deleted_by',null)->where('status',1);
+        }else{
+            return DokterModel::all()->where('created_by',$email)->where("visible_lower",0)->where('deleted_by',null)->where('status',1);
+        }
     }
 
     public function GetListWithOrderTransaction() {
@@ -67,6 +79,7 @@ class DokterModel extends Model
         $d->information = $data['information'];
         $d->dob = $data['dob'];
         $d->billing_no_hp = $data['billing_no_hp'];
+        $d->visible_lower = $data['visible_lower'];
         $d->created_by = $data['created_by'];
         $d->created_at = $data['created_at'];
         return $d->save();

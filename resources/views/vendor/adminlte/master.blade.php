@@ -119,7 +119,7 @@
         <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 
         
-
+        <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
         
 {{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> --}}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -138,6 +138,25 @@
     @endif
 
     <script>
+
+        async function GetTime(){
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
+            let response = await fetch("https://worldtimeapi.org/api/timezone/"+tz)
+            let data = await response.json();
+            currentTime = data.datetime;
+            startTransaction = moment(currentTime).subtract(6, 'days');
+            endTransaction = moment(currentTime);
+            start = moment(currentTime).subtract(6, 'days');
+            end = moment(currentTime);
+            Today = [moment(currentTime), moment(currentTime)]
+            Yesterday = [moment(currentTime).subtract(1, 'days'), moment(currentTime).subtract(1, 'days')]
+            Last7Days = [moment(currentTime).subtract(6, 'days'), moment(currentTime)]
+            Last30Days = [moment(currentTime).subtract(29, 'days'), moment(currentTime)]
+            ThisMonth = [moment(currentTime).startOf('month'), moment(currentTime).endOf('month')]
+            LastMonth = [moment(currentTime).subtract(1, 'month').startOf('month'), moment(currentTime).subtract(1, 'month').endOf('month')]
+            return [Today, Yesterday, Last7Days, Last30Days, ThisMonth, LastMonth, startTransaction, endTransaction, start, end]
+        }
 
         //NOTIF
         // $(document).ready(function() {

@@ -27,7 +27,7 @@ class UserController extends Controller
             return $this->edit(Auth::user()->id);
         }
 
-        $users = User::all();
+        $users = User::all()->where("deleted_by",null);
         return view('users.index', [
             'users' => $users
         ]);
@@ -61,7 +61,7 @@ class UserController extends Controller
 
         $request->validate([
             'name' => 'required|unique:users,name',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'role' => 'required',
             'no_hp' => 'required',
             'password' => 'required|confirmed'
@@ -122,11 +122,14 @@ class UserController extends Controller
             'role' => 'required',
             'password' => 'sometimes|nullable|confirmed'
         ]);
+        
+        
 
         $user = User::find($id);
         // $user->name = $request->name;
         // $user->email = $request->email;
         $user->role = $request->role;
+        $user->no_hp = $request->no_hp;
         $user->img = $imageName;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->save();
@@ -144,11 +147,9 @@ class UserController extends Controller
         $user = User::find($id);
         if ($id == $request->user()->id) return redirect()->route('users.index')
             ->with('error_message', 'Anda tidak dapat menghapus diri sendiri.');
-        
         $user->deleted_at = date('Y-m-d H:i:s');
         $user->deleted_by = Auth::user()->name;
         $user->save();
-
         return redirect()->route('users.index')
             ->with('success_message', 'Berhasil menghapus user');
     }

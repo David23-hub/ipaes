@@ -8,6 +8,8 @@ use App\Models\ItemModel;
 use App\Models\PackageModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use DateTime;
+
 
 class ListProductController extends Controller
 {
@@ -76,19 +78,24 @@ class ListProductController extends Controller
 
         $cartUser = $cartsUser[0];
 
+
         //add list item for each product
         foreach ($product as  $productVal) {
                 $bool = false;
+                $flag=false;
 
                 $carts = explode(",", $cartUser->cart);
                 foreach ($carts as $cartItem) {
                     $temp = explode("|", $cartItem);
                     if ($productVal["id"] == $temp[0] && $temp[1] == "product"){
+                        if($temp[3]==100 && $bool){
+                            $flag=true;
+                            continue;
+                        }
                         $bool = true;
                         $productVal['qty_cart'] = $temp[2];
                         $productVal['disc_cart'] = $temp[3];
-                        break;
-                    }   
+                    }
                 }
                 if(!$bool){
                     $productVal['qty_cart'] = '';
@@ -102,15 +109,19 @@ class ListProductController extends Controller
         //add list item for bundle
         foreach ($productBundle as  $productVal) {
                 $bool = false;
+                $flag=false;
 
                 $carts = explode(",", $cartUser->cart);
                 foreach ($carts as $cartItem) {
                     $temp = explode("|", $cartItem);
                     if ($productVal["id"] == $temp[0] && $temp[1] == "paket"){
+                        if($temp[3]==100 && $bool){
+                            $flag=true;
+                            continue;
+                        }
                         $bool = true;
                         $productVal['qty_cart'] = $temp[2];
                         $productVal['disc_cart'] = $temp[3];
-                        break;
                     }   
                 }
                 if(!$bool){
@@ -142,6 +153,21 @@ class ListProductController extends Controller
             $input['disc']=0;
         }
 
+        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+
+        // Make a GET request to fetch the time data
+        $response = file_get_contents($time_api_url);
+
+        // Decode the JSON response
+        $time_data = json_decode($response, true);
+
+        // Extract the current time from the response
+        $current_time = $time_data['datetime'];
+        $datetime = new DateTime($current_time);
+
+        // Format the DateTime object
+        $formatted_datetime = $datetime->format('Y-m-d H:i:s');
+
         $email=Auth::user()->email;
 
         $cartRes = $this->cartDetail->GetCart($email);
@@ -154,11 +180,16 @@ class ListProductController extends Controller
                     $items = explode(",", $cartTemp->cart);
                     foreach ($items as $item) {
                         $temp = explode("|", $item);
-                        if($temp[0]==$input["id"]&& $temp[1]==$input['category']){
+                        if($temp[0]==$input["id"]&& $temp[1]==$input['category'] && $input['disc']!=100 && $temp[3]!=100){
                             if($temp[2]!=$input['qty']){
                                 $temp[2] = $input['qty'];
                             }
                             $temp[3] = $input['disc'];
+                            $flag=true;
+                        }else if($temp[0]==$input["id"]&& $temp[1]==$input['category'] && $input['disc']==100 && $temp[3]==100){
+                            if($temp[2]!=$input['qty']){
+                                $temp[2] = $input['qty'];
+                            }
                             $flag=true;
                         }
                         $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3]."|".$temp[4] . ",";
@@ -166,12 +197,19 @@ class ListProductController extends Controller
                     $len = strlen($res) - 1; 
                     $res = substr($res, 0, $len);
                 }
-
-                if(!$flag && $res!=""){
+                
+                if((!$flag ) && $res!=""){
                     $res = $res."," . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"]."|".$input['price'];
-                }else if(!$flag){
+                }else if((!$flag ) ){
                     $res = $res . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"]."|".$input['price'];
                 }
+
+
+                $counter = explode(",",$res);
+                if(count($counter)>7){
+                    return "Max Item per Transaction is 7";
+                }
+                
                 return $this->updateCart($cartTemp["id"],$res);
 
 
@@ -210,7 +248,7 @@ class ListProductController extends Controller
             'cart'=>$res,
             
             'created_by' => $email,
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at' => $formatted_datetime,
         ];
 
 

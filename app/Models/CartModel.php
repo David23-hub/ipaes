@@ -35,13 +35,23 @@ class CartModel extends Model
 
     public function GetListJoinDoctorAndDateAndStatus($start,$end,$status, $role, $email) {
         if($status == "all") {
-            if($role == "superuser" || $role == "admin" || $role == "manager") {
+            if($role == "superuser" || $role == "finance" ||$role == "admin") {
                 return $this
                 ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
                 ->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
                 ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.role as role','users.name as user_name')
                 ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
                 ->where('cart.deleted_by',null)
+                ->orderBy('cart.created_at', 'desc')
+                ->get();
+            } else if($role == "manager" ) {
+                return $this
+                ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
+                ->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+                ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.role as role','users.name as user_name')
+                ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+                ->where('cart.deleted_by',null)
+                ->where('cart.management_order', '=', '0')
                 ->orderBy('cart.created_at', 'desc')
                 ->get();
             } else {
@@ -57,12 +67,24 @@ class CartModel extends Model
                 ->get();
             }
         } else {
-            if($role == "superuser" || $role == "admin" || $role == "manager") {
+
+            if($role == "superuser" || $role == "finance" || $role == "admin") {
                 return $this
                 ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
                 ->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
                 ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.name as user_name')
                 ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+                ->whereIn('cart.status', $status)
+                ->where('cart.deleted_by',null)
+                ->orderBy('cart.created_at', 'desc')
+                ->get();
+            } else if($role == "manager" ) {
+                return $this
+                ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
+                ->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+                ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp', 'users.name as user_name')
+                ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
+                ->where('cart.management_order', '=', '0')
                 ->whereIn('cart.status', $status)
                 ->where('cart.deleted_by',null)
                 ->orderBy('cart.created_at', 'desc')
@@ -95,23 +117,6 @@ class CartModel extends Model
             ->take(10)
             ->get();
     }
-
-    // public function GetListJoinCartAndDateAndStatus($start,$end,$status) {
-    //     if($status == "all") {
-    //         return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
-    //         ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
-    //         ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
-    //         ->where('cart.deleted_by',null)
-    //         ->get();
-    //     } else {
-    //         return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
-    //         ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
-    //         ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
-    //         ->where('cart.status', $status)
-    //         ->where('cart.deleted_by',null)
-    //         ->get();
-    //     }
-    // }
 
     public function GetListJoinDoctorAndDateWithUser($start,$end,$listUser) {
         if($listUser!="all"){
@@ -173,12 +178,18 @@ class CartModel extends Model
 
     public function GetListJoinDoctorWithDoctorIdAndEmail($id, $role, $email, $status, $startDate, $endDate) {
         if($status[0] == "all") {
-            if($role == "superuser" || $role == "admin" || $role == "manager") {
+            if($role == "superuser" || $role == "finance") {
                 return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
                 ->where('dokter.id', '=', $id)
                 ->whereBetween(DB::raw('DATE(cart.created_at)'),[$startDate,$endDate])
                 ->orderBy('cart.created_at', 'desc')->select('cart.*' )->get();        
-            } else {
+            } else if($role == "manager" || $role == "admin") {
+                return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+                ->where('dokter.id', '=', $id)
+                ->where('cart.management_order', '==', '0')
+                ->whereBetween(DB::raw('DATE(cart.created_at)'),[$startDate,$endDate])
+                ->orderBy('cart.created_at', 'desc')->select('cart.*' )->get();   
+            }else {
                 return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)
                 ->where('cart.created_by', '=', $email)
                 ->where('cart.management_order', '==', '0')
@@ -186,12 +197,19 @@ class CartModel extends Model
                 ->orderBy('cart.created_at', 'desc')->select('cart.*' )->get();
             }
         }else{
-            if($role == "superuser" || $role == "admin" || $role == "manager") {
+            if($role == "superuser" || $role == "finance") {
                 return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
                 ->where('dokter.id', '=', $id)
                 ->whereBetween(DB::raw('DATE(cart.created_at)'),[$startDate,$endDate])
                 ->whereIn('cart.status', $status)
                 ->orderBy('cart.created_at', 'desc')->select('cart.*' )->get();        
+            } else if($role == "manager" || $role == "admin") {
+                return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
+                ->where('dokter.id', '=', $id)
+                ->where('cart.management_order', '==', '0')
+                ->whereBetween(DB::raw('DATE(cart.created_at)'),[$startDate,$endDate])
+                ->whereIn('cart.status', $status)
+                ->orderBy('cart.created_at', 'desc')->select('cart.*' )->get();   
             } else {
                 return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')->where('dokter.id', '=', $id)
                 ->where('cart.created_by', '=', $email)

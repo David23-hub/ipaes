@@ -54,6 +54,7 @@
               <label for="due_date">Due Date</label>
               <div id="dropadd" name="dropadd" class="form-group">
                 <select class="form-select form-control" id="due_date">
+                  <option value="0">Cash</option>
                   <option value="7">7 Days</option>
                   <option value="14">14 Days</option>
                   <option value="21">21 Days</option>
@@ -84,10 +85,21 @@
               <textarea type="notes_form" class="form-control" id="notes_form" rows="3"  placeholder="Masukkan Note For Admin"></textarea>
             </div>
 
+            @if (auth()->user()->role == 'superuser')
+           
               <div style="text-align: right">
                 <input type="checkbox" id="management_order" name="management_order">
                 <label for="management_order"> Management Order</label><br>
               </div>
+            @else
+            
+            <div style="text-align: right;display: none" >
+              <input type="checkbox" id="management_order" name="management_order">
+              <label for="management_order"> Management Order</label><br>
+            </div>
+            @endif
+
+              
             
             
 
@@ -122,7 +134,7 @@
                     </div>
                     <div>
                       <span class="input-group-text">Stok</span>
-                      <input type="number" class="form-control" id="productQty{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0" >
+                      <input type="number" class="form-control" id="productQty{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0" oninput="upperZero(this,0);">
                     </div>
                     <div>
                       <span class="input-group-text">Price</span>
@@ -130,7 +142,7 @@
                     </div>
                     <div>
                       <span class="input-group-text">Discount</span>
-                      <input type="number" class="form-control" id="productDiscount{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0" >
+                      <input type="number" class="form-control" id="productDiscount{{$keyProduct}}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0"  oninput="upperZero(this,100);">
                     </div>
                   </div>
                 </div>
@@ -162,7 +174,21 @@
 @stop
 
 @push('js')
-<script>
+<script>upperZero
+
+function upperZero(input,max) {
+      
+      input.value = input.value.replace(/[^0-9]/g, '')
+      if (input.value.charAt(0) === '0' && input.value.length !=1) {
+        input.value = input.value.slice(1);
+      }
+      if (input.value < 0 || input.value=="") {
+          input.value = 0
+      }else if(input.value>max && max !=0){
+        input.value=max
+      }
+        
+    }
 
 function removeLeadingZero(input) {
       
@@ -232,8 +258,7 @@ function removeLeadingZero(input) {
         $.each(cart,function(i, item){
           price = `Rp `+item['price']+`<br>- Rp `+item['disc_price']+`<br><div style="border-top: 1px solid #ccc;"></div>Rp `+item["total_price"];
 
-          // price=
-
+          
           dataTable.row.add([
               item['name_product'],
               item['qty'],

@@ -11,7 +11,9 @@
       <div class="card-header">
         <h5 style="font-weight: 600">Dokter</h5>
         <p style="text-align: end">
-          <a class="btn btn-primary" href="{{ route('generate.pdf.all', $dokter['id']) }}">Print All</a>
+          <a class="btn btn-primary" onclick="printPDF('{{ url('generate-pdf-all-dokter/'.$dokter['ids'].'/'.$params['start_date'].'/'.$params['end_date'].'/'.$params['status']) }}');">
+            Print ALL
+          </a>
         </p>
         <div class="row">
           <div class="col-6">
@@ -77,7 +79,7 @@
                     </li>
                     <li class="list-group-item">
                       <p class="text-start">Invoice Number</p>
-                      <p class="text-start">{{ $itemDokter->po_id }}</p>
+                      <p class="text-start">{{ $itemDokter->inv_no }}</p>
                     </li>
                     <li class="list-group-item">
                       <p class="text-start">Due Date</p>
@@ -108,7 +110,8 @@
                       @endif
                     </div>
                     <div class="col" style="text-align: right">
-                      <a class="btn btn-primary" href="{{ route('generate.pdf.one', $itemDokter['id']) }}">
+                      
+                      <a class="btn btn-primary" onclick="printPDF('{{ route('generate.pdf.one.encrypt', ['ids'=>$itemDokter['id_encrypt']]) }}');">
                         Print
                       </a>
                     </div>
@@ -651,11 +654,11 @@
                     </div>
                     <div>
                       <span class="input-group-text">Stok</span>
-                      <input type="text" class="form-control" id="productQty-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0">
+                      <input type="number" class="form-control" id="productQty-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['qty'] }}" min="0" oninput="upperZero(this,0);">
                     </div>
                     <div>
                       <span class="input-group-text">Discount</span>
-                      <input type="text" class="form-control" id="productDiscount-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0">
+                      <input type="number" class="form-control" id="productDiscount-{{ $key }}-{{ $keyProduct }}"  aria-describedby="inputGroupPrepend2" required value="{{ $itemProduct['disc'] }}" min="0" oninput="upperZero(this,100);">
                     </div>
                   </div>
                 </div>
@@ -667,7 +670,7 @@
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" onclick="EditProduct({{ $itemDokter->id }}, {{ $key }})">Save changes</button>
+            <button type="button" id="payment_btn{{ $key }}" class="btn btn-primary" onclick="EditProduct({{ $itemDokter->id }}, {{ $key }},'{{$itemDokter->po_id}}')">Save changes</button>
           </div>
         </form>
         </div>
@@ -694,14 +697,40 @@
 
 @push('js')
 <script>
+
+function printPDF(pdfUrl) {
+        var win = window.open(pdfUrl);
+        win.onload = function() {
+            win.print();
+        };
+    }
+
+function upperZero(input,max) {
+      input.value = input.value.replace(/[^0-9]/g, '')
+      if (input.value.charAt(0) === '0' && input.value.length !=1) {
+        input.value = input.value.slice(1);
+      }
+      if (input.value < 0 || input.value=="") {
+          input.value = 0
+      }else if(input.value>max && max !=0){
+        input.value=max
+      }
+        
+    };
+
     // const Swal = require('sweetalert2');
     dokter = @json($dokter);
     user = @json($user);
     dataCartDokter = @json($dataCartDokter);
     dataEkspedisi = @json($dataEkspedisi);
     extraChargeAll = @json($extraChargeAll);
+
+    productAwal = @json($dataCartDokter);
+
+    
     window.onload = function() {
       checkForButtonStatus()
+      console.log(productAwal)
     };
 
     function addDotPrice(input) {
@@ -825,7 +854,7 @@
 
           if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
               Cancel Purchase Order
             </button>
             `
@@ -858,7 +887,7 @@
 
           if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
               Cancel Purchase Order
             </button>
             `
@@ -910,7 +939,7 @@
           `
           if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
+            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
               Cancel Purchase Order
             </button>
             `
@@ -1445,7 +1474,7 @@
               let edit_product_button = document.querySelector(`#button-edit-product${i}`)
               if(edit_product_button) {
                   edit_product_button.innerHTML = `
-                  <button class="btn me-3 btn-outline-success" id="edit_product{{ $key }}" onclick="EditProductShow(${i})">
+                  <button class="btn me-3 btn-outline-success" id="edit_product${i}" onclick="EditProductShow(${i})">
                       Edit Product
                   </button>
                   `
@@ -2359,7 +2388,7 @@
       })
     }
 
-    function EditProduct(id, key) {
+    function EditProduct(id, key, po_id) {
       let productJoin = ""
       for(let i = 0; i < dataCartDokter[key]['products'].length; i++) {
         let el = dataCartDokter[key]['products'][i]
@@ -2395,7 +2424,9 @@
         url: "{{url('/')}}"+"/editProduct",
         data: { "_token": "{{ csrf_token() }}", data: {
           id: id,
-          cart: {cart: productJoin},
+          po_id: po_id,
+          cart: productJoin,
+          awal : productAwal[key]['products'],
           extra_charge: extraCharge
         }},
         beforeSend: $.LoadingOverlay("show"),

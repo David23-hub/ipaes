@@ -89,7 +89,7 @@
           <table id="tableListTransaction" class="table table-bordered" >
             <thead>
               <tr>
-                  <th>PO Number</th>
+                  <th>INV Number</th>
                   <th>PO Date</th>
                   <th>Doctor</th>
                   <th>Clinic</th>
@@ -104,12 +104,18 @@
       </div>
     </div>
 
+    <style>
+      .bg-row {
+    background-color: #D7F1FC !important; /* Change the background color to red */
+    color: black; /* Change the text color to white for better visibility */
+}
+      </style>
+
 @stop
 
 @push('js')
 <script>
-  dokter = @json($data);
-  user = @json($user);
+  
   var dataTable = $("#tableList").DataTable({
             "ordering": true,
             "destroy": true,
@@ -134,11 +140,24 @@
             // pagingType: 'full_numbers',
     });
 
-  window.onload = function() {
+  var startTransaction
+  var endTransaction
+  var start
+  var end
+  var currentTime;
+  var Today;
+  var Yesterday;
+  var Last7Days;
+  var Last30Days;
+  var ThisMonth;
+  var LastMonth;  
+
+  window.onload = async function() {
+    const [Today, Yesterday, Last7Days, Last30Days, ThisMonth, LastMonth, startTransaction, endTransaction, start, end] = await GetTime()
     // getAllData()
     cb(start, end)
     cb2(startTransaction, endTransaction)
-  };
+
     function cb(start, end) {
         $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
         $(document).trigger('myCustomEvent');
@@ -149,20 +168,16 @@
       $(document).trigger('myCustomEvent2');
     }
 
-    var startTransaction = moment().subtract(6, 'days');
-    var endTransaction = moment();
-    var start = moment().subtract(6, 'days');
-    var end = moment();
     $('#reportrange').daterangepicker({
         startDate: start,
         endDate: end,
         ranges: {
-          'Today': [moment(), moment()],
-          'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-          'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-          'This Month': [moment().startOf('month'), moment().endOf('month')],
-          'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          'Today': Today,
+          'Yesterday': Yesterday,
+          'Last 7 Days': Last7Days,
+          'Last 30 Days': Last30Days,
+          'This Month': ThisMonth,
+          'Last Month': LastMonth
         }
     }, cb);
 
@@ -170,14 +185,16 @@
         startDate: startTransaction,
         endDate: endTransaction,
         ranges: {
-          'Today': [moment(), moment()],
-          'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-          'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-          'This Month': [moment().startOf('month'), moment().endOf('month')],
-          'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          'Today': Today,
+          'Yesterday': Yesterday,
+          'Last 7 Days': Last7Days,
+          'Last 30 Days': Last30Days,
+          'This Month': ThisMonth,
+          'Last Month': LastMonth
         }
     }, cb2);
+  };
+
 
     $('#status-select').on('change', function (e) { 
       $(document).trigger('myCustomEvent');
@@ -231,10 +248,6 @@
             endDate = endDate.split('/').join('-')
 
             let urlDetail = "detailPO/" + item["id"] + "/" + startDate + "/" + endDate +"/" + selectStatus
-            console.log({urlDetail})
-            // let id = item['id']
-            // // alert(urlDetail)
-            // // console.log("detailPO/" + item["id"], "url")
             let detailButton = `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
             
 
@@ -329,17 +342,24 @@
             let detailButton = ``
             detailButton = `<a class="btn btn-info" href="{{url('${urlDetail}')}}">Detail</a>`
 
-            dataTable2.row.add([
-                item['po_id'],
-                item['created_at'],
-                item['doctor_name'],
-                item['clinic'],
-                item['due_date'],
-                item['user_name'],
-                htmlStatus,
-                detailButton
-            ])
-            dataTable2.draw();
+
+            var newRow = dataTable2.row.add([
+              item['inv_no'],
+              item['created_at'],
+              item['doctor_name'],
+              item['clinic'],
+              item['due_date'],
+              item['user_name'],
+              htmlStatus,
+              detailButton
+          ]).draw();
+
+          // Use jQuery to add a class to set the row color to red
+          if(item['management_order']==1){
+            $(newRow.node()).addClass('bg-row');
+          }
+
+
           })
           
           $('#toggle-demo').bootstrapToggle();
@@ -411,7 +431,6 @@
           if(item['status']==0){
             stat = "InActive"
           }
-
           const urlDetail = "detailPO/" + item["id"]
           // alert(urlDetail)
           // console.log("detailPO/" + item["id"], "url")

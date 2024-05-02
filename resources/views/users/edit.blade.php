@@ -3,7 +3,7 @@
 @section('title', 'Edit User')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Edit User</h1>
+    <h1 class="m-0 text-dark">Edit User {{$user->name}}</h1>
 @stop
 
 @section('content')
@@ -14,7 +14,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-
+                    
                     <div class="form-group" >
                         <img id="preview" src="{{ asset('images/'.$user->img) }}" style="width: 200px; height: 200px; border: 1px solid #ccc; background-color: #f0f0f0;">
                     </div>
@@ -23,12 +23,12 @@
                         <input type="file" name="img" accept="image/*" id="img"  placeholder="Masukkan Image" onchange="previewImage(event)">
                     </div>
 
+                    
                     @if(auth()->user()->id != $user->id)
                     <div class="form-group">
                         <label for="exampleInputRole">Role</label>
                         <select  class="form-select form-control" value="{{$user->role}}" name="role" id="role" style="width: 100%;max-width:100%">
                             <option value="" disabled>-- Choose --</option>
-                            <option value="superuser" {{ "superuser" == $user->role ? "selected" : "" }}>SUPERUSER</option>
                             <option value="admin" {{ "admin" == $user->role ? "selected" : "" }}>Admin</option>
                             <option value="marketing" {{ "marketing" == $user->role ? "selected" : "" }}>Marketing</option>
                             <option value="sales" {{ "sales" == $user->role ? "selected" : "" }}>Sales</option>
@@ -41,13 +41,14 @@
                         {{-- <input type="text" class="form-control @error('role') is-invalid @enderror" id="exampleInputRole" placeholder="Masukkan Role" name="role" value="{{old('email')}}"> --}}
 
                         @error('role') <span class="text-danger">{{$message}}</span> @enderror
+                        
                     </div>
                     @else
                     <div class="form-group" style="display: none">
                         <label for="exampleInputRole">Role</label>
                         <select  class="form-select form-control" value="{{$user->role}}" name="role" id="role" style="width: 100%;max-width:100%">
                             <option value="" disabled>-- Choose --</option>
-                            <option value="superuser" {{ "superuser" == $user->role ? "selected" : "" }}>SUPERUSER</option>
+                            <option value="superuser" {{ "superuser" == $user->role ? "selected" : "" }}>-</option>
                             <option value="admin" {{ "admin" == $user->role ? "selected" : "" }}>Admin</option>
                             <option value="marketing" {{ "marketing" == $user->role ? "selected" : "" }}>Marketing</option>
                             <option value="sales" {{ "sales" == $user->role ? "selected" : "" }}>Sales</option>
@@ -60,6 +61,15 @@
                         {{-- <input type="text" class="form-control @error('role') is-invalid @enderror" id="exampleInputRole" placeholder="Masukkan Role" name="role" value="{{old('email')}}"> --}}
 
                         @error('role') <span class="text-danger">{{$message}}</span> @enderror
+                        
+                    </div>
+                    @endif
+                    
+                    @if(auth()->user()->role == "superuser")
+                    <div class="form-group">
+                        <label for="exampleInputPhoneNumber">Phone Number</label>
+                        <input type="no_hp" class="form-control @error('no_hp') is-invalid @enderror" id="exampleInputPhoneNumber" placeholder="Masukkan Nomor HP" name="no_hp" value="{{$user->no_hp}}" oninput="addDotPrice(this);">
+                        @error('no_hp') <span class="text-danger">{{$message}}</span> @enderror
                     </div>
                     @endif
 
@@ -85,7 +95,6 @@
             </div>
         </div>
     </div>
-
     <script>
         function previewImage(event) {
             var reader = new FileReader();

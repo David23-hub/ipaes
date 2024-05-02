@@ -23,6 +23,10 @@ class ItemModel extends Model
     public function GetListActive() {
         return ItemModel::all()->where('deleted_by',null)->where("status",1);
     }
+
+    public function GetListCheckStock($arr) {
+        return ItemModel::all()->whereIn('id',$arr);
+    }
     
     public function GetItem($id){
         return $this

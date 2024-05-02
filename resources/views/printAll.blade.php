@@ -7,16 +7,20 @@
     <title>Invoice</title>
 </head>
 <body>
+    <h3>INVOICE ALL TRANSACTION</h3>
     <table class="w-full">
         <tr>
             <td class="w-half">
-                <h2>INVOICE ALL TRANSACTION</h2>
-                {{-- <h5>{{ $data['po_id'] }}</h5>
-                <h5>{{ $data['created_at'] }}</h5> --}}
-                <h4>DOCTOR NAME: {{ $data['dokter']['name'] }}</h4>
-                <h4>DOCTOR HP: {{ $data['dokter']['no_hp'] }}</h4>
-                <h4>DOCTOR CLINIC: {{ $data['dokter']['clinic'] }}</h4>
-                <h4>DOCTOR ADDRESS: {{ $data['dokter']['address'] }}</h4>
+                <tr>
+                    <td style="width:30%;text-align: start">
+                        <h5>DOCTOR NAME: {{ $data['dokter']['name'] }}</h5>
+                <h5>DOCTOR HP: {{ $data['dokter']['no_hp'] }}</h5>
+                    </td>
+                    <td style="width:70%;text-align: start">
+                <h5>DOCTOR CLINIC: {{ $data['dokter']['clinic'] }}</h5>
+                <h5>DOCTOR ADDRESS: {{ $data['dokter']['address'] }}</h5>        
+                    </td>
+                </tr>
             </td>
         </tr>
     </table>
@@ -90,6 +94,12 @@
     <div class="total">
         Grand Total: IDR {{ $item['total'] }}
     </div>
+    <div class="total-paid">
+        Paid: IDR {{ $item['total_paid'] }}
+    </div>
+    <div class="total-paid" style="margin-bottom:20px">
+        Debt: IDR {{ $item['total_paid_sum'] }}
+    </div>
     @else
     <div class="new-page">
         <h5>INVOICE NUMBER: {{ $item['inv_no'] }}</h5>
@@ -159,18 +169,26 @@
     <div class="total">
         Grand Total: IDR {{ $item['total'] }}
     </div>
+    <div class="total-paid">
+        Paid: IDR {{ $item['total_paid'] }}
+    </div>
+    <div class="total-paid" style="margin-bottom:20px">
+        Debt: IDR {{ $item['total_paid_sum'] }}
+    </div>
     @endif
     @endforeach
     <table>
         <tr>
             <td class="w-half-bottom-left">
-                <div>HARAP MELAKUKAN PEMBAYARAN MELALUI:
-                    BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003234987 an Maggie Princilla Chandra
-                    intipratama@gmail.com
-                    (*) Harap cantumkan nomor invoice saat pembayaran</div>
+                <div>
+                    <p style="margin-bottom:-10px">HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
+                    <p style="margin-bottom:-10px">BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003234987 an Maggie Princilla Chandra</p>
+                    <p style="margin-bottom:-10px">intipersada.aes@gmail.com</p>
+                    <p style="margin-bottom:-10px">(*) Harap cantumkan nomor invoice saat pembayaran</p>
+                </div>
             </td>
             <td class="w-half-bottom-right">
-                <div>12 Maret 2024</div>
+                <div>12 Maret</div>
                 <div class="pad-5">Corentius</div>
             </td>
         </tr>
@@ -187,10 +205,10 @@
 }
 
 .first-page {
-    padding-top: 2em
+    margin-top:20px;
 }
 
-h4 {
+h1,h2,h3,h4,h5,h6 {
     margin: 0;
 }
 .w-full {
@@ -209,16 +227,16 @@ h4 {
 }
 
 .w-half-bottom-left {
-    width: 75%;
-    margin-top: 5rem;
+    width: 65%;
 }
 
 .w-half-bottom-right {
     width: 25%;
-    margin-top: 5rem;
+    text-align: right;  
 }
+
 .margin-top {
-    margin-top: 1.25rem;
+    margin-top: 10px;
 }
 .footer {
     font-size: 0.875rem;
@@ -249,8 +267,10 @@ table tr.items {
     /*background-color: rgb(241 245 249); */
     border: 1px solid black;
     border-collapse: collapse;
+    margin:0;
 }
 table tr.items td {
+    font-size;10px
     padding: 0.5rem;
     text-align: center;
     border: 1px solid black;
@@ -258,8 +278,11 @@ table tr.items td {
 }
 .total {
     text-align: right;
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-top: 10px;
+    font-size: 0.875rem;
+}
+.total-paid {
+    text-align: right;
     font-size: 0.875rem;
 }
 </style>

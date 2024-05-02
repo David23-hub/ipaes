@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\InvoiceNumberModel;
 use App\Models\NotifModel;
 use App\Models\PackageModel;
 use App\Models\CartModel;
@@ -10,6 +10,7 @@ use App\Models\DokterModel;
 use App\Models\ItemModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use DateTime;
 
 class CartController extends Controller
 {
@@ -25,6 +26,7 @@ class CartController extends Controller
     private $notif;
 
     private $stockController;
+    private $invNoModel;
 
     
     public function __construct()
@@ -33,7 +35,7 @@ class CartController extends Controller
 
         $this->middleware(function ($request, $next) {
             $role = auth()->user()->role;
-            if($role!="superuser"&&$role!="marketing"){
+                if($role!="superuser"&&$role!="marketing"){
                     abort(403, 'Unauthorized access');
                 }
             return $next($request);
@@ -52,14 +54,14 @@ class CartController extends Controller
         $this->notif = new NotifModel;
 
         $this->stockController = new StockController;
+         $this->invNoModel = new InvoiceNumberModel;
         
     }
 
     public function index()
     {
-        
         $category = $this->modelCategoryProduct->GetListActive();
-        $dokter = $this->doctorModel->GetListActive();
+        $dokter = $this->doctorModel->GetListActive(Auth::user()->name,Auth::user()->role);
         $items = $this->model->GetListActive();
         $itemsBundle = $this->itemPackage->GetListActive();
         $cartsUser = $this->cart->GetCart(Auth::user()->email);
@@ -146,6 +148,37 @@ class CartController extends Controller
         if ($input['management_order']!="1"){
             $input['management_order']="0";
         }
+        
+        $invNo = $this->invNoModel->GetNumber();
+        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+
+        // Make a GET request to fetch the time data
+        $response = file_get_contents($time_api_url);
+
+        // Decode the JSON response
+        $time_data = json_decode($response, true);
+
+        // Extract the current time from the response
+        $current_time = $time_data['datetime'];
+        $datetime = new DateTime($current_time);
+
+        // Get the month from the DateTime object
+        $month = intVal($datetime->format('m'));
+
+
+        $no = $invNo['counting'];
+
+        if($invNo['month']==$month){
+            $no++;
+            
+        }else{
+            $no=1;
+        }
+        $inv = [
+            'counting'=>$no,
+            'month' => $month,
+        ];
+        $this->invNoModel->UpdateInvoiceNumber($inv,$invNo['month']);
 
         $current_time = time();
 
@@ -153,12 +186,16 @@ class CartController extends Controller
         $new_time = strtotime('+'.$input["due_date"]. 'days', $current_time);
 
         // Format the new time as a readable date/time string
-        $new_time_formatted = date('Y-m-d H:i:s', $new_time);
+        $new_time_formatted = date('Y-m-d 23:59:59', $new_time);
 
         $po_id= "PO/".date('Y', $new_time)."/".date('mdHis', $new_time);
+        
+        $inv_no = "INV/".$datetime->format('m')."/".str_pad($no, 5, "0", STR_PAD_LEFT);
+
 
         $data = [
             'po_id'=>$po_id,
+            'inv_no'=>$inv_no,
             'management_order' => $input['management_order'],
             'notes' => $input['notes_form'],
             'doctor_id' => $input['id_doctor'],
@@ -170,18 +207,11 @@ class CartController extends Controller
 
         $result = "";
         try {
-            $temp = $this->cart->UpdateItem($input["id_cart"],$data);
-            if($temp){
-                $result="sukses";
-            }else{
-                $result="gagal";
-                return $result;
-            }
-            
             $products = [];
             $carts = $this->cart->GetItemWithoutEmail($input['id_cart']);
             $cart = explode(",",$carts[0]["cart"]);
             $date = date('Y-m-d H:i:s');
+
             foreach ($cart as $value) {
                 $temp = explode("|",$value);
                 if($temp[1]=="product"){
@@ -209,7 +239,41 @@ class CartController extends Controller
                     }
                 }
             }
-        
+
+
+
+            $tempObj = [];
+            foreach ($products as $key => $value) {
+                # code...
+                if(isset($tempObj[$value['id_product']])) {
+                    $tempObj[$value['id_product']] += $value['stock_out'];
+                } else {
+                    $tempObj[$value['id_product']] = (int)$value['stock_out'];
+                }
+            }
+
+            $indexArray = array_keys($tempObj);
+
+            $itemStocks = $this->model->GetListCheckStock($indexArray);
+            
+            foreach ($itemStocks as $key => $value) {
+                if($value['deleted_by']!=null){
+                    return "Product ".$value['name']. " Tidak Ditemukan";
+                }else if($value['status']!=1){
+                    return "Product ".$value['name']. " Tidak Aktif";
+                }else if($value['qty']<$tempObj[$value['id']]){
+                    return "Stock ".$value['name']." Tidak Cukup.";
+                }
+            }
+
+            $temp = $this->cart->UpdateItem($input["id_cart"],$data);
+            if($temp){
+                $result="sukses";
+            }else{
+                $result="gagal";
+                return $result;
+            }
+
             return $this->stockController->insert($products,"1");
 
         } catch (\Throwable $th) {

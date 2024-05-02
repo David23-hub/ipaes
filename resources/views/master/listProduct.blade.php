@@ -78,10 +78,6 @@
             <input type="nama_detail" class="form-control" id="nama_detail"  placeholder="Masukkan Nama" disabled>
           </div>
           <div class="form-group">
-            <label for="category_product_detail">Category Product</label>
-            <input type="category_product_detail" class="form-control" id="category_product_detail"  placeholder="Masukkan Status" disabled>
-          </div>
-          <div class="form-group">
             <label for="qty_detail">Stock</label>
             <input type="qty_detail" class="form-control" id="qty_detail"  placeholder="Masukkan Stock" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
           </div>
@@ -133,6 +129,62 @@
           <div class="form-group">
             <label for="updated_by_detail">Diubah Oleh</label>
             <input type="updated_by_detail" class="form-control" id="updated_by_detail"  placeholder="Masukkan Status" disabled>
+          </div>
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalDetailBundle" tabindex="-1" role="dialog" aria-labelledby="modalDetailTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">View Product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <div class="modal-body">
+          
+          <div class="form-group">
+            <label for="nama_detail_bundle">Nama</label>
+            <input type="nama_detail_bundle" class="form-control" id="nama_detail_bundle"  placeholder="Masukkan Nama" disabled>
+          </div>
+          <div class="form-group">
+            <label for="price_detail_bundle">Price (ex: 100000)</label>
+            
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Rp</div>
+              </div>
+              <input type="price_detail_bundle" class="form-control" id="price_detail_bundle"  placeholder="Masukkan Harga Product" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="commision_rate_detail_bundle">Commission Rate (ex: 2.5)</label>
+            <div class="input-group mb-2">
+              <input type="commision_rate_detail_bundle" class="form-control" id="commision_rate_detail_bundle"  placeholder="Masukkan Rate Komisi" onkeyup="this.value = this.value.replace(/[^0-9.]/g, '');" disabled>
+              <div class="input-group-prepend">
+                <div class="input-group-text">%</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="desc_detail_bundle">Description</label>
+            <textarea type="desc_detail_bundle" class="form-control" id="desc_detail_bundle" rows="4"  placeholder="Masukkan Informasi" disabled></textarea>
+          </div>
+          <div class="form-group">
+            <label for="status_detail_bundle">Status</label>
+            <input type="status_detail_bundle" class="form-control" id="status_detail_bundle"  placeholder="Masukkan Status" disabled>
+          </div>
+          <div class="form-group">
+            <label for="created_by_detail_bundle">Dibuat Oleh</label>
+            <input type="created_by_detail_bundle" class="form-control" id="created_by_detail_bundle"  placeholder="Masukkan Status" disabled>
+          </div>
+          <div class="form-group">
+            <label for="updated_by_detail_bundle">Diubah Oleh</label>
+            <input type="updated_by_detail_bundle" class="form-control" id="updated_by_detail_bundle"  placeholder="Masukkan Status" disabled>
           </div>
         </div>
 
@@ -263,7 +315,7 @@ function removeLeadingZero(input) {
         <h5 class="card-title" style="font-weight: bold;">Price</h5>
         <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
         
-        <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
+        <button class="btn btn-info" onclick="getBundleItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
 
 
         <div class="card-body" style="margin-top:10px">
@@ -342,7 +394,7 @@ function removeLeadingZero(input) {
           <h5 class="card-title" style="font-weight: bold;">Price</h5>
           <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
           
-          <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
+          <button class="btn btn-info" onclick="getBundleItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
 
 
           <div class="card-body" style="margin-top:10px">
@@ -542,7 +594,7 @@ function removeLeadingZero(input) {
           <h5 class="card-title" style="font-weight: bold;">Price</h5>
           <p class="card-text" style="font-weight: bold;color: #5AFF1C;font-size: 20px;"> Rp `+item.price+`</p>
           
-          <button class="btn btn-info" onclick="getItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
+          <button class="btn btn-info" onclick="getBundleItem(`+item.id+`)"> <i class="fas fa-clipboard-list"></i> Show Detail</button>
 
 
           <div class="card-body" style="margin-top:10px">
@@ -604,7 +656,7 @@ function removeLeadingZero(input) {
             document.getElementById("disc_"+name).value='';
             AlertSuccess()
           }else{
-            AlertError()
+            AlertErrorWithMessage(data)
           }
         },
         error: function (result, status, err) {
@@ -642,6 +694,37 @@ function removeLeadingZero(input) {
           $('#created_by_detail').val(FormatTimeStamp(data.created_by,data.created_at))
           $('#updated_by_detail').val(FormatTimeStamp(data.updated_by,data.updated_at))
           $('#modalDetail').modal("show")
+        },
+        error: function (result, status, err) {
+          alert(err)
+        }
+      });
+    };
+
+    function getBundleItem(id){
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/getProductBundle",
+        data: { "_token": "{{ csrf_token() }}","id":id},
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          $('#nama_detail_bundle').val(data.name)
+          $('#qty_detail_bundle').val(data.qty)
+          if (data.status==0){
+            $('#status_detail_bundle').val("InActive")
+          }else if (data.status==1){
+            $('#status_detail_bundle').val("Active")
+          }
+
+          $("#price_detail_bundle").val(data.price)
+          $("#commision_rate_detail_bundle").val(data.commision_rate)
+          $("#mini_desc_detail_bundle").val(data.mini_desc)
+          $("#desc_detail_bundle").val(data.desc)
+
+          $('#created_by_detail_bundle').val(FormatTimeStamp(data.created_by,data.created_at))
+          $('#updated_by_detail_bundle').val(FormatTimeStamp(data.updated_by,data.updated_at))
+          $('#modalDetailBundle').modal("show")
         },
         error: function (result, status, err) {
           alert(err)

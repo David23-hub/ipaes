@@ -458,8 +458,12 @@
 
       <div class="container">
             <div class="card">
-              <div class="card-body">
-                  <canvas id="pie-chart1" width="400" height="400" ></canvas></div>
+              <div class="card-body" style="margin-bottom:20px;">
+                  <canvas id="pie-chart1" class="mb-2 chartjs-render-monitor" style="margin-bottom:10px;display: block; height: 126px; width: 253px;" width="500" height="252"></canvas>
+                  <div style="position: absolute;width: 100%; text-align: center;">
+            <p>Ps: Bulan Transaksi</p>
+        </div>
+                </div>
             </div>
       </div>
     @endif
@@ -520,12 +524,6 @@
     .rounded-image {
       border-radius: 50%;
     }
-    
-    canvas {
-        width: 100%;
-        height: auto; /* Maintain aspect ratio */
-        max-height: 400px;
-    }
     </style>
     
 @stop
@@ -539,6 +537,30 @@
   data = @json($data);
   result = @json($result);
   
+  function isSmallDevice() {
+      
+            if (window.innerWidth <= 500){
+                return 1
+            }
+            
+        }
+        
+        function getLabels() {
+            if (isSmallDevice()==1) {
+                // If small device, return fewer labels
+                return ['1', "", '3',"", '5',"",'7',"",'9',"",'11',""];
+            } else {
+                // Otherwise, return all labels
+                return ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni','Juli','Agustus','September','Oktober','November','Desember'];
+            }
+        }
+
+window.addEventListener('resize', function() {
+            // Reconfigure chart labels based on device size
+            chart1.data.labels = getLabels();
+            chart1.update();
+        });
+
 
   window.onload = function() {
 
@@ -572,7 +594,7 @@
     title: {
       display: true,
       position: "top",
-      text: "Last Week Registered Users -  Day Wise Count",
+      text: "Total Revenue",
       fontSize: 18,
       fontColor: "#111"
     },
@@ -589,7 +611,7 @@
   const xValues = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober", "November", "Desember"];
 
   function CobaSelect(e) {
-    // console.log()
+    
     alert(e.target.value);
   }
 
@@ -615,8 +637,7 @@
         afterSend:$.LoadingOverlay("hide"),
         data: { "_token": "{{ csrf_token() }}","end_date": endDate, "start_date": startDate, "temp_mon": temp},
         success: function (data) {
-          // console.log({data}, "dataaa1")
-          document.querySelector(`#total_sales`).innerHTML = `IDR ${data['result']['total_sales']}`
+                    document.querySelector(`#total_sales`).innerHTML = `IDR ${data['result']['total_sales']}`
           document.querySelector(`#total_insentive`).innerHTML = `IDR ${data['result']['total_insentive']}`
           document.querySelector(`#total_shipping`).innerHTML = `IDR ${data['result']['total_shipping']}`
           if(user['role'] == 'superuser') {
@@ -650,7 +671,7 @@
         afterSend:$.LoadingOverlay("hide"),
         data: { "_token": "{{ csrf_token() }}","end_date": endDate, "start_date": startDate},
         success: function (data) {
-          console.log({data}, "dataaa1")
+          
           let htmlText = ``
           for (let i = 0; i < data['result']['mapTransaction'].length; i++) {
             const element = data['result']['mapTransaction'][i];
@@ -688,7 +709,6 @@
             `
           }
 
-          console.log({htmlText})
           document.getElementById('list-transaction').innerHTML = htmlText
         },
         error: function (result, status, err) {
@@ -801,7 +821,7 @@
           margin:10,
           // nav:true,
           autoplay:true,
-          autoplayTimeout:1000,
+          autoplayTimeout:2000,
           autoplayHoverPause:true,
           responsive:{
               0:{
@@ -813,25 +833,22 @@
           }
       })
   }
+  
 
   function MapGrafik(result) {
     var ctx1 = $("#pie-chart1");
     var kiri1 = {
-      labels: xValues,
+      labels: getLabels(),
       datasets: [{
         label: "All",
         data: [result['map_month'][1], result['map_month'][2], result['map_month'][3], result['map_month'][4], result['map_month'][5], result['map_month'][6], result['map_month'][7], result['map_month'][8], result['map_month'][9], result['map_month'][10], result['map_month'][11], result['map_month'][12]],
         borderColor: "red",
-        fill: false
+        fill: false,
+        tension: 0.1
       },
     ]
     };  
 
-    var chart1 = new Chart(ctx1, {
-      type: 'line',
-      data: kiri1,
-      options: options,
-    });
   }
 
   $('.owl-carousel').owlCarousel({
@@ -839,7 +856,7 @@
       margin:10,
       // nav:true,
       autoplay:true,
-      autoplayTimeout:1000,
+      autoplayTimeout:2000,
       autoplayHoverPause:true,
       responsive:{
           0:{
@@ -867,34 +884,9 @@
   
   var ctx1 = $("#pie-chart1");
   var kiri1 = {
-    labels: xValues,
-    // datasets: [
-    //   {
-    //     label: "KIRI ATAS",
-    //     data: dataKiri1.data,
-    //     backgroundColor: [
-    //       "#DEB887",
-    //       "#A9A9A9",
-    //       "#DC143C",
-    //       "#F4A460",
-    //       "#2E8B57",   
-    //       "#1D7A46",
-    //       "#CDA776",
-    //     ],
-    //     borderColor: [
-    //       "#CDA776",
-    //       "#989898",
-    //       "#CB252B",
-    //       "#E39371",
-    //       "#1D7A46",
-    //       "#F4A460",
-    //       "#CDA776",
-    //     ],
-    //     borderWidth: [1, 1, 1, 1, 1,1,1]
-    //   }
-    // ]
+    labels: getLabels(),
     datasets: [{
-      label: "All",
+      label: "Jumlah Transaksi",
       // data: [860,1140,1060,1060,1070,1110,1330,2210,7830,2478],
       data: [result['map_month'][1], result['map_month'][2], result['map_month'][3], result['map_month'][4], result['map_month'][5], result['map_month'][6], result['map_month'][7], result['map_month'][8], result['map_month'][9], result['map_month'][10], result['map_month'][11], result['map_month'][12]],
       borderColor: "red",

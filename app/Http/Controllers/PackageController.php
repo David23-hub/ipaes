@@ -27,7 +27,7 @@ class PackageController extends Controller
         
         $this->middleware(function ($request, $next) {
             $role = auth()->user()->role;
-            if($role!="superuser"&&$role!="admin"){
+            if($role!="superuser"&&$role!="admin" && $request->route()->getName() !="getProductBundle"){
                     abort(403, 'Unauthorized access');
                 }
             return $next($request);

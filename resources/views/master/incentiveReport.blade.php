@@ -100,7 +100,20 @@
 
 @push('js')
 <script>
-  window.onload = function() {
+var startTransaction
+  var endTransaction
+  var start
+  var end
+  var currentTime;
+  var Today;
+  var Yesterday;
+  var Last7Days;
+  var Last30Days;
+  var ThisMonth;
+  var LastMonth;  
+
+  window.onload = async function() {
+    const [Today, Yesterday, Last7Days, Last30Days, ThisMonth, LastMonth, startTransaction, endTransaction, start, end] = await GetTime()
     cb(start, end);
     $('#list_doctor').select2( {
       closeOnSelect: false,
@@ -110,25 +123,26 @@
             $('#list_doctor').select2('open');
         }, 0);
       });
-  };
 
       function cb(start, end) {
           $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
       }
-      var start = moment().subtract(6, 'days');
-      var end = moment();
+      // var start = moment().subtract(6, 'days');
+      // var end = moment();
       $('#reportrange').daterangepicker({
           startDate: start,
           endDate: end,
           ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+             'Today': Today,
+          'Yesterday': Yesterday,
+          'Last 7 Days': Last7Days,
+          'Last 30 Days': Last30Days,
+          'This Month': ThisMonth,
+          'Last Month': LastMonth
           }
       }, cb);
+  };
+
 
     var dataTable = $("#tableList").DataTable({
             "ordering": true,

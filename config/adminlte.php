@@ -92,8 +92,8 @@ return [
             'path' => 'vendor/adminlte/dist/img/logo.png',
             'alt' => 'Auth Logo',
             'class' => '',
-            'width' => 75,
-            'height' => 50,
+            'width' => 200,
+            'height' => 100,
         ],
     ],
 

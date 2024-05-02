@@ -88,8 +88,15 @@ Route::post('/editPaymentOrder', [App\Http\Controllers\ListPOController::class, 
 Route::post('/addExtraCharge', [App\Http\Controllers\ListPOController::class, 'addExtraCharge'])->middleware('auth');
 Route::post('/editProduct', [App\Http\Controllers\ListPOController::class, 'editProduct'])->middleware('auth');
 Route::get('/generate-pdf', [App\Http\Controllers\PDFController::class, 'generatePDF']);
-Route::get('/generate-pdf-one/{id}', [App\Http\Controllers\PDFController::class, 'generatePDFOneTransaction'])->name('generate.pdf.one')->middleware('auth');
-Route::get('/generate-pdf-all/{id}', [App\Http\Controllers\PDFController::class, 'generatePDFAllTransaction'])->name('generate.pdf.all')->middleware('auth');
+
+Route::get('/generate-pdf-one-encrypt/{ids}', [App\Http\Controllers\PDFController::class, 'generatePDFOneTransactionEncrypt'])->name('generate.pdf.one.encrypt')->middleware('auth');
+
+// Route::get('/generate-pdf-all/{id}', [App\Http\Controllers\PDFController::class, 'generatePDFAllTransaction'])->name('generate.pdf.all')->middleware('auth');
+// Route::get('/generate-pdf-all-dokter/{id}/{start_date}/{end_date}/{status}', [App\Http\Controllers\PDFController::class, 'generatePDFAllTransaction'])->name('generate.pdf.all.dokter')->middleware('auth');
+
+Route::get('/generate-pdf-all-dokter/{ids}/{start_date}/{end_date}/{status}', [App\Http\Controllers\PDFController::class, 'generatePDFAllTransactionEncrypt'])->name('generate.pdf.all.dokter.encrypt')->middleware('auth');
+
+Route::get('/generate-pdf-all/{encrypt}', [App\Http\Controllers\PDFController::class, 'generatePDFAllWithEncrypt'])->name('generate.pdf.all');
 
 // productBundle
 Route::get('/listProductBundle', [App\Http\Controllers\PackageController::class, 'index'])->middleware('auth');

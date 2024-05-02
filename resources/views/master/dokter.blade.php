@@ -301,6 +301,7 @@
 
     $('#add_btn').on('click', function(e) {
       name = $("#nama_add").val()
+      name = name.replace("  ", " ")
       status = $("#status_add").val()
       address = $("#alamat_add").val()
       clinic = $("#clinic_add").val()
@@ -400,6 +401,7 @@
 
     $('#update_btn').on('click', function(e) {
       name = $("#nama_update").val()
+      name = name.replace("  ", " ")
       status = $("#status_update").val()
       id = $("#id_update").val()
 

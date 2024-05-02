@@ -16,6 +16,7 @@ use App\Models\PackageModel;
 use App\Models\SalaryModel;
 use App\Models\StockModel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 // use App\Models\OtherCostModel;
 
@@ -36,6 +37,7 @@ class DashboardController extends Controller
 
     private $textDashboard; 
     private $textWA; 
+    private $urlBase;
     public function __construct()
     {
         $this->middleware('auth');
@@ -52,8 +54,14 @@ class DashboardController extends Controller
         $this->otherCost = new OtherCostModel;
         $this->salary = new SalaryModel;
         $this->textDashboard = "Pesanan <strong>#NAMA_DOKTER#</strong> TINGGAL <strong>#DUE_DATE#</strong> Hari lagi Sebelum Jatuh Tempo!";
-        $this->textWA = "Halo *#NAMA_DOKTER#*,%0A%0ASaat ini, anda memiliki tagihan yang belum dibayar. Masa Tenggak Waktu anda selama *#DUE_DATE#* hari lagi.%0ADimohon untuk melakukan pelunasan segera.%0A%0ATerima kasih, salam hormat%0A*IPAES*.";
+        $this->textWA = "Halo *#NAMA_DOKTER#*,%0A%0ASaat ini, anda memiliki tagihan yang belum dibayar. Masa Tenggak Waktu anda selama *#DUE_DATE#* hari lagi.%0ADimohon untuk melakukan pelunasan segera.%0ABerikut untuk link invoice: #NO_INVOICE#%0A%0ATerima kasih, salam hormat%0A*IPAES*.";
+        $this->urlBase = "https::/intipersada.id/generate-pdf-all/";
         }
+
+        private function encryptUrl(string $url) {
+            $encryptedUrl = Crypt::encryptString($url);
+            return $encryptedUrl;
+          }
 
     public function index()
     {
@@ -124,10 +132,14 @@ class DashboardController extends Controller
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
+                    
 
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
                     $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    
+                    $url = $this->urlBase . $this->encryptUrl($value['id']);
+                    $link = str_replace("#NO_INVOICE#", $url, $link);
 
                     $temp['text'] = $text;
                     $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 0, strlen($value['billing_no_hp'])-1)."/?text=".$link;
@@ -144,6 +156,9 @@ class DashboardController extends Controller
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
                     $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $url = $this->urlBase . $this->encryptUrl($value['id']);
+                    $link = str_replace("#NO_INVOICE#", $url, $link);
+
                     $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 1, strlen($value['billing_no_hp']))."/?text=".$link;
 
                     array_push($mapReminderPO, $temp);
@@ -702,6 +717,9 @@ class DashboardController extends Controller
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
                     $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $url = $this->urlBase . $this->encryptUrl($value['id']);
+                    $link = str_replace("#NO_INVOICE#", $url, $link);
+
 
                     $temp['text'] = $text;
                     $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 0, strlen($value['billing_no_hp'])-1)."/?text=".$link;
@@ -718,6 +736,9 @@ class DashboardController extends Controller
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
                     $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $url = $this->urlBase . $this->encryptUrl($value['id']);
+                    $link = str_replace("#NO_INVOICE#", $url, $link);
+
                     $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 1, strlen($value['billing_no_hp']))."/?text=".$link;
 
                     array_push($mapReminderPO, $temp);

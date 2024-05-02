@@ -12,6 +12,7 @@ use App\Models\PackageModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Crypt;
 
 class ListPOController extends Controller
 {
@@ -49,22 +50,15 @@ class ListPOController extends Controller
         $this->stockController = new StockController;
         
     }
+    
+    private function encryptUrl(string $url) {
+      $encryptedUrl = Crypt::encryptString($url);
+      return $encryptedUrl;
+    }
 
     public function index()
     {
-        $user = auth()->user();
-        $dataDokter = $this->doctorModel->GetList();
-        $dataTransaction = $this->cart->GetListAll();
-        foreach ($dataDokter as $valueDokter) {
-          $total = 0;
-          foreach ($dataTransaction as $valueTransaction) {
-            if($valueDokter['id'] == $valueTransaction['doctor_id']) {
-              $total++;
-            }
-          }
-          $valueDokter['total_transaction'] = $total;
-        }
-        return view('master.listPO')->with('data', $dataDokter)->with('user', $user);
+        return view('master.listPO');
     }
 
     public function getAll(Request $request)
@@ -321,8 +315,23 @@ class ListPOController extends Controller
                 $data['status_due_date'] = false;
               }
               
+              $temp = $this->encryptUrl($data['id'].'/'.'1');
+               
+                $data['id_encrypt'] = $temp;
+              
             }
-            return view('master.detailPO')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
+            $params = [
+              'start_date' => $start_date,
+              'end_date' => $end_date,
+              'status' => $status,
+            ];
+                
+                $tempDoc = $this->encryptUrl($dokter['id']);
+               
+                $dokter['ids'] = $tempDoc;
+                
+            return view('master.detailPO')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll)->with('params', $params);
+            // return view('master.detailPO')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
             // return $dataCart;
         }catch(\Throwable $th) {
             Log::error("error di throwable");
@@ -343,7 +352,7 @@ class ListPOController extends Controller
           $user = auth()->user();
 
           foreach ($dataCartDokter as $data) {
-            if((Auth::user()->role == "marketing" && $data->created_by != Auth::user()->email) || $data->management_order==1) {
+            if(Auth::user()->role == "marketing" && ($data->created_by != Auth::user()->email || $data->management_order==1)) {
               return redirect()->route('listPO');
             }
             $totalan = 0;
@@ -363,7 +372,6 @@ class ListPOController extends Controller
                   foreach ($items as $item) {
                     if($temp[0]==$item["id"]){
                       $product["name_product"]=$item["name"];
-                      // $product["price_product"]=$item["price"];
                       break;
                     }                      
                   }
@@ -371,7 +379,6 @@ class ListPOController extends Controller
                   foreach ($bundles as $bundle) {
                     if($temp[0]==$bundle["id"]){
                       $product["name_product"]=$bundle["name"];
-                      // $product["price_product"]=$bundle["price"];
                       break;
                     }                      
                   }
@@ -391,6 +398,7 @@ class ListPOController extends Controller
                 $product["total_price"] = number_format($product["total_price"],0,',','.');
                 $product["disc_price"] = number_format($product["disc_price"],0,',','.');
                 $product["price"] = number_format($product["price"],0,',','.');
+                $product["price_product_real"] = $product["price_product"];
                 $product["price_product"] = number_format($product["price_product"],0,',','.'); 
                 array_push($products, $product);
               }
@@ -471,6 +479,10 @@ class ListPOController extends Controller
                 $data['status_due_date'] = false;
               }
           }
+           $temp = $this->encryptUrl($dataCartDokter[0]['id'].'/'.'1');
+           
+           $dataCartDokter[0]['id_encrypt'] = $temp;
+           
           return view('master.detailTransaction')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
           // return $dataCart;
       }catch(\Throwable $th) {
@@ -763,15 +775,89 @@ class ListPOController extends Controller
     public function editProduct(Request $request) {
         try {
           $input = $request->all();
-          $this->cart->UpdateItem($input['data']['id'], $input['data']['cart']);
+          $masuk = $input['data']['cart'];
+          $awal = $input['data']['awal'];
+          //update di cart
+          $tempProd = "";
+
+          $products = explode(',',$masuk);
+          foreach ($products as $value) {
+              $temp = explode('|', $value);
+              if($temp[2]<=0){
+                  continue;
+              }
+              $tempProd.=$value.",";
+          }
+
+          if($tempProd==""){
+              return "Tidak ada Produk tersisa, harap menekan tombol cancel PO untuk menghapus pesanan";
+          }else{
+            $data = [
+              'cart' => substr($tempProd,0,strlen($tempProd)-1),
+              'updated_by' => Auth::user()->email,
+              'updated_at' => date('Y-m-d H:i:s')
+            ];
+              $this->cart->UpdateItem($input['data']["id"], $data);
+          }
+
           if(isset($input['data']['extra_charge'])) {
             $data['extra_charge'] = $input['data']['extra_charge'];
             Log::info('extra_charge', [$data['extra_charge']]);
             $this->extra_charge->UpdatesItem($data['extra_charge']);
           }
+          
+          //update stock dan add reporting stok
+          $in = explode(",", $masuk);
+          foreach ($awal as $key => $valueAwal) {
+            $inTemp = explode("|", $in[$key]);
+            if ($inTemp[2] == $valueAwal['qty']){
+              //kalo qty sama, lewatin update stock
+              continue;
+            } else if($inTemp[2]==0){
+              // kalo qty yang dimasukin itu 0, maka tambahin stock dan tambahin report stock
+              $products=[];
+              $obj = [];
+              $obj["id_product"] = $inTemp[0];
+              $obj['stock_in'] = $valueAwal['qty'];
+              $obj['desc'] = "Penambahan Produk Saat Perubahan Produk Pada Transaksi PO ".$input['data']['po_id'];
+              $obj['status'] = "1";
+              $obj['created_at'] = date('Y-m-d H:i:s');
+              array_push($products, $obj);
+              $this->stockController->insert($products,"1");
+            }else if($inTemp[2]>$valueAwal['qty']){
+              // kurangin stock dan tambahin reporting stock
+              $products=[];
+              $obj = [];
+              $obj["id_product"] = $inTemp[0];
+              $obj['stock_out'] = $inTemp[2]-$valueAwal['qty'];
+              $obj['desc'] = "Pengurangan Produk Saat Perubahan Produk Pada Transaksi PO ".$input['data']['po_id'];
+              $obj['status'] = "1";
+              $obj['created_at'] = date('Y-m-d H:i:s');
+              array_push($products, $obj);
+              $this->stockController->insert($products,"1");
+
+            }else if($inTemp[2]<$valueAwal['qty']){
+              //tambahin stock dan tambahin reporting stock
+              $products=[];
+              $obj = [];
+              $obj["id_product"] = $inTemp[0];
+              $obj['stock_in'] = $valueAwal['qty']-$inTemp[2];
+              $obj['desc'] = "Penambahan Produk Saat Perubahan Produk Pada Transaksi PO ".$input['data']['po_id'];
+              $obj['status'] = "1";
+              $obj['created_at'] = date('Y-m-d H:i:s');
+              array_push($products, $obj);
+              $this->stockController->insert($products,"1");
+
+            }
+
+          }
+
+
+
           $result = "sukses";
           return $result;
         }catch(\Throwable $th) {
+            dd($th);
             Log::error("error di throwable");
             Log::error($th);
             return "gagal";

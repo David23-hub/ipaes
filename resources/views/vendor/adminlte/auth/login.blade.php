@@ -26,14 +26,14 @@
 
         {{-- Email field  (NAME GANTI EMAIL KALO MAU DIGANTI LOGIN BY EMAIL)--}}
         <div class="input-group mb-3">
-            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                   value="{{ old('name') }}" placeholder="{{ __('adminlte::adminlte.name') }}" autofocus>
-
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
+
+            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                   value="{{ old('name') }}" placeholder="{{ __('adminlte::adminlte.name') }}" autofocus>
 
             @error('name')
                 <span class="invalid-feedback" role="alert">
@@ -44,14 +44,14 @@
 
         {{-- Password field --}}
         <div class="input-group mb-3">
-            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                   placeholder="{{ __('adminlte::adminlte.password') }}">
-
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
+
+            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                   placeholder="{{ __('adminlte::adminlte.password') }}">
 
             @error('password')
                 <span class="invalid-feedback" role="alert">
@@ -71,12 +71,20 @@
                     </label>
                 </div>
             </div>
+        </div>
 
-            <div class="col-5">
+        <div class="row mt-3">
+            <div class="col">
                 <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
                     <span class="fas fa-sign-in-alt"></span>
                     {{ __('adminlte::adminlte.sign_in') }}
                 </button>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <a class="btn btn-block btn-outline-primary" href="{{ url('home') }}">Back to Landing Page</a>
             </div>
         </div>
 

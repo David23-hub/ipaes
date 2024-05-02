@@ -10,21 +10,21 @@
 <body>
     <table class="w-full">
         <tr>
-            <td class="w-half">
+            <td class="w-half" >
                 <h2>INVOICE</h2>
                 <h5>{{ $data['inv_no'] }}</h5>
                 <h5>{{ $data['created_at'] }}</h5>
             </td>
-            <td class="w-quarter" style="text-align: start">
-                <h6>{{ $data['dokter']['name'] }}</h6>
-                <h6>{{ $data['dokter']['no_hp'] }}</h6>
-                <h6>{{ $data['dokter']['clinic'] }}</h6>
-                <h6>{{ $data['dokter']['address'] }}</h6>
+            <td  style="width:55%;text-align: start">
+                <h5>{{ $data['dokter']['name'] }}</h5>
+                <h5>{{ $data['dokter']['no_hp'] }}</h5>
+                <h5>{{ $data['dokter']['clinic'] }}</h5>
+                <h5>{{ $data['dokter']['address'] }}</h5>
             </td>
             <td class="w-quarter" style="text-align: end">
-                <h6>Tanggal PO: {{ $data['created_at'] }}</h6>
-                <h6>Jatuh Tempo: {{ $data['due_date'] }}</h6>
-                <h6>M.R: {{ $data['user']['name'] }}</h6>
+                <h5>Tanggal PO: {{ $data['created_at'] }}</h5>
+                <h5>Jatuh Tempo: {{ $data['due_date'] }}</h5>
+                <h5>M.R: {{ $data['user']['name'] }}</h5>
             </td>
         </tr>
     </table>
@@ -86,22 +86,28 @@
             </table>
         </div>
     @endif
-
-    
     <div class="total">
         Grand Total: IDR {{ $data['total'] }}
     </div>
+    <div class="total-paid">
+        Paid: IDR {{ $data['total_paid'] }}
+    </div>
+    <div class="total-paid" style="margin-bottom:20px">
+        Debt: IDR {{ $data['total_paid_sum'] }}
+    </div>
+    
     <table>
         <tr>
             <td class="w-half-bottom-left">
-                <div><p>HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
-                    <p>BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003234987 an Maggie Princilla Chandra</p>
-                    <p>intipratama@gmail.com</p>
-                    <p>(*) Harap cantumkan nomor invoice saat pembayaran</p>
+                <div>
+                    <p style="margin-bottom:-10px">HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
+                    <p style="margin-bottom:-10px">BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003234987 an Maggie Princilla Chandra</p>
+                    <p style="margin-bottom:-10px">intipersada.aes@gmail.com</p>
+                    <p style="margin-bottom:-10px">(*) Harap cantumkan nomor invoice saat pembayaran</p>
                 </div>
             </td>
             <td class="w-half-bottom-right">
-                <div>12 Maret 2024</div>
+                <div>{{ $data['created_at'] }}</div>
                 <div class="pad-5">Corentius</div>
             </td>
         </tr>
@@ -109,8 +115,11 @@
 </body>
 
 <style>
-h4 {
+h1, h2, h3, h4, h5, h6 {
     margin: 0;
+}
+span{
+    margin-bottom:50px;
 }
 
 .pad-5 {
@@ -121,7 +130,7 @@ h4 {
     width: 100%;
 }
 .w-quarter {
-    width: 20%;
+    width: 25%;
 }
 
 .flex-bottom{
@@ -133,16 +142,16 @@ h4 {
 }
 
 .w-half-bottom-left {
-    width: 75%;
-    margin-top: 5rem;
+    width: 65%;
 }
 
 .w-half-bottom-right {
     width: 25%;
-    margin-top: 5rem;
+    text-align: right;  
 }
+
 .margin-top {
-    margin-top: 1.25rem;
+    margin-top: 10px;
 }
 .footer {
     font-size: 0.875rem;
@@ -173,8 +182,10 @@ table tr.items {
     /*background-color: rgb(241 245 249);*/
     border: 1px solid black;
     border-collapse: collapse;
+    margin:0;
 }
 table tr.items td {
+    font-size;10px
     padding: 0.5rem;
     text-align: center;
     border: 1px solid black;
@@ -182,8 +193,11 @@ table tr.items td {
 }
 .total {
     text-align: right;
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-top: 10px;
+    font-size: 0.875rem;
+}
+.total-paid {
+    text-align: right;
     font-size: 0.875rem;
 }
 </style>

@@ -31,11 +31,10 @@ class DokterController extends Controller
     }
 
     public function getAll(Request $request){
-
-        if(Auth::user()->role=="superuser"||Auth::user()->role=="admin"||Auth::user()->role=="manager"){
+        if(Auth::user()->role=="superuser"||Auth::user()->role=="admin"){
             $data = $this->model->GetList();
         }else{
-            $data = $this->model->GetListBaseOnRole(Auth::user()->name);
+            $data = $this->model->GetListBaseOnRole(Auth::user()->name, Auth::user()->role);
         }
 
         foreach ($data as $key=> $value) {
@@ -77,6 +76,10 @@ class DokterController extends Controller
         }
 
 
+        $visible_lower = 0;
+        if(Auth::user()->role=="superuser"||Auth::user()->role=="admin"){
+            $visible_lower = 1;
+        }
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
@@ -86,6 +89,7 @@ class DokterController extends Controller
             'information' => $input['information'],
             'dob' => $input['dob'],
             'billing_no_hp' => $input['billing_no_hp'],
+            'visible_lower' => $input['visible_lower'],
             'created_by' => Auth::user()->name,
             'created_at' => date('Y-m-d H:i:s')
         ];
