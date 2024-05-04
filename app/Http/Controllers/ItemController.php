@@ -6,6 +6,7 @@ use App\Models\CategoryProductModel;
 use App\Models\ItemModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use DateTime;
 
 class ItemController extends Controller
 {
@@ -100,6 +101,18 @@ class ItemController extends Controller
             $imageName="";
         }
 
+        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+
+        // Make a GET request to fetch the time data
+        $response = file_get_contents($time_api_url);
+
+        // Decode the JSON response
+        $time_data = json_decode($response, true);
+
+        // Extract the current time from the response
+        $current_time = $time_data['datetime'];
+        $datetime = new DateTime($current_time);
+
         $data = [
             'name' => $input['name'],
             'status' => $input['status'],
@@ -115,7 +128,7 @@ class ItemController extends Controller
             'img' => $imageName,
 
             'created_by' => Auth::user()->email,
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at' => $datetime
         ];
 
         $result = "";
@@ -135,7 +148,7 @@ class ItemController extends Controller
             $obj['stock_in'] = $data['qty'];
             $obj['desc'] = "Penambahan Produk Saat Insert Stock".$data['name'];
             $obj['status'] = "1";
-            $obj['created_at'] = date('Y-m-d H:i:s');
+            $obj['created_at'] = $datetime;
             array_push($products, $obj);
 
             $result = $this->stockController->insert($products,"0");
@@ -187,6 +200,18 @@ class ItemController extends Controller
         //     print_r("GAK ");die();
         // }
 
+        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+
+        // Make a GET request to fetch the time data
+        $response = file_get_contents($time_api_url);
+
+        // Decode the JSON response
+        $time_data = json_decode($response, true);
+
+        // Extract the current time from the response
+        $current_time = $time_data['datetime'];
+        $datetime = new DateTime($current_time);
+
 
         if ($request->hasFile('img')) {
             // Image is uploaded
@@ -208,7 +233,7 @@ class ItemController extends Controller
                 'img' => $imageName,
     
                 'updated_by' => Auth::user()->email,
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => $datetime
             ];
         } else {
             // Image is not uploaded
@@ -225,7 +250,7 @@ class ItemController extends Controller
                 'desc' => $input['desc'],
     
                 'updated_by' => Auth::user()->email,
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => $datetime
             ];
         }
         $result = "";
@@ -245,7 +270,7 @@ class ItemController extends Controller
                 $obj['stock_out'] = $qtyAwal-$input['qty'];
                 $obj['status'] = "1";
                 $obj['desc'] = "Pengurangan Produk Saat Update Stock ".$data['name'];
-                $obj['created_at'] = date('Y-m-d H:i:s');
+                $obj['created_at'] = $datetime;
                 array_push($products, $obj);
 
                 $result = $this->stockController->insert($products,"0");
@@ -253,7 +278,7 @@ class ItemController extends Controller
                 $obj['stock_in'] = $input['qty']-$qtyAwal;
                 $obj['status'] = "1";
                 $obj['desc'] = "Penambahan Produk Saat Update Stock".$data['name'];
-                $obj['created_at'] = date('Y-m-d H:i:s');
+                $obj['created_at'] = $datetime;
                 array_push($products, $obj);
 
                 $result = $this->stockController->insert($products,"0");
@@ -268,10 +293,24 @@ class ItemController extends Controller
     }
 
     public function deleteItem(Request $request){
+
+        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+
+        // Make a GET request to fetch the time data
+        $response = file_get_contents($time_api_url);
+
+        // Decode the JSON response
+        $time_data = json_decode($response, true);
+
+        // Extract the current time from the response
+        $current_time = $time_data['datetime'];
+        $datetime = new DateTime($current_time);
+
+
         $input = $request->all();
         $data = [
             'deleted_by' => Auth::user()->email,
-            'deleted_at' => date('Y-m-d H:i:s')
+            'deleted_at' => $datetime
         ];
 
         $result = "";

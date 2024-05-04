@@ -57,7 +57,7 @@ class ListProductController extends Controller
         $bool = false;
 
         //if no item on cart
-        if (count($cartsUser)==0){
+        // if (count($cartsUser)==0){
             foreach ($product as  $productVal) {
                 $productVal['qty_cart'] = '';
                 $productVal['disc_cart'] = '';
@@ -74,67 +74,67 @@ class ListProductController extends Controller
                 array_push($resProductBundle,$value);
             }
             return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);
-        }
+        // }
 
-        $cartUser = $cartsUser[0];
+        // $cartUser = $cartsUser[0];
 
 
-        //add list item for each product
-        foreach ($product as  $productVal) {
-                $bool = false;
-                $flag=false;
+        // //add list item for each product
+        // foreach ($product as  $productVal) {
+        //         $bool = false;
+        //         $flag=false;
 
-                $carts = explode(",", $cartUser->cart);
-                foreach ($carts as $cartItem) {
-                    $temp = explode("|", $cartItem);
-                    if ($productVal["id"] == $temp[0] && $temp[1] == "product"){
-                        if($temp[3]==100 && $bool){
-                            $flag=true;
-                            continue;
-                        }
-                        $bool = true;
-                        $productVal['qty_cart'] = $temp[2];
-                        $productVal['disc_cart'] = $temp[3];
-                    }
-                }
-                if(!$bool){
-                    $productVal['qty_cart'] = '';
-                    $productVal['disc_cart'] = '';
-                }
-                $productVal['priceNum']=$productVal["price"];
-                $productVal['price']=number_format($productVal["priceNum"],0,',','.');
-                array_push($resProduct,$productVal);
-        }
+        //         $carts = explode(",", $cartUser->cart);
+        //         foreach ($carts as $cartItem) {
+        //             $temp = explode("|", $cartItem);
+        //             if ($productVal["id"] == $temp[0] && $temp[1] == "product"){
+        //                 if($temp[3]==100 && $bool){
+        //                     $flag=true;
+        //                     continue;
+        //                 }
+        //                 $bool = true;
+        //                 $productVal['qty_cart'] = $temp[2];
+        //                 $productVal['disc_cart'] = $temp[3];
+        //             }
+        //         }
+        //         if(!$bool){
+        //             $productVal['qty_cart'] = '';
+        //             $productVal['disc_cart'] = '';
+        //         }
+        //         $productVal['priceNum']=$productVal["price"];
+        //         $productVal['price']=number_format($productVal["priceNum"],0,',','.');
+        //         array_push($resProduct,$productVal);
+        // }
 
-        //add list item for bundle
-        foreach ($productBundle as  $productVal) {
-                $bool = false;
-                $flag=false;
+        // //add list item for bundle
+        // foreach ($productBundle as  $productVal) {
+        //         $bool = false;
+        //         $flag=false;
 
-                $carts = explode(",", $cartUser->cart);
-                foreach ($carts as $cartItem) {
-                    $temp = explode("|", $cartItem);
-                    if ($productVal["id"] == $temp[0] && $temp[1] == "paket"){
-                        if($temp[3]==100 && $bool){
-                            $flag=true;
-                            continue;
-                        }
-                        $bool = true;
-                        $productVal['qty_cart'] = $temp[2];
-                        $productVal['disc_cart'] = $temp[3];
-                    }   
-                }
-                if(!$bool){
-                    $productVal['qty_cart'] = '';
-                    $productVal['disc_cart'] = '';
-                }
-                $productVal['unit'] = "Package";
-                $productVal['priceNum']=$productVal["price"];
-                $productVal['price']=number_format($productVal["priceNum"],0,',','.');
-                array_push($resProductBundle,$productVal);
-        }
+        //         $carts = explode(",", $cartUser->cart);
+        //         foreach ($carts as $cartItem) {
+        //             $temp = explode("|", $cartItem);
+        //             if ($productVal["id"] == $temp[0] && $temp[1] == "paket"){
+        //                 if($temp[3]==100 && $bool){
+        //                     $flag=true;
+        //                     continue;
+        //                 }
+        //                 $bool = true;
+        //                 $productVal['qty_cart'] = $temp[2];
+        //                 $productVal['disc_cart'] = $temp[3];
+        //             }   
+        //         }
+        //         if(!$bool){
+        //             $productVal['qty_cart'] = '';
+        //             $productVal['disc_cart'] = '';
+        //         }
+        //         $productVal['unit'] = "Package";
+        //         $productVal['priceNum']=$productVal["price"];
+        //         $productVal['price']=number_format($productVal["priceNum"],0,',','.');
+        //         array_push($resProductBundle,$productVal);
+        // }
 
-        return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);
+        // return view('master.listProduct')->with('category', $category)->with('product', $resProduct)->with('bundle',$resProductBundle);
     }
 
     public function addCartDetail(Request $request){
@@ -144,6 +144,10 @@ class ListProductController extends Controller
             return "Kuantity Barang Harus Diisi!";
         }else if (!preg_match('/^[0-9]+$/', $input["disc"]) && $input["disc"]!="") {
             return "Diskon Harus Diisi!";
+        }
+
+        if ($input["qty"]<1){
+            return "Kuantity Barang Harus Lebih Dari 0!";
         }
 
         if ($input['disc']>100){
@@ -175,71 +179,12 @@ class ListProductController extends Controller
         $res = "";
         if(count($cartRes)!=0){
             $cartTemp = $cartRes[0];
-            if($input['qty']!=0){
-                if ($cartTemp->cart!=""){
-                    $items = explode(",", $cartTemp->cart);
-                    foreach ($items as $item) {
-                        $temp = explode("|", $item);
-                        if($temp[0]==$input["id"]&& $temp[1]==$input['category'] && $input['disc']!=100 && $temp[3]!=100){
-                            if($temp[2]!=$input['qty']){
-                                $temp[2] = $input['qty'];
-                            }
-                            $temp[3] = $input['disc'];
-                            $flag=true;
-                        }else if($temp[0]==$input["id"]&& $temp[1]==$input['category'] && $input['disc']==100 && $temp[3]==100){
-                            if($temp[2]!=$input['qty']){
-                                $temp[2] = $input['qty'];
-                            }
-                            $flag=true;
-                        }
-                        $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3]."|".$temp[4] . ",";
-                    }
-                    $len = strlen($res) - 1; 
-                    $res = substr($res, 0, $len);
-                }
-                
-                if((!$flag ) && $res!=""){
-                    $res = $res."," . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"]."|".$input['price'];
-                }else if((!$flag ) ){
-                    $res = $res . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"]."|".$input['price'];
-                }
+            
 
+            $res = $cartTemp->cart . "," . $input['id']."|".$input["category"]."|".$input["qty"]."|".$input["disc"]."|".$input['price'];
 
-                $counter = explode(",",$res);
-                if(count($counter)>7){
-                    return "Max Item per Transaction is 7";
-                }
-                
-                return $this->updateCart($cartTemp["id"],$res);
+            return $this->updateCart($cartTemp["id"],$res);
 
-
-            }else if($input['qty']==0){
-                //delete item on cart
-                if ($cartTemp->cart!=""){
-                    $items = explode(",", $cartTemp->cart);
-                    foreach ($items as $item) {
-                        $temp = explode("|", $item);
-
-                        if($temp[0]==$input["id"] && $input['qty']<=0){
-                            continue;
-                        }
-                        if($temp[0]==$input["id"]){
-                            $temp[2] = $input['qty'];
-                            $temp[3] = $input['disc'];
-                            $flag=true;
-                        }
-                        $res .= $temp[0] . "|" . $temp[1] . "|" . $temp[2] . "|" . $temp[3]."|".$temp[4] . ",";
-                    }
-                    $len = strlen($res) - 1; 
-                    $res = substr($res, 0, $len);
-                }
-                
-                if(strlen($res)==0){
-                    $res = "";
-                }
-
-                return $this->updateCart($cartTemp["id"],$res);
-            }
         }
 
         

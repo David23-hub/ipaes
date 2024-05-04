@@ -182,7 +182,7 @@
             <td class="w-half-bottom-left">
                 <div>
                     <p style="margin-bottom:-10px">HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
-                    <p style="margin-bottom:-10px">BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003234987 an Maggie Princilla Chandra</p>
+                    <p style="margin-bottom:-10px">BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003428944 an Maggie Princilla Chandra</p>
                     <p style="margin-bottom:-10px">intipersada.aes@gmail.com</p>
                     <p style="margin-bottom:-10px">(*) Harap cantumkan nomor invoice saat pembayaran</p>
                 </div>

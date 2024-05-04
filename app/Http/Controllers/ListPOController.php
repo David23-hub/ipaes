@@ -58,6 +58,7 @@ class ListPOController extends Controller
 
     public function index()
     {
+        
         return view('master.listPO');
     }
 
@@ -315,7 +316,12 @@ class ListPOController extends Controller
                 $data['status_due_date'] = false;
               }
               
+              $data['status_due_date'] = false;
+              
+              
               $temp = $this->encryptUrl($data['id'].'/'.'1');
+              
+               
                
                 $data['id_encrypt'] = $temp;
               
@@ -469,19 +475,20 @@ class ListPOController extends Controller
                 'new_date' => $newDate
               ]);
               if(strtotime($data['due_date']) <= strtotime($newDate)) {
-                // $data['status'] = 4;
-
-                // $data['cancel_at'] = $data['due_date'];
-                // $data['cancel_by'] = "system";
-                // $data['cancel_reason'] = "due date is passed";
+                //kena due date
                 $data['status_due_date'] = true;
               } else {
                 $data['status_due_date'] = false;
               }
+              
+              $data['status_due_date'] = false;
           }
            $temp = $this->encryptUrl($dataCartDokter[0]['id'].'/'.'1');
+          
+           
            
            $dataCartDokter[0]['id_encrypt'] = $temp;
+           
            
           return view('master.detailTransaction')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
           // return $dataCart;
@@ -857,7 +864,6 @@ class ListPOController extends Controller
           $result = "sukses";
           return $result;
         }catch(\Throwable $th) {
-            dd($th);
             Log::error("error di throwable");
             Log::error($th);
             return "gagal";

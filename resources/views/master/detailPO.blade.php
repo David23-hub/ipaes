@@ -230,7 +230,7 @@
                     <p class="text-start">{{ $itemDokter->notes }}</p>
                   </div>
                   <div class="form-group" id="button-edit-product{{ $key }}">
-                  @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
+                  @if ($user['role'] == "superuser" || $user['role'] == "admin")
                     <button class="btn me-3 btn-outline-success" id="edit_product{{ $key }}" onclick="EditProductShow({{ $key }})">
                     Edit Product
                     </button>
@@ -722,6 +722,7 @@ function upperZero(input,max) {
     dokter = @json($dokter);
     user = @json($user);
     dataCartDokter = @json($dataCartDokter);
+    
     dataEkspedisi = @json($dataEkspedisi);
     extraChargeAll = @json($extraChargeAll);
 
@@ -816,6 +817,8 @@ function upperZero(input,max) {
     function resetModalInput() {
       document.getElementById('cancel_reason').value = '';
     }
+    
+    
 
     function checkForButtonStatus() {
       /*
@@ -827,6 +830,7 @@ function upperZero(input,max) {
       paid step payment => 5
       */
 
+
       for (let i = 0; i < dataCartDokter.length; i++) {
         const element = dataCartDokter[i];
 
@@ -837,6 +841,7 @@ function upperZero(input,max) {
             Submited
           </span>
           `
+          
 
           if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
             document.querySelector(`#button_status_update${i}`).innerHTML = `
@@ -1461,7 +1466,7 @@ function upperZero(input,max) {
               queryCancel.innerHTML = ""
             }
           } else {
-            if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
+            if(user['role'] == "superuser" || user['role'] == "admin") {
               let queryCancel = document.querySelector(`#button-status-canceled${i}`)
               if(queryCancel) {
                 queryCancel.innerHTML = `
@@ -1480,6 +1485,24 @@ function upperZero(input,max) {
                   `
               }
   
+              let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
+              if(extra_charge_button) {
+                extra_charge_button.innerHTML = `
+                <button class="btn btn-outline-success" data-target="#modalExtraCharge${i}" data-toggle="modal">
+                  Add Extra Charges
+                </button>
+                `
+              }
+            } else if(user['role'] == "finance") {
+              let queryCancel = document.querySelector(`#button-status-canceled${i}`)
+              if(queryCancel) {
+                queryCancel.innerHTML = `
+                <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
+                  Cancel Purchase Order
+                </button>
+                `
+              }
+
               let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
               if(extra_charge_button) {
                 extra_charge_button.innerHTML = `
@@ -1638,7 +1661,7 @@ function upperZero(input,max) {
                   IDR ${dataCartDokter[key]['total_paid_sum']}
                 </div>
               `
-              if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
+              if(user['role'] == "superuser" || user['role'] == "admin") {
                 let edit_product_button = document.querySelector(`#button-edit-product${key}`)
                 if(edit_product_button) {
                   edit_product_button.innerHTML = `
@@ -1648,6 +1671,15 @@ function upperZero(input,max) {
                   `
                 }
     
+                let extra_charge_button = document.querySelector(`#button-extra-charge${key}`)
+                if(extra_charge_button) {
+                  extra_charge_button.innerHTML = `
+                  <button class="btn btn-outline-success" data-target="#modalExtraCharge${key}" data-toggle="modal">
+                    Add Extra Charges
+                  </button>
+                  `
+                }
+              } else if(user['role'] == "finance") {
                 let extra_charge_button = document.querySelector(`#button-extra-charge${key}`)
                 if(extra_charge_button) {
                   extra_charge_button.innerHTML = `

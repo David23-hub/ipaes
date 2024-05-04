@@ -129,7 +129,9 @@ class UserController extends Controller
         // $user->name = $request->name;
         // $user->email = $request->email;
         $user->role = $request->role;
-        $user->no_hp = $request->no_hp;
+        if($request->no_hp!=null){
+            $user->no_hp = $request->no_hp;
+        }
         $user->img = $imageName;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->save();

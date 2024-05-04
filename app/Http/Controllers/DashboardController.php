@@ -222,7 +222,7 @@ class DashboardController extends Controller
             }
 
             foreach ($products as $valueProduct) {
-                if($valueProduct['qty'] <= $valueProduct['qty_min']) {
+                if($valueProduct['qty'] <= $valueProduct['qty_min'] && $value['deleted_by']==null ) {
                     array_push($mapStock, [
                         'name'=> $valueProduct['name'],
                         'stock' => $valueProduct['qty']

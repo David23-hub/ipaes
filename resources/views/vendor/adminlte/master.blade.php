@@ -108,7 +108,7 @@
         {{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script>  --}}
         <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
 
         <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
         <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
@@ -118,8 +118,8 @@
         
         <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 
-        
         <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+
         
 {{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> --}}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -141,7 +141,7 @@
 
         async function GetTime(){
             const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    
+      
             let response = await fetch("https://worldtimeapi.org/api/timezone/"+tz)
             let data = await response.json();
             currentTime = data.datetime;
@@ -157,7 +157,6 @@
             LastMonth = [moment(currentTime).subtract(1, 'month').startOf('month'), moment(currentTime).subtract(1, 'month').endOf('month')]
             return [Today, Yesterday, Last7Days, Last30Days, ThisMonth, LastMonth, startTransaction, endTransaction, start, end]
         }
-
         //NOTIF
         // $(document).ready(function() {
         //     function beep() {

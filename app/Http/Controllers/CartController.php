@@ -214,6 +214,7 @@ class CartController extends Controller
 
             foreach ($cart as $value) {
                 $temp = explode("|",$value);
+                
                 if($temp[1]=="product"){
                     $obj = [];
                     $obj["id_product"] = $temp[0];
@@ -224,7 +225,8 @@ class CartController extends Controller
                     $obj['created_at'] = $date;
                     array_push($products, $obj);
                 }else if($temp[1]=="paket"){
-                    $listProd = $this->bundle->GetItem($value[0]);
+                    $listProd = $this->bundle->GetItem($temp[0]);
+                    
                     $tempProd = explode(",",$listProd[0]["product"]);
                     foreach ($tempProd as $valuePackage) {
                         $temp = explode("|",$valuePackage);
@@ -239,7 +241,8 @@ class CartController extends Controller
                     }
                 }
             }
-
+            
+            
 
 
             $tempObj = [];
@@ -251,11 +254,12 @@ class CartController extends Controller
                     $tempObj[$value['id_product']] = (int)$value['stock_out'];
                 }
             }
+            
 
             $indexArray = array_keys($tempObj);
+            
 
             $itemStocks = $this->model->GetListCheckStock($indexArray);
-            
             foreach ($itemStocks as $key => $value) {
                 if($value['deleted_by']!=null){
                     return "Product ".$value['name']. " Tidak Ditemukan";
