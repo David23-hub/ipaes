@@ -118,6 +118,62 @@ class DashboardController extends Controller
             11 => 0,
             12 => 0
         ];
+        $mapSalaryPerMonth = [
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+            12 => 0
+        ];
+        $mapOtherCostPerMonth = [
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+            12 => 0
+        ];
+        $mapSalaryPerMonth = [
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+            12 => 0
+        ];
+        $mapOtherCostPerMonth = [
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+            12 => 0
+        ];
         $result['mapReminder'] = [];
 
         //untuk reminder
@@ -305,11 +361,16 @@ class DashboardController extends Controller
 
         //total other cost
         foreach ($otherCost as $valueOtherCost) {
+            $monthOtherCost = date("n", strtotime($valueOtherCost['created_at']));
+            $mapOtherCostPerMonth[$monthOtherCost] += $valueOtherCost['price'];
             $totalOtherCost += $valueOtherCost['price'];
         }
 
         //total salary
         foreach ($salaryAll as $valueSalary) {
+            # code...
+            $monthSalary = date("n", strtotime($valueSalary['created_at']));
+            $mapSalaryPerMonth[$monthSalary] += $valueSalary['price'];
             $totalSalary += $valueSalary['price'];
         }
 
@@ -470,7 +531,7 @@ class DashboardController extends Controller
                 } else if($valueCarousel['status'] == 5) {
                     $paidArray = explode('|', $valueCarousel['nominal']);
                     $totalpaidItem = array_sum($paidArray);
-                      $totalpoIdr = $totalpaidItem;
+                    $totalpoIdr = $totalpaidItem;
                     $countPo++;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 0) {
@@ -642,6 +703,10 @@ class DashboardController extends Controller
             return $a['stock_out'] < $b['stock_out'];
         });
 
+        foreach ($mapTotalPerMonth as $key => $valuePermonth) {
+            # code...
+            $mapTotalPerMonth[$key] = $valuePermonth - $mapOtherCostPerMonth[$key] - $mapSalaryPerMonth[$key];
+        }
         // Log::info("other total paid", [$totalPaid]);
 
         $result['total_insentive'] = number_format($incentiveIdr,0,',','.');
@@ -730,7 +795,34 @@ class DashboardController extends Controller
             11 => 0,
             12 => 0
         ];
-
+        $mapSalaryPerMonth = [
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+            12 => 0
+        ];
+        $mapOtherCostPerMonth = [
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+            12 => 0
+        ];
 
         $mapMarketingStock = [];
         $result['mapReminder'] = [];
@@ -829,8 +921,11 @@ class DashboardController extends Controller
             'otherCost' => $otherCost
         ]);
 
+        //total salary
         foreach ($salaryAll as $valueSalary) {
             # code...
+            $monthSalary = date("n", strtotime($valueSalary['created_at']));
+            $mapSalaryPerMonth[$monthSalary] += $valueSalary['price'];
             $totalSalary += $valueSalary['price'];
         }
 
@@ -838,8 +933,6 @@ class DashboardController extends Controller
             $date = date_create($value['dob']);  
             date_sub($date, date_interval_create_from_date_string('1 days'));  
             $substractOneDay = date_format($date, 'Y-m-d');
-            // $newDate1 = date('Y-m-d H:i:s');
-            // Log::info('date', [($value['dob']), ($newDate), ($substractOneDay), ($newDate1)]);
             if(strtotime($value['dob']) == strtotime($newDate) || strtotime($substractOneDay) == strtotime($newDate)) {
                 array_push($mapDoktor, [
                     'name' => $value['name'],
@@ -847,7 +940,10 @@ class DashboardController extends Controller
             }
         }
 
+        //total other cost
         foreach ($otherCost as $valueOtherCost) {
+            $monthOtherCost = date("n", strtotime($valueOtherCost['created_at']));
+            $mapOtherCostPerMonth[$monthOtherCost] += $valueOtherCost['price'];
             $totalOtherCost += $valueOtherCost['price'];
         }
 
@@ -863,6 +959,7 @@ class DashboardController extends Controller
                 }
                 // $i=0;
                 $totalPerorang = 0;
+                $tempIncen = 0;
                 $carts = explode(",", $value->cart);
                 foreach ($carts as $key => $cart) {
                     $items = explode("|", $cart);
@@ -1016,7 +1113,8 @@ class DashboardController extends Controller
                     $countPo++;
                 }
 
-                 $month = date("n", strtotime($valueCarousel['created_at']));
+
+                $month = date("n", strtotime($valueCarousel['created_at']));
     
                 //loop for extra charge
                 $extras = $this->extra_charge->GetList($valueCarousel["id"]);
@@ -1028,6 +1126,7 @@ class DashboardController extends Controller
                 if($valueCarousel['shipping_cost']) {
                     $totalpoIdr += $value['shipping_cost'];
                 }
+
 
                 if(!isset($mapUser[$valueCarousel['created_by']])) {
                     $mapUser[$valueCarousel['created_by']] = [
@@ -1154,6 +1253,11 @@ class DashboardController extends Controller
         usort($mapProduct, function($a, $b) {
             return $a['stock_out'] < $b['stock_out'];
         });
+
+        foreach ($mapTotalPerMonth as $key => $valuePermonth) {
+            # code...
+            $mapTotalPerMonth[$key] = $valuePermonth - $mapOtherCostPerMonth[$key] - $mapSalaryPerMonth[$key];
+        }
 
         $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
