@@ -1801,10 +1801,18 @@
     function SentButton(id, key) {
       var ekspedisi = $(`#ekspedisi_select${key}`).val()
       var shippingCost = $(`#shipping_cost_input${key}`).val()
+      if (!shippingCost) {
+        AlertWarningWithMsg("must fill the shipping cost")
+        return
+      }
       shippingCost = shippingCost.split('.').join('')
       // console.log({shippingCost})
       // return
       var receipt_number_input = $(`#receipt_number_input${key}`).val()
+      if (!receipt_number_input) {
+        AlertWarningWithMsg("must fill the receipt number")
+        return
+      }
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/sentPO",
@@ -1844,10 +1852,18 @@
     function EditApiSentButton(id, key) {
       var ekspedisi = $(`#ekspedisi_edit_select${key}`).val()
       var shippingCost = $(`#shipping_edit_cost_input${key}`).val()
+      if (!shippingCost) {
+        AlertWarningWithMsg("must fill the shipping cost")
+        return
+      }
       shippingCost = shippingCost.split('.').join('')
       // console.log({shippingCost})
       // return
       var receipt_number_input = $(`#receipt_edit_number_input${key}`).val()
+      if (!receipt_number_input) {
+        AlertWarningWithMsg("must fill the receipt number")
+        return
+      }
       $.ajax({
         type: "POST",
         url: "{{url('/')}}"+"/sentPO",

@@ -7,7 +7,7 @@
     <title>Invoice</title>
 </head>
 <body>
-    <h3>INVOICE ALL TRANSACTION</h3>
+    <h3 style="margin-top:-20px">INVOICE ALL TRANSACTION</h3>
     <table class="w-full">
         <tr>
             <td class="w-half">
@@ -62,10 +62,8 @@
                     </tr>
                 @endforeach
             </table>
-        </div>
-    
-        @if ($item['count_extra'] != 0)
-            <div class="margin-top">
+            @if ($item['count_extra'] != 0)
+            <div >
                 <h4>Extra Charge</h4>
                 <table class="products">
                     <tr>
@@ -89,17 +87,39 @@
                 </table>
             </div>
         @endif
+        </div>
+    
+        
     </div>
-
+    <!--<table>-->
+        <!--<td >-->
+        <!--   Grand Total: IDR {{ $item['total'] }} -->
+        <!--</td>-->
+        <!--<br>-->
+        <!--<br>-->
+        <!--<td >-->
+        <!--    Paid: IDR {{ $item['total_paid'] }}-->
+        <!--</td>-->
+        <!--<td >-->
+        <!--    Debt: IDR {{ $item['total_paid_sum'] }}-->
+        <!--</td>-->
+    <!--</table>-->
     <div class="total">
         Grand Total: IDR {{ $item['total'] }}
     </div>
-    <div class="total-paid">
-        Paid: IDR {{ $item['total_paid'] }}
-    </div>
-    <div class="total-paid" style="margin-bottom:20px">
-        Debt: IDR {{ $item['total_paid_sum'] }}
-    </div>
+    <br>
+    <br>
+
+    <!--<div class="total">-->
+    <!--    Grand Total: IDR {{ $item['total'] }}-->
+    <!--</div>-->
+    <!--<div class="total-paid">-->
+    <!--    Paid: IDR {{ $item['total_paid'] }}-->
+    <!--</div>-->
+    <!--<div class="total-paid" style="margin-bottom:20px">-->
+    <!--    Debt: IDR {{ $item['total_paid_sum'] }}-->
+    <!--</div>-->
+    
     @else
     <div class="new-page">
         <h5>INVOICE NUMBER: {{ $item['inv_no'] }}</h5>
@@ -137,10 +157,8 @@
                     </tr>
                 @endforeach
             </table>
-        </div>
-    
-        @if ($item['count_extra'] != 0)
-            <div class="margin-top">
+            @if ($item['count_extra'] != 0)
+            <div >
                 <h4>Extra Charge</h4>
                 <table class="products">
                     <tr>
@@ -164,27 +182,33 @@
                 </table>
             </div>
         @endif
+        </div>
+    
+        
     </div>
-
+    
     <div class="total">
         Grand Total: IDR {{ $item['total'] }}
     </div>
-    <div class="total-paid">
-        Paid: IDR {{ $item['total_paid'] }}
-    </div>
-    <div class="total-paid" style="margin-bottom:20px">
-        Debt: IDR {{ $item['total_paid_sum'] }}
-    </div>
+    <br>
+    <br>
+    <!--<div class="total-paid">-->
+    <!--    Paid: IDR {{ $item['total_paid'] }}-->
+    <!--</div>-->
+    <!--<div class="total-paid" style="margin-bottom:20px">-->
+    <!--    Debt: IDR {{ $item['total_paid_sum'] }}-->
+    <!--</div>-->
     @endif
     @endforeach
     <table>
         <tr>
             <td class="w-half-bottom-left">
                 <div>
-                    <p style="margin-bottom:-10px">HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
-                    <p style="margin-bottom:-10px">BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003428944 an Maggie Princilla Chandra</p>
-                    <p style="margin-bottom:-10px">intipersada.aes@gmail.com</p>
-                    <p style="margin-bottom:-10px">(*) Harap cantumkan nomor invoice saat pembayaran</p>
+                    <p class="info">HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
+                    <p class="info">BCA 2880517131 an Maggie Princilla Chandra</p>
+                    <p class="info">MANDIRI 1650003428944 an Maggie Princilla Chandra</p>
+                    <p class="info">intipersada.aes@gmail.com</p>
+                    <p class="info">(*) Harap cantumkan nomor invoice saat pembayaran</p>
                 </div>
             </td>
             <td class="w-half-bottom-right">
@@ -196,6 +220,10 @@
 </body>
 
 <style>
+.info{
+    margin-bottom:-15px;
+    font-size:15px;
+}
 .pad-5 {
     padding-top: 5em;
 }
@@ -213,6 +241,7 @@ h1,h2,h3,h4,h5,h6 {
 }
 .w-full {
     width: 100%;
+    margin-top:-20px;
 }
 .w-quarter {
     width: 20%;
@@ -237,6 +266,7 @@ h1,h2,h3,h4,h5,h6 {
 
 .margin-top {
     margin-top: 10px;
+    min-height:200px;
 }
 .footer {
     font-size: 0.875rem;

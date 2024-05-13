@@ -292,6 +292,96 @@ class ItemController extends Controller
         return $result;
     }
 
+    public function updateItemQty(Request $request){
+        $input = $request->all();
+
+        if ($input["qty"]=="" || trim($input['qty']=="")) {
+            return "Jumlah Barang Harus Diisi!";
+        }else if ($input["desc"]=="" || trim($input['desc']=="") ) {
+            return "Deskripsi Harus Diisi!";
+        }
+        
+        $input["qty"] = str_replace('.', '', $input["qty"]);
+
+        $index = $this->model->GetItem($input['id']);
+        if(count($index)==0){
+            return "gagal";
+        }
+        $qtyAwal = (int)$index[0]['qty'];
+
+        // if (!strpos("Pengurangan Produk Saat Update", "Pengurangan")) {
+        //     print_r("The string contains 'hello'");die();
+        // } else {
+        //     print_r("GAK ");die();
+        // }
+
+        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+
+        // Make a GET request to fetch the time data
+        $response = file_get_contents($time_api_url);
+
+        // Decode the JSON response
+        $time_data = json_decode($response, true);
+
+        // Extract the current time from the response
+        $current_time = $time_data['datetime'];
+        $datetime = new DateTime($current_time);
+
+
+        $result = "";
+        try {
+            $qty = 0;
+            if($input["type"]=="in"){
+                $qty = $qtyAwal+$input["qty"];
+            }else if($input["type"]=="out"){
+                $qty = $qtyAwal-$input["qty"];
+                
+            }
+
+            $data = [
+                'qty' => $qty,
+                'updated_by' => Auth::user()->email,
+                'updated_at' => $datetime
+            ];
+
+            $temp = $this->model->UpdateItem($input["id"],$data);
+            if($temp){
+                $result="sukses";
+            }else{
+                $result="gagal";
+                return;
+            }
+
+
+            $products=[];
+            $obj = [];
+            $obj["id_product"] = $input["id"];
+            if($input['type'] == "in"){
+                $obj['stock_in'] = $input['qty'];
+                $obj['status'] = "1";
+                $obj['desc'] = $input['desc'];
+                $obj['created_at'] = $datetime;
+                array_push($products, $obj);
+
+                $result = $this->stockController->insert($products,"0");
+            }else{
+                $obj['stock_out'] = $input['qty'];
+                $obj['status'] = "1";
+                $obj['desc'] =$input['desc'];
+                $obj['created_at'] = $datetime;
+                array_push($products, $obj);
+
+                $result = $this->stockController->insert($products,"0");
+            }
+
+            return $result;
+        } catch (\Throwable $th) {
+            $result="gagal";
+        }        
+
+        return $result;
+    }
+
     public function deleteItem(Request $request){
 
         $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';

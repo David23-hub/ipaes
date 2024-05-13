@@ -158,9 +158,9 @@
                 </select> 
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" hidden>
               <label for="qty_update">Stock *</label>
-              <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);">
+              <input type="qty_update" class="form-control" id="qty_update"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);" disabled>
             </div>
             <div class="form-group">
               <label for="qty_min_update">Stock Min (Untuk Peringatan di Dashboard) *</label>
@@ -210,6 +210,55 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" id="update_btn" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Update Stock-->
+<div class="modal fade" id="modalUpdateQty" tabindex="-1" role="dialog" aria-labelledby="modalUpdateTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Update Stock Form</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="formUpdate" role="form">
+        <div class="modal-body">
+            <input type="hidden" class="form-control" id="id_update_stck">
+            <div class="form-group">
+              
+            </div>
+            <label for="qty_update_stck">Stock <span id="name_stck_update"></span> *</label>
+            <div class="form-group" >
+              <div class="row">
+                <div class="col-4">
+                    <div id="dropunitupdate" name="dropunitupdate" class="form-group">
+                      <select class="form-select form-control" id="stock_update">
+                          <option value="in">In</option>
+                          <option value="out">Out</option>
+                      </select> 
+                  </div>
+                </div>
+                <div class="col-8">
+                  <input type="qty_update_stck" class="form-control" id="qty_update_stck"  placeholder="Masukkan Stock (Numeric Only)" oninput="addDotPrice(this);" >
+                </div>
+              </div>
+                
+            </div>
+            
+            <div class="form-group">
+              <label for="desc_update_stck">Description *</label>
+              <textarea type="desc_update_stck" class="form-control" id="desc_update_stck" rows="4"  placeholder="Masukkan Informasi"></textarea>
+            </div>
+            
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="update_btn_stck" class="btn btn-primary">Save changes</button>
       </div>
     </form>
     </div>
@@ -381,7 +430,7 @@
       document.getElementById('desc_add').value = '';
       document.getElementById('status_add').value = '0';
       document.getElementById('preview').src = '';
-      document.getElementById('image_add').value = '';
+    document.getElementById('image_add').value = '';
     }
 
     function getAllData(){
@@ -419,6 +468,7 @@
               stat,
               `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
               <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
+              <button class="btn btn-warning" onclick="getItemUpdateQty(`+item['id']+`)">Update Stock</button>
               <button class="btn btn-danger" onclick="deleteItem(`+item['id']+`)">Delete</button>`,
           ])
             dataTable.draw();
@@ -440,7 +490,6 @@
       status = $("#status_add").val()
       qty = $("#qty_add").val()
       qty_min = $("#qty_min_add").val()
-      
       // var fileInput = document.getElementById('image_add');
       // img = fileInput.files[0]
 
@@ -521,7 +570,7 @@
           $("#desc_detail").val(data.desc)
 
           $('#created_by_detail').val(FormatTimeStamp(data.created_by,data.created_at))
-          $('#updated_by_detail').val(FormatTimeStamp(data.updated_by,data.updated_at))
+$('#updated_by_detail').val(FormatTimeStamp(data.updated_by,data.updated_at))
           $('#modalDetail').modal("show")
         },
         error: function (result, status, err) {
@@ -629,6 +678,76 @@
           $.LoadingOverlay("hide")
         },
       });
+    });
+
+    function getItemUpdateQty(id){
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/getItem",
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        data: { "_token": "{{ csrf_token() }}","id":id},
+        success: function (data) {
+
+          path = "images/"+data.img
+
+          if(data.img!=""){
+            $('#preview_update').attr('src', path);
+          }else{
+            $('#preview_update').attr('src', "");
+
+          }
+
+          $('#id_update_stck').val(data.id)
+          $('#name_stck_update').text(data.name)
+
+          $('#modalUpdateQty').modal("show")
+        },
+        error: function (result, status, err) {
+        }
+      });
+    };
+
+    $('#update_btn_stck').on('click', function(e) {
+      qty = $("#qty_update_stck").val()
+      id = $("#id_update_stck").val()
+      
+      desc = $("#desc_update_stck").val()
+      type = $("#stock_update").val()
+      var fileInput = document.getElementById('image_update');
+
+      var formData = new FormData();
+      formData.append('_token', '{{ csrf_token() }}');
+      formData.append('qty', qty);
+      formData.append('desc', desc);
+      formData.append('type', type);
+      formData.append('id', id);
+      
+      
+      $.ajax({
+        type: "POST",
+        url: "{{url('/')}}"+"/updateItemQty",
+        data:formData,
+        processData: false,
+        contentType: false,
+        beforeSend: $.LoadingOverlay("show"),
+        afterSend:$.LoadingOverlay("hide"),
+        success: function (data) {
+          if(data=="sukses"){
+            getAllData()
+            $('#modalUpdateQty').modal("hide")
+            AlertSuccess()
+          }else{
+            AlertError()
+          }
+          
+        },
+        error: function (result, status, err) {
+          alert(err)
+          $.LoadingOverlay("hide")
+        },
+      });
+      
     });
 
     function deleteItem(id){

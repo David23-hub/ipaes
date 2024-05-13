@@ -138,7 +138,7 @@ class IncentiveReportController extends Controller
                         }
                     }
                 }
-
+                $tempPrice = $items[4];
 
                 if($i==count($carts)){
                     $product .= $items[0];
@@ -214,12 +214,17 @@ class IncentiveReportController extends Controller
             $data[$count]["total"]="IDR ".number_format($total,0,',','.');
             $data[$count]["stepPayment"]=($stepPayment);
             
-            if($value['status']!=3 && $value['status']!=5){
-                $incentiveIdr = 0;
-            }
+            // if($value['status']!=3 && $value['status']!=5){
+            //     $incentiveIdr = 0;
+            // }
             
             $data[$count]["incentiveIdr"]="IDR ".number_format($incentiveIdr,0,',','.');
-            $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            if($total!=0){
+                $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            }else{
+                $data[$count]["incentivePerc"] = "0%";
+            }
+            
             $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
             $count++;
         }
@@ -364,6 +369,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                 }
             }
 
+            $tempPrice = $items[4];
 
             if($i==count($carts)){
                 $product .= $items[0];
@@ -518,6 +524,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                 }
             }
 
+            $tempPrice = $items[4];
 
             if($i==count($carts)){
                 $product .= $items[0];
@@ -593,11 +600,15 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
         $data[$count]["revenue"]="IDR ".($total-$value["shipping_cost"]);
         $data[$count]["total"]="IDR ".number_format($total,0,',','.');
         $data[$count]["stepPayment"]=($stepPayment);
-        if($value['status']!=3 && $value['status']!=5){
-                $incentiveIdr = 0;
-            }
+        // if($value['status']!=3 && $value['status']!=5){
+        //         $incentiveIdr = 0;
+        //     }
         $data[$count]["incentiveIdr"]="IDR ".number_format($incentiveIdr,0,',','.');
-        $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+        if($total!=0){
+                $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            }else{
+                $data[$count]["incentivePerc"] = "0%";
+            }
         $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
         $count++;
     }

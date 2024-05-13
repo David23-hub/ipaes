@@ -55,7 +55,7 @@ class DashboardController extends Controller
         $this->salary = new SalaryModel;
         $this->textDashboard = "Pesanan <strong>#NAMA_DOKTER#</strong> TINGGAL <strong>#DUE_DATE#</strong> Hari lagi Sebelum Jatuh Tempo!";
         $this->textWA = "Halo *#NAMA_DOKTER#*,%0A%0ASaat ini, anda memiliki tagihan yang belum dibayar. Masa Tenggak Waktu anda selama *#DUE_DATE#* hari lagi.%0ADimohon untuk melakukan pelunasan segera.%0ABerikut untuk link invoice: #NO_INVOICE#%0A%0ATerima kasih, salam hormat%0A*IPAES*.";
-        $this->urlBase = "https::/intipersada.id/generate-pdf-all/";
+        $this->urlBase = "https://intipersada.id/generate-pdf-all/";
         }
 
         private function encryptUrl(string $url) {
@@ -119,11 +119,12 @@ class DashboardController extends Controller
             12 => 0
         ];
         $result['mapReminder'] = [];
+
+        //untuk reminder
         foreach ($data as $value) {
             if($value->status==3 || $value->status==5 || $value->status==4){
                 continue;
             }
-
 
             $temp = [];
             if(Auth::user()->role=="marketing" && $value->management_order==0 && $value->created_by == Auth::user()->email){
@@ -167,7 +168,7 @@ class DashboardController extends Controller
         }
         $result['mapReminder'] =  $mapReminderPO;
 
-
+        //without total sales di dashboard
         if ($user['role'] == "admin" || $user['role'] == "finance") {
             $doctorAll = $this->doctorModel->GetListDoctorAndDate();
             $dataTransaction = $this->cart->GetListJoinDoctorDashboard($formattedDateStart, $formattedDateEnd);
@@ -256,6 +257,7 @@ class DashboardController extends Controller
         $otherCost = $this->otherCost->GetAllByRange($formattedDateStart, $formattedDateEnd);
         $salaryAll = $this->salary->GetListFilter($formattedSalary);
 
+        //ultah dokter
         foreach ($doctorAll as $value) {
             $dateDoctor = new DateTime($value['dob']);  
             $currentDate = new DateTime();
@@ -301,19 +303,20 @@ class DashboardController extends Controller
         }
 
 
-
+        //total other cost
         foreach ($otherCost as $valueOtherCost) {
             $totalOtherCost += $valueOtherCost['price'];
         }
 
+        //total salary
         foreach ($salaryAll as $valueSalary) {
-            # code...
             $totalSalary += $valueSalary['price'];
         }
 
-        // data product
+        // data table total sales, incentive, dll
         if(count($data) > 0) {
             foreach ($data as $value) {
+                $tempIncen = 0;
                 
                 if($value['status'] == 4) {
                     continue;
@@ -322,6 +325,7 @@ class DashboardController extends Controller
                 if($user['role'] == "marketing") {
                     array_push($mapMarketingStock, $value['id']);
                 }
+
                 // $i=0;
                 $totalPerorang = 0;
                 $carts = explode(",", $value->cart);
@@ -331,6 +335,7 @@ class DashboardController extends Controller
                     // $tempPrice="";
                     $tempTotal = 0;
                     $tempCommisionRate = 0;
+
                     $tempPrice = (int)$items[4];
                     if($items[1]=="product"){
                         foreach ($products as $valueProd) {
@@ -359,25 +364,29 @@ class DashboardController extends Controller
                         $total += $tempTotal;
                         $totalPerorang += $tempTotal;
                     }
-
                     
-                    if($value['status']==3||$value['status']==5){
-                        $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
-                    }
-                    
+                    $incentiveIdr += ($tempTotal * ($tempCommisionRate/100));
+                    $tempIncen += ($tempTotal * ($tempCommisionRate/100));
                 }
+                
+                
 
                 $month = date("n", strtotime($value['created_at']));
     
-                $mapTotalPerMonth[$month] += $totalPerorang;
                 //loop for extra charge
                 $extras = $this->extra_charge->GetList($value["id"]);
+                $tempExtra = 0;
                 foreach ($extras as $extraValue) {
                     $extraVal += $extraValue["price"];
+                    $tempExtra += $extraValue["price"];
                 }
     
+                $tempShip = 0;
                 if($value['shipping_cost']) {
+                    $total += $value['shipping_cost'];
+                    $totalPerorang += $value['shipping_cost'];
                     $totalShippingCost+= $value['shipping_cost'];
+                    $tempShip += $value['shipping_cost'];
                 }
     
                 if($value['status'] == 5 || $value['status'] == 3) {
@@ -386,6 +395,9 @@ class DashboardController extends Controller
                         $totalPaid += array_sum($paidArray);
                     }
                 }
+
+
+                $mapTotalPerMonth[$month] += $totalPerorang + $tempExtra - $tempShip - $tempIncen;
             }
         }
 
@@ -451,21 +463,40 @@ class DashboardController extends Controller
                 $countSent = 0;
                 $countPaid = 0;
                 if($valueCarousel['status'] == 3) {
+                    $totalpoIdr = $totalPerorang;
                     $totalpaidItem = $valueCarousel['nominal'];
+                    $countPo++;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 5) {
                     $paidArray = explode('|', $valueCarousel['nominal']);
                     $totalpaidItem = array_sum($paidArray);
+                      $totalpoIdr = $totalpaidItem;
+                    $countPo++;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 0) {
                     $totalpoIdr = $totalPerorang;
                     $countPo++;
                 } else if($valueCarousel['status'] == 2) {
-                    $totalsentIdr = $totalPerorang;
+                    $totalpoIdr = $totalPerorang;
+                    $totalsentIdr = $totalPerorang; 
+                    $countPo++;
                     $countSent++;
                 } else if($valueCarousel['status'] == 1) {
                     $totalpoIdr = $totalPerorang;
                     $countPo++;
+                }
+
+                $month = date("n", strtotime($valueCarousel['created_at']));
+    
+                //loop for extra charge
+                $extras = $this->extra_charge->GetList($valueCarousel["id"]);
+                $tempExtra = 0;
+                foreach ($extras as $extraValue) {
+                    $totalpoIdr += $extraValue["price"];
+                }
+    
+                if($valueCarousel['shipping_cost']) {
+                    $totalpoIdr += $valueCarousel['shipping_cost'];
                 }
                 
                 if(!isset($mapUser[$valueCarousel['created_by']])) {
@@ -548,6 +579,7 @@ class DashboardController extends Controller
             }
         }
 
+        //untuk list product di samping kanan
         if($user['role'] == "marketing") {
             foreach ($stockAll as $valueStock) {
                 $stockIn += $valueStock['stock_in'];
@@ -592,7 +624,7 @@ class DashboardController extends Controller
             }
         }
 
-
+        //alert stock
         foreach ($products as $valueProduct) {
             if(isset($mapProduct[$valueProduct['id']])) {
                 $mapProduct[$valueProduct['id']]['name'] = $valueProduct['name'];
@@ -612,13 +644,15 @@ class DashboardController extends Controller
 
         // Log::info("other total paid", [$totalPaid]);
 
-        $result['total_insentive'] = number_format(ceil($incentiveIdr),0,',','.');
+        $result['total_insentive'] = number_format($incentiveIdr,0,',','.');
         // $result['insentivePerc'] = round(($incentiveIdr*100)/$total,2);
         $totalSales = ceil($total) + ceil($extraVal);
         $result['total_sales'] = number_format($totalSales,0,',','.');
         $result['total_shipping'] = number_format($totalShippingCost,0,',','.');
         $result['total_other_cost'] = number_format($totalOtherCost,0,',','.');
-        $totalRevenue = $totalSales - ceil($totalShippingCost);
+
+        $totalRevenue = $totalSales - $totalShippingCost - ceil($incentiveIdr) - $totalSalary - $totalOtherCost;
+
         $result['total_revenue'] = number_format($totalRevenue,0,',','.');
         $result['total_paid'] = number_format($totalPaid,0,',','.');
         $result['total_po'] = count($data);
@@ -864,25 +898,27 @@ class DashboardController extends Controller
                         $total += $tempTotal;
                         $totalPerorang += $tempTotal;
                     }
-
                     
-    
-                    if($value['status']==3||$value['status']==5){
-                        $incentiveIdr += ($tempTotal * $tempCommisionRate)/100;
-                    }
+                    $incentiveIdr += ($tempTotal * ($tempCommisionRate/100));
+                    $tempIncen += ($tempTotal * ($tempCommisionRate/100));
                 }
-
+                $total += $value['shipping_cost'];
                 $month = date("n", strtotime($value['created_at']));
     
-                $mapTotalPerMonth[$month] += $totalPerorang;
                 //loop for extra charge
                 $extras = $this->extra_charge->GetList($value["id"]);
+                $tempExtra = 0;
                 foreach ($extras as $extraValue) {
                     $extraVal += $extraValue["price"];
+                    $tempExtra += $extraValue["price"];
                 }
     
+                $tempShip = 0;
                 if($value['shipping_cost']) {
+                    $total += $value['shipping_cost'];
+                    $totalPerorang += $value['shipping_cost'];
                     $totalShippingCost+= $value['shipping_cost'];
+                    $tempShip += $value['shipping_cost'];
                 }
     
                 if($value['status'] == 5 || $value['status'] == 3) {
@@ -897,6 +933,7 @@ class DashboardController extends Controller
                 }
 
 
+                $mapTotalPerMonth[$month] += $totalPerorang + $tempExtra - $tempShip - $tempIncen;
     
             }
         }
@@ -956,24 +993,42 @@ class DashboardController extends Controller
                 $countSent = 0;
                 $countPaid = 0;
                 if($valueCarousel['status'] == 3) {
+                    $totalpoIdr = $totalPerorang;
                     $totalpaidItem = $valueCarousel['nominal'];
-                    // $totalPaid += $valueCarousel['nominal'];
+                    $countPo++;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 5) {
                     $paidArray = explode('|', $valueCarousel['nominal']);
                     $totalpaidItem = array_sum($paidArray);
-                    // $totalPaid += $totalpaidItem;
+                    $totalpoIdr = $totalpaidItem;
+                    $countPo++;
                     $countPaid++;
                 } else if($valueCarousel['status'] == 0) {
                     $totalpoIdr = $totalPerorang;
                     $countPo++;
                 } else if($valueCarousel['status'] == 2) {
-                    $totalsentIdr = $totalPerorang;
+                    $totalpoIdr = $totalPerorang;
+                    $totalsentIdr = $totalPerorang; 
+                    $countPo++;
                     $countSent++;
                 } else if($valueCarousel['status'] == 1) {
                     $totalpoIdr = $totalPerorang;
                     $countPo++;
                 }
+
+                 $month = date("n", strtotime($valueCarousel['created_at']));
+    
+                //loop for extra charge
+                $extras = $this->extra_charge->GetList($valueCarousel["id"]);
+                $tempExtra = 0;
+                foreach ($extras as $extraValue) {
+                    $totalpoIdr += $extraValue["price"];
+                }
+    
+                if($valueCarousel['shipping_cost']) {
+                    $totalpoIdr += $value['shipping_cost'];
+                }
+
                 if(!isset($mapUser[$valueCarousel['created_by']])) {
                     $mapUser[$valueCarousel['created_by']] = [
                         'revenue' => $revenuePerorang,

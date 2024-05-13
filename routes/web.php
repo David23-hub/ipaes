@@ -36,6 +36,7 @@ Route::post('/getItems', [App\Http\Controllers\ItemController::class, 'getAll'])
 Route::post('/addItem', [App\Http\Controllers\ItemController::class, 'addItem'])->name('addItem')->middleware('auth');
 Route::post('/getItem', [App\Http\Controllers\ItemController::class, 'getItem'])->name('getItem')->middleware('auth');
 Route::post('/updateItem', [App\Http\Controllers\ItemController::class, 'updateItem'])->name('updateItem')->middleware('auth');
+Route::post('/updateItemQty', [App\Http\Controllers\ItemController::class, 'updateItemQty'])->name('updateItemQty')->middleware('auth');
 Route::post('/deleteItem', [App\Http\Controllers\ItemController::class, 'deleteItem'])->name('deleteItem')->middleware('auth');
 
 // ekspedisi

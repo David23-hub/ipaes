@@ -168,10 +168,11 @@ class SalesReportController extends Controller
             }
 
             //loop for payment step
-            if(strlen($value->paid_at)>0 && $value->paid_at[strlen($value->paid_at)-1]=="|"){
-                $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
-            }
+            
             if($value->paid_at != ""){
+                if(strlen($value->paid_at)>0 && $value->paid_at[strlen($value->paid_at)-1]=="|"){
+                    $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
+                }
                 $payments = explode("|", $value->paid_at);
             }else{
                 $payments = [];
@@ -211,7 +212,11 @@ class SalesReportController extends Controller
             $data[$count]["total"]="IDR ".number_format($total,0,',','.');
             $data[$count]["stepPayment"]=($stepPayment);
             $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
-            $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            if($total!=0){
+                $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            }else{
+                $data[$count]["incentivePerc"] = "0%";
+            }
             $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
             $count++;
         }
@@ -392,10 +397,11 @@ class SalesReportController extends Controller
             }
 
             //loop for payment step
-            if($value->paid_at[strlen($value->paid_at)-1]=="|"){
-                $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
-            }
+            
             if($value->paid_at != ""){
+                if($value->paid_at[strlen($value->paid_at)-1]=="|"){
+                    $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
+                }
                 $payments = explode("|", $value->paid_at);
             }else{
                 $payments = [];
@@ -436,7 +442,11 @@ class SalesReportController extends Controller
             $data[$count]["total"]="IDR ".number_format($total,0,',','.');
             $data[$count]["stepPayment"]=($stepPayment);
             $data[$count]["incentiveIdr"]="IDR ".($incentiveIdr);
-            $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            if($total!=0){
+                $data[$count]["incentivePerc"]=round(($incentiveIdr*100)/$total,2).' %';
+            }else{
+                $data[$count]["incentivePerc"] = "0%";
+            }
             $value['status'] = $this->getStatus($value['status'],$total,$stepPaymentNominal);
 
             $count++;

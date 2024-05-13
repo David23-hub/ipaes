@@ -15,7 +15,7 @@
                 <h5>{{ $data['inv_no'] }}</h5>
                 <h5>{{ $data['created_at'] }}</h5>
             </td>
-            <td  style="width:55%;text-align: start">
+            <td  style="width:55%;padding-right:10px;text-align: start">
                 <h5>{{ $data['dokter']['name'] }}</h5>
                 <h5>{{ $data['dokter']['no_hp'] }}</h5>
                 <h5>{{ $data['dokter']['clinic'] }}</h5>
@@ -59,10 +59,8 @@
                 </tr>
             @endforeach
         </table>
-    </div>
-
-    @if (count($data['extra_charge']) > 0)
-        <div class="margin-top">
+        @if (count($data['extra_charge']) > 0)
+        <div>
             <h4>Extra Charge</h4>
             <table class="products">
                 <tr>
@@ -86,24 +84,30 @@
             </table>
         </div>
     @endif
+    </div>
+
+   
     <div class="total">
         Grand Total: IDR {{ $data['total'] }}
     </div>
-    <div class="total-paid">
-        Paid: IDR {{ $data['total_paid'] }}
-    </div>
-    <div class="total-paid" style="margin-bottom:20px">
-        Debt: IDR {{ $data['total_paid_sum'] }}
-    </div>
+    <br>
+    <br>
+    <!--<div class="total-paid">-->
+    <!--    Paid: IDR {{ $data['total_paid'] }}-->
+    <!--</div>-->
+    <!--<div class="total-paid" style="margin-bottom:20px">-->
+    <!--    Debt: IDR {{ $data['total_paid_sum'] }}-->
+    <!--</div>-->
     
     <table>
         <tr>
             <td class="w-half-bottom-left">
                 <div>
-                    <p style="margin-bottom:-10px">HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
-                    <p style="margin-bottom:-10px">BCA 2880517131 an Maggie Princilla Chandra / MANDIRI 1650003428944 an Maggie Princilla Chandra</p>
-                    <p style="margin-bottom:-10px">intipersada.aes@gmail.com</p>
-                    <p style="margin-bottom:-10px">(*) Harap cantumkan nomor invoice saat pembayaran</p>
+                    <p class="info">HARAP MELAKUKAN PEMBAYARAN MELALUI:</p>
+                    <p class="info">BCA 2880517131 an Maggie Princilla Chandra</p>
+                    <p class="info">MANDIRI 1650003428944 an Maggie Princilla Chandra</p>
+                    <p class="info">intipersada.aes@gmail.com</p>
+                    <p class="info">(*) Harap cantumkan nomor invoice saat pembayaran</p>
                 </div>
             </td>
             <td class="w-half-bottom-right">
@@ -115,6 +119,11 @@
 </body>
 
 <style>
+.info{
+    margin-bottom:-15px;
+    font-size:15px;
+}
+
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
 }
@@ -128,6 +137,7 @@ span{
 
 .w-full {
     width: 100%;
+    margin-top:-20px;
 }
 .w-quarter {
     width: 25%;
@@ -152,6 +162,7 @@ span{
 
 .margin-top {
     margin-top: 10px;
+    min-height:210px;
 }
 .footer {
     font-size: 0.875rem;
