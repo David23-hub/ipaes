@@ -30,6 +30,7 @@ class CartModel extends Model
         ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp','users.name as created_by')
         ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
         ->where('cart.deleted_by',null)
+        ->orderBy('cart.created_at', 'desc')
         ->get();
     }
 
@@ -138,6 +139,7 @@ class CartModel extends Model
             ->whereIn('cart.created_by', $listUser)
             ->where('cart.deleted_by',null)
             ->orderBy('cart.created_by', 'desc')
+            ->orderBy('cart.created_at', 'desc')
             ->get();
         }else if($listUser=="all"){
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
@@ -146,6 +148,7 @@ class CartModel extends Model
             ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
             ->where('cart.deleted_by',null)
             ->orderBy('cart.created_by', 'desc')
+            ->orderBy('cart.created_at', 'desc')
             ->get();
         }
     }
@@ -162,7 +165,8 @@ class CartModel extends Model
             ->get();
         }else if($roleUser=="superuser" || $roleUser == "admin" || $roleUser=="finance"){
             return $this->join('dokter', 'cart.doctor_id', '=', 'dokter.id')
-            ->select('cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
+            ->join('users', 'cart.created_by', '=', DB::raw('users.email collate utf8mb4_unicode_ci'))
+            ->select('users.role as role','cart.*', 'dokter.name as doctor_name', 'dokter.clinic as clinic', 'dokter.address as address', 'dokter.billing_no_hp as billing_no_hp', 'dokter.no_hp as no_hp')
             ->whereBetween(DB::raw('DATE(cart.created_at)'),[$start,$end])
             ->where('cart.deleted_by',null)
             ->orderBy('cart.created_by', 'desc')

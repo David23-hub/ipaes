@@ -304,6 +304,7 @@ class DashboardController extends Controller
         }
 
         $dataCarousel = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,'superuser', $user['email']);
+        
         $userAll = $this->user->GetUserAll();
         $stockAll = $this->stock->GetList($formattedDateStart,$formattedDateEnd,"all");
         // if($user['role'] == "marketing") {
@@ -470,7 +471,8 @@ class DashboardController extends Controller
         if(count($dataCarousel) > 0) {
 
             foreach ($dataCarousel as $valueCarousel) {
-                if($valueCarousel['status'] == 4) {
+                // dd($valueCarousel["role"]);
+                if($valueCarousel['status'] == 4 || $valueCarousel["role"]=="superuser") {
                     continue;
                 }
                 // $i=0;
@@ -1038,7 +1040,7 @@ class DashboardController extends Controller
         if(count($dataCarousel) > 0) {
 
             foreach ($dataCarousel as $valueCarousel) {
-                if($valueCarousel['status'] == 4) {
+                if($valueCarousel['status'] == 4 || $valueCarousel["role"]=="superuser") {
                     continue;
                 }
                 // $i=0;

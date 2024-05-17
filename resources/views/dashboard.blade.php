@@ -384,7 +384,6 @@
               <div class="card">
                 <div class="card-body px-4 py-4-0">
                   <div>
-                    #{{ $count++ }}
                     @if ($item['img'])
                     <div class=" d-flex justify-content-center card-profile-picture">
                         <img src="images/{{ $item['img'] }}" class="rounded-image img-fluid custom-img">
@@ -752,7 +751,6 @@ window.addEventListener('resize', function() {
           <div class="card">
             <div class="card-body px-4 py-4-0">
               <div>
-                ${count}
                 <div class=" d-flex justify-content-center card-profile-picture">
                   ${imgHtml}
                 </div>
@@ -905,4 +903,4 @@ window.addEventListener('resize', function() {
     
 </script>
     
-  @endpush
+@endpush
