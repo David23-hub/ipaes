@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CartModel;
 use App\Models\ItemModel;
+use App\Models\PackageModel;
 use App\Models\StockModel;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -13,7 +15,9 @@ class StockController extends Controller
 {
     private $model;
 
+    private $cart;
     private $item;
+    private $bundle;
     public function __construct()
     {
         $this->middleware('auth');
@@ -28,8 +32,10 @@ class StockController extends Controller
 
           
         $this->model = new StockModel;
+        $this->cart = new CartModel;
         $this->item = new ItemModel;
-    }
+        $this->bundle = new PackageModel;
+        }
 
     public function index()
     {
@@ -78,25 +84,60 @@ class StockController extends Controller
     public function cancelPO(string $id){
         $products = [];
         try {
-            $datas = $this->model->GetItems($id,1);
+            $carts = $this->cart->GetItemWithoutEmail($id);
+            $datas = [];
+
+            $cart = explode(",",$carts[0]["cart"]);
+            $po_id = $carts[0]['po_id'];
+
+            foreach ($cart as $value) {
+                $temp = explode("|",$value);
+                
+                if($temp[1]=="product"){
+                    $obj = [];
+                    $obj["id_product"] = $temp[0];
+                    $obj['stock_in'] = $temp[2];
+                    $obj['cart_id'] = $id;
+                    $obj['desc'] = "CANCEL ORDER Dari Pesanan PO ".$po_id;
+                    $obj['status'] = "0";
+                    $obj['created_at'] = date('Y-m-d H:i:s');
+                    array_push($datas, $obj);
+                }else if($temp[1]=="paket"){
+                    $listProd = $this->bundle->GetItem($temp[0]);
+                    
+                    $tempProd = explode(",",$listProd[0]["product"]);
+                    foreach ($tempProd as $valuePackage) {
+                        $temp = explode("|",$valuePackage);
+                        $obj = [];
+                        $obj["id_product"] = $temp[1];
+                        $obj['stock_in'] = $temp[0];
+                        $obj['cart_id'] = $id;
+                        $obj['desc'] = "CANCEL ORDER Dari Pesanan PO ".$po_id;
+                        $obj['status'] = "0";
+                        $obj['created_at'] = date('Y-m-d H:i:s');
+                        array_push($datas, $obj);
+                    }
+                }
+            }
+
+
+            // $datas = $this->model->GetItems($id,1);
 
             if(count($datas)==0){
                 return "Data Tidak Ditemukan didalam Stock";
             }
 
-
             foreach ($datas as $value) {
                 $obj = [];
-                $obj["id_product"] = $value->id_product;
-                $obj['stock_in'] = $value->stock_out;
-                $obj['cart_id'] = $value->cart_id;
-                $obj['desc'] = "CANCEL ORDER ".$value->desc;
+                $obj["id_product"] = $value['id_product'];
+                $obj['stock_in'] = $value['stock_in'];
+                $obj['cart_id'] = $value['cart_id'];
+                $obj['desc'] = "CANCEL ORDER ".$value['desc'];
                 $obj['status'] = "0";
                 $obj['created_at'] = date('Y-m-d H:i:s');
                 array_push($products, $obj);
             }
             
-
             $temp = $this->model->AddItems($products);
 
             if(!$temp){
@@ -108,7 +149,7 @@ class StockController extends Controller
             foreach ($datas as $value) {
                 $res = 0;
 
-                $res = $this->item->UpdateQtyStockPlus($value['id_product'],($value["stock_out"]));
+                $res = $this->item->UpdateQtyStockPlus($value['id_product'],($value["stock_in"]));
 
                 if ($res != 1){
                     $result .= $value["product_id"].", ";
@@ -123,6 +164,7 @@ class StockController extends Controller
 
 
         } catch (\Throwable $th) {
+            dd($th);
             return "Gagal mengurangi stock! Tolong di cek lagi bagian stock!";
         }
     }

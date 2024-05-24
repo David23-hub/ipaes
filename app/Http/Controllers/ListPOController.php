@@ -824,6 +824,7 @@ class ListPOController extends Controller
               // kalo qty yang dimasukin itu 0, maka tambahin stock dan tambahin report stock
               $products=[];
               $obj = [];
+              $obj["cart_id"] = $input['data']['id'];
               $obj["id_product"] = $inTemp[0];
               $obj['stock_in'] = $valueAwal['qty'];
               $obj['desc'] = "Penambahan Produk Saat Perubahan Produk Pada Transaksi PO ".$input['data']['po_id'];
@@ -835,6 +836,7 @@ class ListPOController extends Controller
               // kurangin stock dan tambahin reporting stock
               $products=[];
               $obj = [];
+              $obj["cart_id"] = $input['data']['id'];
               $obj["id_product"] = $inTemp[0];
               $obj['stock_out'] = $inTemp[2]-$valueAwal['qty'];
               $obj['desc'] = "Pengurangan Produk Saat Perubahan Produk Pada Transaksi PO ".$input['data']['po_id'];
@@ -847,6 +849,7 @@ class ListPOController extends Controller
               //tambahin stock dan tambahin reporting stock
               $products=[];
               $obj = [];
+              $obj["cart_id"] = $input['data']['id'];
               $obj["id_product"] = $inTemp[0];
               $obj['stock_in'] = $valueAwal['qty']-$inTemp[2];
               $obj['desc'] = "Penambahan Produk Saat Perubahan Produk Pada Transaksi PO ".$input['data']['po_id'];
@@ -866,6 +869,7 @@ class ListPOController extends Controller
         }catch(\Throwable $th) {
             Log::error("error di throwable");
             Log::error($th);
+            dd($th);
             return "gagal";
         }
     }
