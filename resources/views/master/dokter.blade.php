@@ -9,9 +9,11 @@
 @section('content')
     <div class="card">
       <div class="card-header">
+          @if (auth()->user()->role != 'manager')
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modaladd">
           ADD Dokter
         </button>
+        @endif
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -259,6 +261,7 @@
     }
 
     function getAllData(){
+        
       $.ajax({
       type: "POST",
       url: "{{url('/')}}"+"/getDokters",
@@ -301,7 +304,7 @@
 
     $('#add_btn').on('click', function(e) {
       name = $("#nama_add").val()
-      name = name.replace("  ", " ")
+      name = name.trim().split(/[\s,\t,\n]+/).join(' ');
       status = $("#status_add").val()
       address = $("#alamat_add").val()
       clinic = $("#clinic_add").val()
@@ -401,7 +404,7 @@
 
     $('#update_btn').on('click', function(e) {
       name = $("#nama_update").val()
-      name = name.replace("  ", " ")
+      name = name.trim().split(/[\s,\t,\n]+/).join(' ');
       status = $("#status_update").val()
       id = $("#id_update").val()
 

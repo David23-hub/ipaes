@@ -54,7 +54,7 @@ class DashboardController extends Controller
         $this->otherCost = new OtherCostModel;
         $this->salary = new SalaryModel;
         $this->textDashboard = "Pesanan <strong>#NAMA_DOKTER#</strong> TINGGAL <strong>#DUE_DATE#</strong> Hari lagi Sebelum Jatuh Tempo!";
-        $this->textWA = "Halo *#NAMA_DOKTER#*,%0A%0ASaat ini, anda memiliki tagihan yang belum dibayar. Masa Tenggak Waktu anda selama *#DUE_DATE#* hari lagi.%0ADimohon untuk melakukan pelunasan segera.%0ABerikut untuk link invoice: #NO_INVOICE#%0A%0ATerima kasih, salam hormat%0A*IPAES*.";
+        $this->textWA = "*PT Inti Persada Aesthetic*%0A%0AINVOICE - *#NO_INVOICE#*%0A%0ATanggal PO : *#PO_DATE#*%0AJatuh tempo : *#DUE_DATE#*%0AKepada :*#NAMA_DOKTER#*%0ATerima kasih atas kepercayaan Dokter kepada kami.%0A%0AUntuk detailnya dapat dilihat di link dibawah ini: #LINK_INVOICE#%0A%0AHarap melakukan pembayaran sesuai jatuh tempo atau sebelumnya dengan cara transfer hanya ke rekening:%0A%0ABCA 2880517131 an Maggie Princilla Chandra%0A%0A(Harap cantumkan nomor invoice pada berita transfer)%0A%0ATerima kasih.%0A%0AHormat kami,%0AFinance";
         $this->urlBase = "https://intipersada.id/generate-pdf-all/";
         }
 
@@ -193,10 +193,12 @@ class DashboardController extends Controller
 
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
-                    $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $link = str_replace("#DUE_DATE#", $value['due_date'], $link);
+                    $link = str_replace("#PO_DATE#", $value['created_at'], $link);
+                    $link = str_replace("#NO_INVOICE#", $value['inv_no'], $link);
                     
                     $url = $this->urlBase . $this->encryptUrl($value['id']);
-                    $link = str_replace("#NO_INVOICE#", $url, $link);
+                    $link = str_replace("#LINK_INVOICE#", $url, $link);
 
                     $temp['text'] = $text;
                     $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 0, strlen($value['billing_no_hp'])-1)."/?text=".$link;
@@ -212,9 +214,13 @@ class DashboardController extends Controller
 
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
-                    $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $link = str_replace("#DUE_DATE#", $value['due_date'], $link);
+                    $link = str_replace("#PO_DATE#", $value['created_at'], $link);
+                    $link = str_replace("#NO_INVOICE#", $value['inv_no'], $link);
+
+                     
                     $url = $this->urlBase . $this->encryptUrl($value['id']);
-                    $link = str_replace("#NO_INVOICE#", $url, $link);
+                    $link = str_replace("#LINK_INVOICE#", $url, $link);
 
                     $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 1, strlen($value['billing_no_hp']))."/?text=".$link;
 
@@ -844,9 +850,12 @@ class DashboardController extends Controller
 
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
-                    $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $link = str_replace("#DUE_DATE#", $value['due_date'], $link);
+                    $link = str_replace("#PO_DATE#", $value['created_at'], $link);
+                    $link = str_replace("#NO_INVOICE#", $value['inv_no'], $link);
+                    
                     $url = $this->urlBase . $this->encryptUrl($value['id']);
-                    $link = str_replace("#NO_INVOICE#", $url, $link);
+                    $link = str_replace("#LINK_INVOICE#", $url, $link);
 
 
                     $temp['text'] = $text;
@@ -863,9 +872,13 @@ class DashboardController extends Controller
 
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
-                    $link = str_replace("#DUE_DATE#", $reminder, $link);
+                    $link = str_replace("#DUE_DATE#", $value['due_date'], $link);
+                    $link = str_replace("#PO_DATE#", $value['created_at'], $link);
+                    $link = str_replace("#NO_INVOICE#", $value['inv_no'], $link);
+
+                     
                     $url = $this->urlBase . $this->encryptUrl($value['id']);
-                    $link = str_replace("#NO_INVOICE#", $url, $link);
+                    $link = str_replace("#LINK_INVOICE#", $url, $link);
 
                     $temp['link'] = "https://wa.me/62".substr($value['billing_no_hp'], 1, strlen($value['billing_no_hp']))."/?text=".$link;
 

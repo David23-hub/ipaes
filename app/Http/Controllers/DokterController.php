@@ -43,7 +43,10 @@ class DokterController extends Controller
                 <button class="btn btn-info" onclick="getItem(' . $value['id'] . ')">Detail</button>
                 <button class="btn btn-primary" onclick="getItemUpdate(' . $value['id'] . ')">Update</button>
                 <button class="btn btn-danger" onclick="deleteItem(' . $value['id'] . ')">Delete</button>';
-            } else  {
+            }else if(Auth::user()->role=="manager"){
+                $data[$key]['btn'] = '
+                <button class="btn btn-info" onclick="getItem(' . $value['id'] . ')">Detail</button>';
+            }else  {
                 $data[$key]['btn'] = 'Cannot Do Action';
             }
         }

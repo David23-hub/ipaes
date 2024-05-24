@@ -20,7 +20,7 @@ class ItemController extends Controller
         
         $this->middleware(function ($request, $next) {
             $role = auth()->user()->role;
-            if($role!="superuser"&&$role!="admin" && $request->route()->getName() != "getItem"){
+            if($role!="superuser"&&$role!="admin" && $role!="manager" && $request->route()->getName() != "getItem"){
                     abort(403, 'Unauthorized access');
                 }
             return $next($request);
@@ -34,21 +34,27 @@ class ItemController extends Controller
 
     public function index()
     {
-
-        // $data = $this->model->GetList();
-
         $data = $this->modelCategoryProduct->GetListActive();
+    
         
         return view('master.item')->with('data', $data);
-        // return view('items.list',$data);
     }
-
+    
     public function getAll(Request $request){
         $result = $this->model->GetList();
         foreach ($result as $key => $value) {
             $result[$key]["price"] = number_format( $result[$key]["price"],0,',','.');
             $result[$key]["qty"] = number_format( $result[$key]["qty"],0,',','.');
             $result[$key]["qty_min"] = number_format( $result[$key]["qty_min"],0,',','.');
+
+            if(auth()->user()->role=="manager"){
+                $result[$key]['btn'] = '<button class="btn btn-info" onclick="getItem('. $value['id'] . ')">Detail</button>';
+                
+            }else{
+                $result[$key]['btn'] = '<button class="btn btn-info" onclick="getItem(' . $value['id'] . ')">Detail</button><button class="btn btn-primary" onclick="getItemUpdate(' . $value['id'] . ')">Update</button><button class="btn btn-warning" onclick="getItemUpdateQty(' . $value['id'] . ')">Update Stock</button><button class="btn btn-danger" onclick="deleteItem(' . $value['id'] . ')">Delete</button>';
+                
+            }
+
         }
         return $result;
     }

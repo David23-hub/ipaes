@@ -9,9 +9,11 @@
 @section('content')
     <div class="card">
       <div class="card-header">
+          @if (auth()->user()->role != 'manager')
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modaladd">
           ADD Product
         </button>
+        @endif
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -22,7 +24,7 @@
                   <th>Image</th>
                   <th>Nama</th>
                   <th>Stock</th>
-                  <th>Stock Minimum</th>
+                  <th>Stock Minimum</coth>
                   <th>Price</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -390,7 +392,7 @@
         var reader = new FileReader();
         reader.onload = function(){
             var output = document.getElementById('preview_update');
-            console.log(reader.result)
+            
             output.src = reader.result;
             output.style.display = 'block'; // Show the image preview
         }
@@ -457,6 +459,8 @@
           }else{
             img = `<img style="width: 50px; height: 50px; border: 1px solid #ccc; background-color: #AFACAC; display:block; margin:auto;">`
           }
+         
+        
 
           dataTable.row.add([
               no,
@@ -466,10 +470,7 @@
               item['qty_min'] +" "+ item['unit'],
               "Rp "+item['price'],
               stat,
-              `<button class="btn btn-info" onclick="getItem(`+item['id']+`)">Detail</button>
-              <button class="btn btn-primary" onclick="getItemUpdate(`+item['id']+`)">Update</button>
-              <button class="btn btn-warning" onclick="getItemUpdateQty(`+item['id']+`)">Update Stock</button>
-              <button class="btn btn-danger" onclick="deleteItem(`+item['id']+`)">Delete</button>`,
+              item['btn'],
           ])
             dataTable.draw();
         }

@@ -254,6 +254,11 @@ class AppServiceProvider extends ServiceProvider
                     'icon'    => 'fas fa-fw fa-share',
                     'submenu' => [
                         [
+                            'text' => "Product",
+                            'icon_color' => 'red',
+                            'url' => "listItem",
+                        ],
+                        [
                             'text' => "Dokter",
                             'icon_color' => 'red',
                             'url' => "listDokter",
