@@ -86,7 +86,9 @@ class DashboardController extends Controller
         
         $formattedSalary = "all";
         
+        
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
+        $reminders = $this->cart->GETLISTREMINDER($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
         Log::info("data", [
             "list cart" => $data
         ]);
@@ -184,11 +186,11 @@ class DashboardController extends Controller
         $result['mapReminder'] = [];
 
         //untuk reminder
-        foreach ($data as $value) {
+        foreach ($reminders as $value) {
             if($value->status==3 || $value->status==5 || $value->status==4){
                 continue;
             }
-
+            
             $temp = [];
             if(Auth::user()->role=="marketing" && $value->management_order==0 && $value->created_by == Auth::user()->email){
                 $reminder = $this->getDayAgo($value['due_date']);
@@ -242,6 +244,7 @@ class DashboardController extends Controller
                 }
             }else if (Auth::user()->role!="marketing"){
                 $reminder = $this->getDayAgo($value['due_date']);
+                
                 if ($reminder!=""){
                     $totalInv = 0;
                     $string = "";
@@ -292,6 +295,7 @@ class DashboardController extends Controller
             }
         }
         $result['mapReminder'] =  $mapReminderPO;
+        
 
         //without total sales di dashboard
         if ($user['role'] == "admin" || $user['role'] == "finance") {
@@ -831,6 +835,7 @@ class DashboardController extends Controller
             $formattedSalaryDate = date("Y F", $startDate);
         }
         $data = $this->cart->GetListJoinDoctorAndDateWithUserAndManagementOrder($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
+        $reminders = $this->cart->GETLISTREMINDER($formattedDateStart,$formattedDateEnd,$user['role'], $user['email']);
 
         $newDate = date('Y-m-d');
         $incentiveIdr=0;
@@ -898,7 +903,7 @@ class DashboardController extends Controller
         $mapMarketingStock = [];
         $result['mapReminder'] = [];
 
-        foreach ($data as $value) {
+        foreach ($reminders as $value) {
             if($value->status==3 || $value->status==5 || $value->status==4){
                 continue;
             }
@@ -1451,28 +1456,37 @@ class DashboardController extends Controller
 
     private function getDayAgo($timestamp) {
         $timezone = 'Asia/Jakarta';
-        // $now = new DateTime('now', new DateTimeZone('UTC'));
+        $now = new DateTime('now', new DateTimeZone($timezone));
         // $now->setTimezone(new DateTimeZone($timezone));
         // $now->setTime(0, 0, 0);
-        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+        // $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
 
-        // Make a GET request to fetch the time data
-        $response = file_get_contents($time_api_url);
+        // // Make a GET request to fetch the time data
+        // $response = file_get_contents($time_api_url);
 
-        // Decode the JSON response
-        $time_data = json_decode($response, true);
+        // // Decode the JSON response
+        // $time_data = json_decode($response, true);
 
         // Extract the current time from the response
-        $current_time = $time_data['datetime'];
-        $now = new DateTime($current_time);
+        // $current_time = $time_data['datetime'];
+        // $now = new DateTime($current_time );
+        
+        $now = $now->format('Y-m-d');
+        $now = DateTime::createFromFormat('Y-m-d', $now);
+        // dd($now);
 
         $time = new DateTime($timestamp, new DateTimeZone($timezone));
-        $time->setTime(0, 0, 0);
+        $time->setTimezone(new DateTimeZone($timezone));
+        $time = $time->format('Y-m-d');
+        $time = DateTime::createFromFormat('Y-m-d', $time);
+        
+        
     
         $interval = $now->diff($time);
+        
 
-
-        if ($interval->d <= 4 && $interval->invert==0) {
+        if ($interval->d <= 4 && $now >= $time) {
+            
             return $interval->format('%d');
         }
 

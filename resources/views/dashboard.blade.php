@@ -880,8 +880,10 @@ window.addEventListener('resize', function() {
       let startDate = `${year}-${month}-01`
       return [startDate, endDate]
     }else{
-      endDate = `${year}-${month}-31`
-      startDate = `${year}-${month}-01`
+      endDate = `${year}-12-31`
+      startDate = `${year}-01-01`
+
+      alert(startDate+" | "+endDate)
       return [startDate, endDate]
     }
   }

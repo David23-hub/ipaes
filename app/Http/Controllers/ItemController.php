@@ -7,6 +7,7 @@ use App\Models\ItemModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use DateTime;
+use DateTimeZone;
 
 class ItemController extends Controller
 {
@@ -107,17 +108,18 @@ class ItemController extends Controller
             $imageName="";
         }
 
-        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+        // $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
 
-        // Make a GET request to fetch the time data
-        $response = file_get_contents($time_api_url);
+        // // Make a GET request to fetch the time data
+        // $response = file_get_contents($time_api_url);
 
-        // Decode the JSON response
-        $time_data = json_decode($response, true);
+        // // Decode the JSON response
+        // $time_data = json_decode($response, true);
 
-        // Extract the current time from the response
-        $current_time = $time_data['datetime'];
-        $datetime = new DateTime($current_time);
+        // // Extract the current time from the response
+        // $current_time = $time_data['datetime'];
+        $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
+        // $datetime = new DateTime($current_time);
 
         $data = [
             'name' => $input['name'],
@@ -206,17 +208,18 @@ class ItemController extends Controller
         //     print_r("GAK ");die();
         // }
 
-        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+        // $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
 
-        // Make a GET request to fetch the time data
-        $response = file_get_contents($time_api_url);
+        // // Make a GET request to fetch the time data
+        // $response = file_get_contents($time_api_url);
 
-        // Decode the JSON response
-        $time_data = json_decode($response, true);
+        // // Decode the JSON response
+        // $time_data = json_decode($response, true);
 
-        // Extract the current time from the response
-        $current_time = $time_data['datetime'];
-        $datetime = new DateTime($current_time);
+        // // Extract the current time from the response
+        // $current_time = $time_data['datetime'];
+        // $datetime = new DateTime($current_time);
+        $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
 
 
         if ($request->hasFile('img')) {
@@ -321,17 +324,18 @@ class ItemController extends Controller
         //     print_r("GAK ");die();
         // }
 
-        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+        // $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
 
-        // Make a GET request to fetch the time data
-        $response = file_get_contents($time_api_url);
+        // // Make a GET request to fetch the time data
+        // $response = file_get_contents($time_api_url);
 
-        // Decode the JSON response
-        $time_data = json_decode($response, true);
+        // // Decode the JSON response
+        // $time_data = json_decode($response, true);
 
-        // Extract the current time from the response
-        $current_time = $time_data['datetime'];
-        $datetime = new DateTime($current_time);
+        // // Extract the current time from the response
+        // $current_time = $time_data['datetime'];
+        // $datetime = new DateTime($current_time);
+        $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
 
 
         $result = "";
@@ -390,17 +394,18 @@ class ItemController extends Controller
 
     public function deleteItem(Request $request){
 
-        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+        // $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
 
-        // Make a GET request to fetch the time data
-        $response = file_get_contents($time_api_url);
+        // // Make a GET request to fetch the time data
+        // $response = file_get_contents($time_api_url);
 
-        // Decode the JSON response
-        $time_data = json_decode($response, true);
+        // // Decode the JSON response
+        // $time_data = json_decode($response, true);
 
-        // Extract the current time from the response
-        $current_time = $time_data['datetime'];
-        $datetime = new DateTime($current_time);
+        // // Extract the current time from the response
+        // $current_time = $time_data['datetime'];
+        // $datetime = new DateTime($current_time);
+        $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
 
 
         $input = $request->all();

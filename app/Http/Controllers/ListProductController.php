@@ -9,6 +9,7 @@ use App\Models\PackageModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use DateTime;
+use DateTimeZone;
 
 
 class ListProductController extends Controller
@@ -157,17 +158,19 @@ class ListProductController extends Controller
             $input['disc']=0;
         }
 
-        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+        // $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
 
-        // Make a GET request to fetch the time data
-        $response = file_get_contents($time_api_url);
+        // // Make a GET request to fetch the time data
+        // $response = file_get_contents($time_api_url);
 
-        // Decode the JSON response
-        $time_data = json_decode($response, true);
+        // // Decode the JSON response
+        // $time_data = json_decode($response, true);
 
-        // Extract the current time from the response
-        $current_time = $time_data['datetime'];
-        $datetime = new DateTime($current_time);
+        // // Extract the current time from the response
+        // $current_time = $time_data['datetime'];
+        // $datetime = new DateTime($current_time);
+        
+        $datetime = new DateTime('now', new DateTimeZone('Asia/Jakarta'));
 
         // Format the DateTime object
         $formatted_datetime = $datetime->format('Y-m-d H:i:s');
