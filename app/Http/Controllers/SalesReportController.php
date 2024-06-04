@@ -171,8 +171,8 @@ class SalesReportController extends Controller
             
             if($value->paid_at != ""){
                 if(strlen($value->paid_at)>0 && $value->paid_at[strlen($value->paid_at)-1]=="|"){
-                    $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
-                }
+                $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
+            }
                 $payments = explode("|", $value->paid_at);
             }else{
                 $payments = [];
@@ -339,7 +339,7 @@ class SalesReportController extends Controller
                     foreach ($products as $valueProd) {
                         if($valueProd["id"]==$items[0]){
                             $items[0]=$valueProd["name"];
-                            $tempPrice = $valueProd["price"];
+                            $tempPrice = $items[4];
                             $tempCommisionRate=$valueProd["commision_rate"];
                             break;
                         }
@@ -348,7 +348,7 @@ class SalesReportController extends Controller
                     foreach ($bundle as $valueBundle) {
                         if($valueBundle["id"]==$items[0]){
                             $items[0]=$valueBundle["name"];
-                            $tempPrice = $valueBundle["price"];
+                            $tempPrice = $items[4];
                             $tempCommisionRate=$valueBundle["commision_rate"];
                             break;
                         }
@@ -400,8 +400,8 @@ class SalesReportController extends Controller
             
             if($value->paid_at != ""){
                 if($value->paid_at[strlen($value->paid_at)-1]=="|"){
-                    $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
-                }
+                $value->paid_at = substr($value->paid_at,0,strlen($value->paid_at)-1);
+            }
                 $payments = explode("|", $value->paid_at);
             }else{
                 $payments = [];

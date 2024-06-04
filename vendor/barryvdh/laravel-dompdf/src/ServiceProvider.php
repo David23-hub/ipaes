@@ -12,7 +12,17 @@ class ServiceProvider extends IlluminateServiceProvider
     /**
      * Indicates if loading of the provider is deferred.
      *
-     * @var bool
+     * @var bool$this->app->bind('dompdf', function ($app) {
+
+ 
+
+            $options = $app->make('dompdf.options');
+
+            $dompdf = new Dompdf($options);
+
+            $path = realpath($app['config']->get('dompdf.public_path') ?: public_path());
+
+            if ($path === false) {
      */
     protected $defer = false;
 

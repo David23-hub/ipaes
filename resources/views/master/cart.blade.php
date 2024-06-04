@@ -55,6 +55,7 @@
               <div id="dropadd" name="dropadd" class="form-group">
                 <select class="form-select form-control" id="due_date">
                   <option value="0">Cash</option>
+                  <option value="2">2 Days</option>
                   <option value="7">7 Days</option>
                   <option value="14">14 Days</option>
                   <option value="21">21 Days</option>

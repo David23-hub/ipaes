@@ -390,7 +390,7 @@ class PDFController extends Controller
         // return $pdf->download($datas['dokter']['name'] . " all transaksi" . ".pdf");
     }
     
-    public function generatePDFAllTransactionEncrypt(string $ids, string $start_date, string $end_date, string $status)
+    public function generatePDFAllTransactionEncryptnsactionEncrypt(string $ids, string $start_date, string $end_date, string $status)
     {
         $id = $decryptedUrl = Crypt::decryptString($ids);
         return $this->generatePDFAllTransaction($id, $start_date,  $end_date,  $status);

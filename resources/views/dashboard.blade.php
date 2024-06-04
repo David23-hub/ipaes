@@ -136,15 +136,18 @@
       <p style="font-weight: bold;font-size: 20px">Set Period</p>
       <div style="margin-bottom: 20px">
         <select id="month" name="month" onchange="GetAll(event)">
-          <option value="all" selected>All Months</option>        
-
+          <option value="all">All Months</option>        
+            
             @for ($i = 1; $i <= 12; $i++)
-                {{-- @if ($i == $result['month_now'])
-                  <option value="{{ $i }}" selected>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
+            @php
+                $formattedMonth = sprintf('%02d', $i);
+            @endphp
+                @if ($i == $result['month_now'])
+                  <option value="{{ $formattedMonth }}" selected>{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>
                 @else
-                  <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>        
-                @endif --}}
-                <option value="{{ $i }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>        
+                  <option value="{{ $formattedMonth }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>        
+                @endif
+                {{-- <option value="{{ $formattedMonth }}">{{ date('F', mktime(0, 0, 0, $i, 1)) }}</option>         --}}
 
             @endfor
         </select>
@@ -633,7 +636,7 @@ window.addEventListener('resize', function() {
         type: "POST",
         url: "{{url('/')}}"+"/dashboard/getlist",
         beforeSend: $.LoadingOverlay("show"),
-        afterSend:$.LoadingOverlay("hide"),
+        
         data: { "_token": "{{ csrf_token() }}","end_date": endDate, "start_date": startDate, "temp_mon": temp},
         success: function (data) {
                     document.querySelector(`#total_sales`).innerHTML = `IDR ${data['result']['total_sales']}`
@@ -657,9 +660,11 @@ window.addEventListener('resize', function() {
           MapProduct(data['result'])
           MapUser(data['result'])
           MapGrafik(data['result'])
+          $.LoadingOverlay("hide")
         },
         error: function (result, status, err) {
           console.log(err)
+          $.LoadingOverlay("hide")
         }
       });
     } else {
@@ -868,14 +873,15 @@ window.addEventListener('resize', function() {
 
   function formatDate2(month, year) {
     if(month!="all"){
-      let endDate = new Date(year, month + 1, 0);
+        
+      let endDate = new Date(year, month, 0);
       endDate = endDate.getDate();
       endDate = `${year}-${month}-${endDate}`
       let startDate = `${year}-${month}-01`
       return [startDate, endDate]
     }else{
-      endDate = `${year}-12-31`
-      startDate = `${year}-01-01`
+      endDate = `${year}-${month}-31`
+      startDate = `${year}-${month}-01`
       return [startDate, endDate]
     }
   }

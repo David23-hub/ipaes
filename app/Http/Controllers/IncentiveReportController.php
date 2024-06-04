@@ -123,7 +123,7 @@ class IncentiveReportController extends Controller
                     foreach ($products as $valueProd) {
                         if($valueProd["id"]==$items[0]){
                             $items[0]=$valueProd["name"];
-                            $tempPrice = $valueProd["price"];
+                            $tempPrice = $items[4];
                             $tempCommisionRate=$valueProd["commision_rate"];
                             break;
                         }
@@ -132,7 +132,7 @@ class IncentiveReportController extends Controller
                     foreach ($bundle as $valueBundle) {
                         if($valueBundle["id"]==$items[0]){
                             $items[0]=$valueBundle["name"];
-                            $tempPrice = $valueBundle["price"];
+                            $tempPrice = $items[4];
                             $tempCommisionRate=$valueBundle["commision_rate"];
                             break;
                         }
@@ -353,7 +353,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                 foreach ($products as $valueProd) {
                     if($valueProd["id"]==$items[0]){
                         $items[0]=$valueProd["name"];
-                        $tempPrice = $valueProd["price"];
+                        $tempPrice = $items[4];
                         $tempCommisionRate=$valueProd["commision_rate"];
                         break;
                     }
@@ -362,7 +362,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                 foreach ($bundle as $valueBundle) {
                     if($valueBundle["id"]==$items[0]){
                         $items[0]=$valueBundle["name"];
-                        $tempPrice = $valueBundle["price"];
+                        $tempPrice = $items[4];
                         $tempCommisionRate=$valueBundle["commision_rate"];
                         break;
                     }
@@ -508,7 +508,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                 foreach ($products as $valueProd) {
                     if($valueProd["id"]==$items[0]){
                         $items[0]=$valueProd["name"];
-                        $tempPrice = $valueProd["price"];
+                        $tempPrice = $items[4];
                         $tempCommisionRate=$valueProd["commision_rate"];
                         break;
                     }
@@ -517,7 +517,7 @@ private function getBodySummary($created_by, $total, $incentive ,$number) {
                 foreach ($bundle as $valueBundle) {
                     if($valueBundle["id"]==$items[0]){
                         $items[0]=$valueBundle["name"];
-                        $tempPrice = $valueBundle["price"];
+                        $tempPrice = $items[4];
                         $tempCommisionRate=$valueBundle["commision_rate"];
                         break;
                     }

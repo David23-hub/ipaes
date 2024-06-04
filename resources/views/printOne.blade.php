@@ -7,7 +7,7 @@
     {{-- <link rel="stylesheet" href="{{ asset('pdf.css') }}" type="text/css">  --}}
     <title>Invoice</title>
 </head>
-<body>
+<body style="margin-left:-25px; margin-right:-25px">
     <table class="w-full">
         <tr>
             <td class="w-half" >
@@ -63,10 +63,10 @@
         <div>
             <h4>Extra Charge</h4>
             <table class="products">
-                <tr>
-                    <th>Description</th>
-                    <th>Price</th>
-                </tr>
+                <!--<tr>-->
+                <!--    <th>Description</th>-->
+                <!--    <th>Price</th>-->
+                <!--</tr>-->
                 @foreach($data['extra_charge'] as $item)
                 <tr class="items">
                         <td>
@@ -77,10 +77,10 @@
                         </td>
                     </tr>
                 @endforeach
-                <tr class="items">
-                    <td>Total Extra Charge</td>
-                    <td>IDR {{ $data['totalan_extra_charge'] }}</td>
-                </tr>
+                <!--<tr class="items">-->
+                <!--    <td>Total Extra Charge</td>-->
+                <!--    <td>IDR {{ $data['totalan_extra_charge'] }}</td>-->
+                <!--</tr>-->
             </table>
         </div>
     @endif

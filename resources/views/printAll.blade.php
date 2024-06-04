@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Invoice</title>
 </head>
-<body>
+<body style="margin-left:-25px; margin-right:-25px">
     <h3 style="margin-top:-20px">INVOICE ALL TRANSACTION</h3>
     <table class="w-full">
         <tr>
@@ -66,10 +66,10 @@
             <div >
                 <h4>Extra Charge</h4>
                 <table class="products">
-                    <tr>
+                    {{-- <tr>
                         <th>Description</th>
                         <th>Price</th>
-                    </tr>
+                    </tr> --}}
                     @foreach($item['extra_charge'] as $itemExtra)
                     <tr class="items">
                             <td>
@@ -80,10 +80,10 @@
                             </td>
                         </tr>
                     @endforeach
-                    <tr class="items">
+                    {{-- <tr class="items">
                         <td>Total Extra Charge</td>
                         <td>IDR {{ $item['totalan_extra_charge'] }}</td>
-                    </tr>
+                    </tr> --}}
                 </table>
             </div>
         @endif
@@ -161,10 +161,10 @@
             <div >
                 <h4>Extra Charge</h4>
                 <table class="products">
-                    <tr>
+                    {{-- <tr>
                         <th>Description</th>
                         <th>Price</th>
-                    </tr>
+                    </tr> --}}
                     @foreach($item['extra_charge'] as $itemExtra)
                     <tr class="items">
                             <td>
@@ -175,10 +175,10 @@
                             </td>
                         </tr>
                     @endforeach
-                    <tr class="items">
+                    {{-- <tr class="items">
                         <td>Total Extra Charge</td>
                         <td>IDR {{ $item['totalan_extra_charge'] }}</td>
-                    </tr>
+                    </tr> --}}
                 </table>
             </div>
         @endif

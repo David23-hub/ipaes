@@ -54,8 +54,15 @@ class DashboardController extends Controller
         $this->otherCost = new OtherCostModel;
         $this->salary = new SalaryModel;
         $this->textDashboard = "Pesanan <strong>#NAMA_DOKTER#</strong> TINGGAL <strong>#DUE_DATE#</strong> Hari lagi Sebelum Jatuh Tempo!";
-        $this->textWA = "*PT Inti Persada Aesthetic*%0A%0AINVOICE - *#NO_INVOICE#*%0A%0ATanggal PO : *#PO_DATE#*%0AJatuh tempo : *#DUE_DATE#*%0AKepada :*#NAMA_DOKTER#*%0ATerima kasih atas kepercayaan Dokter kepada kami.%0A%0AUntuk detailnya dapat dilihat di link dibawah ini: #LINK_INVOICE#%0A%0AHarap melakukan pembayaran sesuai jatuh tempo atau sebelumnya dengan cara transfer hanya ke rekening:%0A%0ABCA 2880517131 an Maggie Princilla Chandra%0A%0A(Harap cantumkan nomor invoice pada berita transfer)%0A%0ATerima kasih.%0A%0AHormat kami,%0AFinance";
+        $this->textWA = "*PT Inti Persada Aesthetic*%0A%0AINVOICE - *#NO_INVOICE#*%0A%0ATanggal PO : *#PO_DATE#*%0AJatuh tempo : *#DUE_DATE#*%0AKepada :*#NAMA_DOKTER#*%0ATerima kasih atas kepercayaan Dokter kepada kami.%0A%0ABerikut adalah daftar produk dan total belanja Anda:%0A%0A#CART_DETAIL#Untuk detailnya dapat dilihat di link dibawah ini: #LINK_INVOICE#%0A%0AHarap melakukan pembayaran sesuai jatuh tempo atau sebelumnya dengan cara transfer hanya ke rekening:%0A%0ABCA 2880517131 an Maggie Princilla Chandra%0AMANDIRI 1650003428944 an Maggie Princilla Chandra%0A%0A(Harap cantumkan nomor invoice pada berita transfer)%0A%0ATerima kasih.%0A%0AHormat kami,%0AFinance";
         $this->urlBase = "https://intipersada.id/generate-pdf-all/";
+        }
+
+        private function addDetailItemOnWa(string $no, $name, $qty, $price, $disc, $total){
+            $price = number_format($price,0,',','.');
+            $total = number_format($total,0,',','.');
+            $no++;
+            return "*".$no.". ". $name."*%0AIDR ".$price." x ".$qty." x ".$disc."% = IDR ". $total."%0A%0A";
         }
 
         private function encryptUrl(string $url) {
@@ -72,9 +79,9 @@ class DashboardController extends Controller
         $user = auth()->user();
         $products = $this->model->GetAll();
         $bundle=$this->bundle->GetAll();
-        $formattedDateEnd = mktime(0, 0, 0, 12, 31, date("Y"));
+        $formattedDateEnd = mktime(23, 59, 59, date('n'), date('t'), date('Y'));
         $formattedDateEnd = date("Y-m-d H:i:s", $formattedDateEnd);
-        $formattedDateStart = mktime(0, 0, 0, 1, 1, date("Y"));
+        $formattedDateStart = mktime(0, 0, 0, date('n'), 1, date('Y'));
         $formattedDateStart = date("Y-m-d H:i:s", $formattedDateStart);
         
         $formattedSalary = "all";
@@ -186,6 +193,33 @@ class DashboardController extends Controller
             if(Auth::user()->role=="marketing" && $value->management_order==0 && $value->created_by == Auth::user()->email){
                 $reminder = $this->getDayAgo($value['due_date']);
                 if ($reminder!=""){
+                    $totalInv = 0;
+                    $string = "";
+
+                    $cart = explode(",",$value["cart"]);
+                    foreach ($cart as $key => $val) {
+                        $temp = explode("|",$val);
+                        if($temp[1]=="product"){
+                            foreach ($products as $prod) {
+                                if($prod["id"]==$temp[0]){
+                                    $totalTemp = $temp[4] *$temp[2] * ((100-$temp[3])/100); 
+                                    $string.= $this->addDetailItemOnWa($key, $prod["name"],$temp[2],$temp[4],$temp[3],$totalTemp);
+                                    $totalInv += $totalTemp;
+                                }
+                            }
+
+                        }else if($temp[1]=="paket"){
+                            foreach ($bundle as $bun) {
+                                if($bun["id"]==$temp[0]){
+                                    $totalTemp = $temp[4] *$temp[2] * ((100-$temp[3])/100); 
+                                    $string.= $this->addDetailItemOnWa($key, $bun["name"],$temp[2],$temp[4],$temp[3],$totalTemp);
+                                    $totalInv += $totalTemp;
+                                }
+                            }
+                        }
+                    }
+
+
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
@@ -194,7 +228,9 @@ class DashboardController extends Controller
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
                     $link = str_replace("#DUE_DATE#", $value['due_date'], $link);
-                    $link = str_replace("#PO_DATE#", $value['created_at'], $link);
+                    $link = str_replace("#PO_DATE#", $value['created_at'], 
+                    $link);
+                    $link = str_replace("#CART_DETAIL#", $string, $link);
                     $link = str_replace("#NO_INVOICE#", $value['inv_no'], $link);
                     
                     $url = $this->urlBase . $this->encryptUrl($value['id']);
@@ -207,6 +243,32 @@ class DashboardController extends Controller
             }else if (Auth::user()->role!="marketing"){
                 $reminder = $this->getDayAgo($value['due_date']);
                 if ($reminder!=""){
+                    $totalInv = 0;
+                    $string = "";
+
+                    $cart = explode(",",$value["cart"]);
+                    foreach ($cart as $key => $val) {
+                        $temp = explode("|",$val);
+                        if($temp[1]=="product"){
+                            foreach ($products as $prod) {
+                                if($prod["id"]==$temp[0]){
+                                    $totalTemp = $temp[4] *$temp[2] * ((100-$temp[3])/100); 
+                                    $string.= $this->addDetailItemOnWa($key, $prod["name"],$temp[2],$temp[4],$temp[3],$totalTemp);
+                                    $totalInv += $totalTemp;
+                                }
+                            }
+
+                        }else if($temp[1]=="paket"){
+                            foreach ($bundle as $bun) {
+                                if($bun["id"]==$temp[0]){
+                                    $totalTemp = $temp[4] *$temp[2] * ((100-$temp[3])/100); 
+                                    $string.= $this->addDetailItemOnWa($key, $bun["name"],$temp[2],$temp[4],$temp[3],$totalTemp);
+                                    $totalInv += $totalTemp;
+                                }
+                            }
+                        }
+                    }
+
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
@@ -216,6 +278,7 @@ class DashboardController extends Controller
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
                     $link = str_replace("#DUE_DATE#", $value['due_date'], $link);
                     $link = str_replace("#PO_DATE#", $value['created_at'], $link);
+                    $link = str_replace("#CART_DETAIL#", $string, $link);
                     $link = str_replace("#NO_INVOICE#", $value['inv_no'], $link);
 
                      
@@ -844,6 +907,32 @@ class DashboardController extends Controller
             if(Auth::user()->role=="marketing" && $value->management_order==0 && $value->created_by == Auth::user()->email){
                 $reminder = $this->getDayAgo($value['due_date']);
                 if ($reminder!=""){
+                    $totalInv = 0;
+                    $string = "";
+
+                    $cart = explode(",",$value["cart"]);
+                    foreach ($cart as $key => $val) {
+                        $temp = explode("|",$val);
+                        if($temp[1]=="product"){
+                            foreach ($products as $prod) {
+                                if($prod["id"]==$temp[0]){
+                                    $totalTemp = $temp[4] *$temp[2] * ((100-$temp[3])/100); 
+                                    $string.= $this->addDetailItemOnWa($key, $prod["name"],$temp[2],$temp[4],$temp[3],$totalTemp);
+                                    $totalInv += $totalTemp;
+                                }
+                            }
+
+                        }else if($temp[1]=="paket"){
+                            foreach ($bundle as $bun) {
+                                if($bun["id"]==$temp[0]){
+                                    $totalTemp = $temp[4] *$temp[2] * ((100-$temp[3])/100); 
+                                    $string.= $this->addDetailItemOnWa($key, $bun["name"],$temp[2],$temp[4],$temp[3],$totalTemp);
+                                    $totalInv += $totalTemp;
+                                }
+                            }
+                        }
+                    }
+
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
@@ -852,6 +941,7 @@ class DashboardController extends Controller
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
                     $link = str_replace("#DUE_DATE#", $value['due_date'], $link);
                     $link = str_replace("#PO_DATE#", $value['created_at'], $link);
+                    $link = str_replace("#CART_DETAIL#", $string, $link);
                     $link = str_replace("#NO_INVOICE#", $value['inv_no'], $link);
                     
                     $url = $this->urlBase . $this->encryptUrl($value['id']);
@@ -865,6 +955,32 @@ class DashboardController extends Controller
             }else if (Auth::user()->role!="marketing"){
                 $reminder = $this->getDayAgo($value['due_date']);
                 if ($reminder!=""){
+                    $totalInv = 0;
+                    $string = "";
+
+                    $cart = explode(",",$value["cart"]);
+                    foreach ($cart as $key => $val) {
+                        $temp = explode("|",$val);
+                        if($temp[1]=="product"){
+                            foreach ($products as $prod) {
+                                if($prod["id"]==$temp[0]){
+                                    $totalTemp = $temp[4] *$temp[2] * ((100-$temp[3])/100); 
+                                    $string.= $this->addDetailItemOnWa($key, $prod["name"],$temp[2],$temp[4],$temp[3],$totalTemp);
+                                    $totalInv += $totalTemp;
+                                }
+                            }
+
+                        }else if($temp[1]=="paket"){
+                            foreach ($bundle as $bun) {
+                                if($bun["id"]==$temp[0]){
+                                    $totalTemp = $temp[4] *$temp[2] * ((100-$temp[3])/100); 
+                                    $string.= $this->addDetailItemOnWa($key, $bun["name"],$temp[2],$temp[4],$temp[3],$totalTemp);
+                                    $totalInv += $totalTemp;
+                                }
+                            }
+                        }
+                    }
+
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
@@ -874,6 +990,7 @@ class DashboardController extends Controller
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
                     $link = str_replace("#DUE_DATE#", $value['due_date'], $link);
                     $link = str_replace("#PO_DATE#", $value['created_at'], $link);
+                    $link = str_replace("#CART_DETAIL#", $string, $link);
                     $link = str_replace("#NO_INVOICE#", $value['inv_no'], $link);
 
                      
@@ -1336,6 +1453,18 @@ class DashboardController extends Controller
         $timezone = 'Asia/Jakarta';
         $now = new DateTime('now', new DateTimeZone('UTC'));
         $now->setTimezone(new DateTimeZone($timezone));
+
+        $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
+
+        // Make a GET request to fetch the time data
+        $response = file_get_contents($time_api_url);
+
+        // Decode the JSON response
+        $time_data = json_decode($response, true);
+
+        // Extract the current time from the response
+        $current_time = $time_data['datetime'];
+
         $now->setTime(0, 0, 0);
 
         $time = new DateTime($timestamp, new DateTimeZone($timezone));
