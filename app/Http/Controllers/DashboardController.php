@@ -1451,9 +1451,9 @@ class DashboardController extends Controller
 
     private function getDayAgo($timestamp) {
         $timezone = 'Asia/Jakarta';
-        $now = new DateTime('now', new DateTimeZone('UTC'));
-        $now->setTimezone(new DateTimeZone($timezone));
-
+        // $now = new DateTime('now', new DateTimeZone('UTC'));
+        // $now->setTimezone(new DateTimeZone($timezone));
+        // $now->setTime(0, 0, 0);
         $time_api_url = 'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
 
         // Make a GET request to fetch the time data
@@ -1464,8 +1464,7 @@ class DashboardController extends Controller
 
         // Extract the current time from the response
         $current_time = $time_data['datetime'];
-
-        $now->setTime(0, 0, 0);
+        $now = new DateTime($current_time);
 
         $time = new DateTime($timestamp, new DateTimeZone($timezone));
         $time->setTime(0, 0, 0);
