@@ -1490,7 +1490,7 @@ class DashboardController extends Controller
         $interval = $now->diff($time);
         
 
-        if ($interval->d <= 4 && $now >= $time) {
+        if ($interval->d <= 4 && $now <= $time) {
             
             return $interval->format('%d');
         }
