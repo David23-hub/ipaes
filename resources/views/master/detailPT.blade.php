@@ -3,7 +3,7 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Detail Transaction</h1>
+    <h1 class="m-0 text-dark">Detail Transaction PT</h1>
 @stop
 
 @section('content')
@@ -87,7 +87,7 @@
                       <p class="text-start">{{ $itemDokter->created_by }}</p>
                     </li>
                   </ul>
-                  <div class="row" >
+                  <div class="row">
                     <div class="col-6" style="text-align: left">
                       <strong class="text-black fs-2">
                         Status  | 
@@ -100,7 +100,7 @@
                       <div id="span-edit-status{{ $key }}">
                       @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
                         <span class="p-2">
-                            <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{ $key }}">Edit Status</button>
+                            {{-- <button class="btn btn-light" data-toggle="modal" data-target="#modalEditStatus{{ $key }}">Edit Status</button> --}}
                         </span>
                       @endif
                       </div>
@@ -108,15 +108,13 @@
                     </div>
                     <div class="col" style="text-align: right">
                       <div class="row">
-                        @if ($itemDokter['is_pt']!=1)
                           <div class="col pr-0" id="moveToPT">
                             <button class="btn btn-warning"  onclick="MoveToPT({{ $itemDokter['id'] }})">
-                              Move To PT
+                              Remove from PT
                             </button>
                           </div>
-                        @endif
                         <div class="col p-0">
-                          <a class="btn btn-primary" onclick="printPDF('{{ route('generate.pdf.one.encrypt', ['ids'=>$itemDokter['id_encrypt']]) }}');">
+                          <a class="btn btn-primary" onclick="printPDF('{{ route('generate.pdf.one.encrypt.pt', ['ids'=>$itemDokter['id_encrypt'],'inv_no'=>$itemDokter['inv_no_ency']]) }}')">
                             Print
                           </a>
                         </div>
@@ -129,11 +127,11 @@
                       <div class="row">
                         <div class="col-sm-12 col-md-6">
                           <div class="p-2" id="button-status-canceled{{ $key }}">
-                            @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
+                            {{-- @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
                               <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel{{ $key }}">
                                   Cancel Purchase Order
                               </button>
-                            @endif
+                            @endif --}}
                           </div>
                           
                         </div>
@@ -226,22 +224,14 @@
                     </tfoot>
                   </table>
                   <div class="d-flex justify-content-end" id="button-extra-charge{{ $key }}">
-                  @if ($user['role'] == "superuser" || $user['role'] == "finance" || $user['role'] == "admin")
-                    <button class="btn btn-outline-success" data-target="#modalExtraCharge{{ $key }}" data-toggle="modal">
-                    Add Extra Charges
-                    </button>
-                  @endif
+                  
                   </div>
                   <div class="form-group">
                     <label for="notes_form">Note For Admin</label>
                     <p class="text-start">{{ $itemDokter->notes }}</p>
                   </div>
                   <div class="form-group" id="button-edit-product{{ $key }}">
-                  @if ($user['role'] == "superuser" || $user['role'] == "admin")
-                    <button class="btn me-3 btn-outline-success" id="edit_product{{ $key }}" onclick="EditProductShow({{ $key }})">
-                    Edit Product
-                    </button>
-                  @endif
+                 
                   </div>
                 </div>
               </div>
@@ -843,27 +833,11 @@
           </span>
           `
 
-          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
-            document.querySelector(`#button_status_update${i}`).innerHTML = `
-            <button type="button" class="btn btn-outline-warning" id="packing_btn" onclick="packing_btn(${dataCartDokter[i].id}, ${i})">
-            Packing Purchase Order
-            </button> 
-            `
-          }
-
           document.querySelector(`#dropaddstatus${i}`).innerHTML = `
           <select class="form-select form-control" id="status_select${i}" required>
             <option value="0" selected>SUBMITED</option>
           </select>
           `
-
-          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
-            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i} ">
-              Cancel Purchase Order
-            </button>
-            `
-          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = ""
           document.querySelector(`#column_sent${i}`).innerHTML = ""
@@ -875,28 +849,6 @@
             Packing
           </span>
           `
-
-          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
-            document.querySelector(`#button_status_update${i}`).innerHTML = `
-            <button class="btn btn-outline-info" id="sent_btn_modal" data-toggle="modal" data-target="#modalSent${i}">
-            Sent Order
-            </button> `
-          }
-
-          document.querySelector(`#dropaddstatus${i}`).innerHTML = `
-          <select class="form-select form-control" id="status_select${i}" required>
-            <option value="0" id="">SUBMITED</option>
-            <option value="1" selected>PACKING</option>
-          </select>
-          `
-
-          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
-            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
-              Cancel Purchase Order
-            </button>
-            `
-          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = `
           <div class="card">
@@ -928,27 +880,6 @@
           document.querySelector(`#column_payment${i}`).innerHTML = ""
           document.querySelector(`#column_cancel${i}`).innerHTML = ""
 
-          if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
-            document.querySelector(`#button_status_update${i}`).innerHTML = `
-            <button class="btn btn-outline-success" id="payment_btn_modal" data-toggle="modal" data-target="#modalPayment${i}" onclick="clearModalPayment(${i})">
-            Submit Payment
-            </button>`
-          }
-
-          document.querySelector(`#dropaddstatus${i}`).innerHTML = `
-          <select class="form-select form-control" id="status_select${i}" required>
-            <option value="0">SUBMITED</option>
-            <option value="1">PACKING</option>
-            <option value="2" selected>SENT</option>
-          </select>
-          `
-          if (user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
-            document.querySelector(`#button-status-canceled${i}`).innerHTML = `
-            <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
-              Cancel Purchase Order
-            </button>
-            `
-          }
 
           document.querySelector(`#column_packing${i}`).innerHTML = `
           <div class="card">
@@ -1273,13 +1204,6 @@
               "max": dataCartDokter[i]['total_num_paid_sum'],
           })
 
-          if(user['role'] == "superuser" || user['role'] == "finance" || user['role'] == "admin") {
-            document.querySelector(`#button_status_update${i}`).innerHTML = `
-            <button class="btn btn-outline-success" id="payment_btn_modal" data-toggle="modal" data-target="#modalStepPayment${i}" onclick="clearModalPayment(${i})">
-            Submit Payment
-            </button>`
-          }
-
           document.querySelector(`#column_packing${i}`).innerHTML = `
           <div class="card">
                 <div class="card-body">
@@ -1470,45 +1394,35 @@
               let queryCancel = document.querySelector(`#button-status-canceled${i}`)
               if(queryCancel) {
                 queryCancel.innerHTML = `
-                <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
-                  Cancel Purchase Order
-                </button>
+                
                 `
               }
   
               let edit_product_button = document.querySelector(`#button-edit-product${i}`)
               if(edit_product_button) {
                   edit_product_button.innerHTML = `
-                  <button class="btn me-3 btn-outline-success" id="edit_product${i}" onclick="EditProductShow(${i})">
-                      Edit Product
-                  </button>
+                 
                   `
               }
   
               let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
               if(extra_charge_button) {
                 extra_charge_button.innerHTML = `
-                <button class="btn btn-outline-success" data-target="#modalExtraCharge${i}" data-toggle="modal">
-                  Add Extra Charges
-                </button>
+                
                 `
               }
             } else if(user['role'] == "finance") {
               let queryCancel = document.querySelector(`#button-status-canceled${i}`)
               if(queryCancel) {
                 queryCancel.innerHTML = `
-                <button class="btn me-3 btn-outline-danger" id="cancel_status_btn" data-toggle="modal" data-target="#modalCancel${i}">
-                  Cancel Purchase Order
-                </button>
+                
                 `
               }
 
               let extra_charge_button = document.querySelector(`#button-extra-charge${i}`)
               if(extra_charge_button) {
                 extra_charge_button.innerHTML = `
-                <button class="btn btn-outline-success" data-target="#modalExtraCharge${i}" data-toggle="modal">
-                  Add Extra Charges
-                </button>
+                
                 `
               }
             }
@@ -1665,27 +1579,21 @@
                 let edit_product_button = document.querySelector(`#button-edit-product${key}`)
                 if(edit_product_button) {
                   edit_product_button.innerHTML = `
-                  <button class="btn me-3 btn-outline-success" id="edit_product${key}" onclick="EditProductShow(${key})">
-                    Edit Product
-                  </button>
+                 
                   `
                 }
     
                 let extra_charge_button = document.querySelector(`#button-extra-charge${key}`)
                 if(extra_charge_button) {
                   extra_charge_button.innerHTML = `
-                  <button class="btn btn-outline-success" data-target="#modalExtraCharge${key}" data-toggle="modal">
-                    Add Extra Charges
-                  </button>
+                  
                   `
                 }
               } else if(user['role'] == "finance") {
                 let extra_charge_button = document.querySelector(`#button-extra-charge${key}`)
                 if(extra_charge_button) {
                   extra_charge_button.innerHTML = `
-                  <button class="btn btn-outline-success" data-target="#modalExtraCharge${key}" data-toggle="modal">
-                    Add Extra Charges
-                  </button>
+                  
                   `
                 }
               }
@@ -2507,7 +2415,7 @@
         type: "POST",
         url: "{{url('/')}}"+"/changeToPT",
         data: { "_token": "{{ csrf_token() }}", data: {
-          status: 1,
+          status: 0,
           id:id,
         }},
         beforeSend: $.LoadingOverlay("show"),
@@ -2529,6 +2437,7 @@
         },
       });
     }
+
 
 </script>
     

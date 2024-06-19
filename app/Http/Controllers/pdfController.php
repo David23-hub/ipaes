@@ -208,7 +208,152 @@ class PDFController extends Controller
         $newDate = date('d F Y');
         $cart['new_date'] = $newDate;
 
+        dd("PRINT BUKAN PT");
         $pdf = PDF::loadView('printOne', ['data' => $cart]);
+
+        return $pdf->stream('document.pdf');
+        // return $pdf->download($cart['po_id'] . '.pdf');
+    }
+
+    private function generatePDFOneTransactionPT(string $id, int $access=0, string $inv_no)
+    {
+        $cart = $this->cart->GetItemWithoutEmail($id);
+        $cart = $cart[0];
+        $user = auth()->user();
+        if($access==1){
+          if (($user['email'] != $cart['created_by'] && $user['role'] == "marketing")||
+          ($cart['management_order']==1 && $user['role'] != "superuser" && $user['role'] != "finance")){
+            
+            return redirect()->route('listPO');
+          }
+        }
+        
+        $dokter = $this->doctorModel->SingleItem($cart['doctor_id']);
+        $items = $this->model->getAll();
+        $usersCreate = $this->user->GetUserWithEmail($cart['created_by']);
+        $bundles = $this->bundle->getAll();
+        $extraChargeAll = $this->extra_charge->GetListAll();
+
+        $carts = explode(",", $cart->cart);
+        $products = [];
+        $extraChargeOne = [];
+        $stepPayment = [];
+        $totalan = 0;
+        $totalExtraCharge = 0;
+        $cart['dokter'] = $dokter;
+        $cart['user'] = $usersCreate[0];
+        $cart['po_id'] = str_replace("PO", "INV", $cart['po_id']);
+        $cart['created_at'] = date("d F Y", strtotime($cart['created_at']));
+        $cart['due_date'] = date("d F Y", strtotime($cart['due_date']));
+        Log::info("po_id", [
+          "po_id" => $cart['po_id']
+        ]);
+        foreach ($carts as $valueCart) {
+            $temp = explode("|", $valueCart);
+
+    
+            if($temp[1]=="product"){
+                foreach ($items as $item) {
+                    if($temp[0]==$item["id"]){
+                    $product["name_product"]=$item["name"];
+                    $product["price_product"]=$item["price"];
+                    break;
+                    }                      
+            }
+            }else if($temp[1]=="paket"){
+                foreach ($bundles as $bundle) {
+                    if($temp[0]==$bundle["id"]){
+                    $product["name_product"]=$bundle["name"];
+                    $product["price_product"]=$bundle["price"];
+                    break;
+                    }                      
+                }
+            }
+
+            $product["type"] = $temp[1];
+            $product["id"] = $temp[0];
+            $product["qty"]=$temp[2];
+            $product["disc"]=$temp[3];
+            $price = $product["price_product"]*$temp[2];
+            $disc = $price*($temp[3]/100);
+            $product["price"]=$price;
+            $product["disc_price"]=$disc;
+            $product["total_price"]=$price-$disc;
+            $totalan+=$product["total_price"];
+            $product["total_price"] = number_format($product["total_price"],0,',','.');
+            $product["disc_price"] = number_format($product["disc_price"],0,',','.');
+            $product["price"] = number_format($product["price"],0,',','.');
+            $product["price_product"] = number_format($product["price_product"],0,',','.'); 
+            array_push($products, $product);            
+        }
+
+        $cart['products'] = $products;
+                
+        foreach ($extraChargeAll as $valueExtra) {
+            if ($cart['id'] == $valueExtra['transaction_id']) {
+                $totalExtraCharge += $valueExtra['price'];
+                $valueExtra['real_price'] = $valueExtra['price'];
+                $totalan += $valueExtra['price'];
+                $valueExtra['price'] = number_format($valueExtra["price"],0,',','.');
+                array_push($extraChargeOne, $valueExtra);
+            }
+        }
+        $totalan = ceil($totalan);
+        $cart['total_price'] = $totalan;
+        $cart['total'] = number_format($totalan,0,',','.');
+        $cart['total_extra_charge'] = $totalExtraCharge;
+        $cart['totalan_extra_charge'] = number_format($totalExtraCharge,0,',','.');
+        $cart['shipping_cost_number'] = $cart['shipping_cost'];
+        $cart['shipping_cost'] = number_format($cart['shipping_cost'],0,',','.');
+        $cart['nominal_number'] = $cart['nominal'];
+        // $cart['nominal'] = number_format($cart['nominal'],0,',','.');
+        $cart['extra_charge'] = $extraChargeOne;
+
+        // step payment
+        if($cart['status'] == 5) {
+          $dataPaidBy = explode("|", $cart['paid_by']);
+          $dataPaidAt = explode("|", $cart['paid_at']);
+          $dataPaidBankName = explode("|", $cart['paid_bank_name']);
+          $dataPaidAccountBankName = explode("|", $cart['paid_account_bank_name']);
+          $dataNominal = explode("|", $cart['nominal']);
+          $sum = array_sum(explode("|", $cart['nominal']));
+          foreach ($dataPaidBy as $key => $value) {
+            if($value != "") {
+              $dataStepPayment['paid_by'] = $value;
+              $dataStepPayment['paid_at'] = $dataPaidAt[$key];
+              $dataStepPayment['paid_bank_name'] = $dataPaidBankName[$key];
+              $dataStepPayment['paid_account_bank_name'] = $dataPaidAccountBankName[$key];
+              $dataStepPayment['nominal'] = $dataNominal[$key];
+              // $totalPaid += $dataStepPayment['nominal'];
+              array_push($stepPayment, $dataStepPayment);
+            }
+          }
+          $cart['total_num_paid'] = $sum;
+          $cart['total_paid'] = number_format($sum,0,',','.');
+          $cart['total_num_paid_sum'] = $cart['total_price'] - $sum;
+          $cart['total_paid_sum'] = number_format($cart['total_price'] - $sum,0,',','.');
+          $cart['step_payment'] = $stepPayment;
+        } else if($cart['status'] == 3) {
+          $cart['total_num_paid'] = $cart['total_price'];
+          $cart['total_paid'] = number_format($cart['total_price'],0,',','.');
+          $cart['total_num_paid_sum'] = $cart['total_price'] - $cart['total_num_paid'];
+          $cart['total_paid_sum'] = number_format($cart['total_num_paid_sum'],0,',','.');
+        } else {
+          $sum = 0;
+          $cart['total_num_paid'] = $sum;
+          $cart['total_paid'] = number_format($sum,0,',','.');
+          $cart['total_num_paid_sum'] = $cart['total_price'];
+          $cart['total_paid_sum'] = number_format($cart['total_price'],0,',','.');
+        }
+
+        $newDate = date('d F Y');
+        $cart['new_date'] = $newDate;
+        
+        $inv_no = str_replace("_","/",$inv_no);
+        $cart['inv_no'] = $inv_no;
+
+        dd("PRINT PT ". $inv_no);
+        $pdf = PDF::loadView('printOnePT', ['data' => $cart]);
 
         return $pdf->stream('document.pdf');
         // return $pdf->download($cart['po_id'] . '.pdf');
@@ -222,6 +367,19 @@ class PDFController extends Controller
           $val=0;
         }
         return $this->generatePDFOneTransaction($val[0],$val[1]);
+    }
+
+    public function generatePDFOneTransactionEncryptPT(string $ids,$inv_no="")
+    {
+        $value = Crypt::decryptString($ids);
+        $val = explode("/", $value);
+        if($val[1]==""){
+          $val=0;
+        }
+
+        $inv_no = Crypt::decryptString($inv_no);
+
+        return $this->generatePDFOneTransactionPT($val[0],$val[1],$inv_no);
     }
 
     private function generatePDFAllTransaction(string $id, string $start_date, string $end_date, string $status)

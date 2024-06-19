@@ -53,7 +53,8 @@ class DashboardController extends Controller
         $this->stock = new StockModel;
         $this->otherCost = new OtherCostModel;
         $this->salary = new SalaryModel;
-        $this->textDashboard = "Pesanan <strong>#NAMA_DOKTER#</strong> TINGGAL <strong>#DUE_DATE#</strong> Hari lagi Sebelum Jatuh Tempo!";
+        $this->textDashboard = "Pesanan <strong>#NAMA_DOKTER#</strong> Dengan Nomor PO <strong>#NO_PO#</strong> TINGGAL <strong>#DUE_DATE#</strong> Hari lagi Sebelum Jatuh Tempo!";
+
         $this->textWA = "*PT Inti Persada Aesthetic*%0A%0AINVOICE - *#NO_INVOICE#*%0A%0ATanggal PO : *#PO_DATE#*%0AJatuh tempo : *#DUE_DATE#*%0AKepada :*#NAMA_DOKTER#*%0ATerima kasih atas kepercayaan Dokter kepada kami.%0A%0ABerikut adalah daftar produk dan total belanja Anda:%0A%0A#CART_DETAIL#Untuk detailnya dapat dilihat di link dibawah ini: #LINK_INVOICE#%0A%0AHarap melakukan pembayaran sesuai jatuh tempo atau sebelumnya dengan cara transfer hanya ke rekening:%0A%0ABCA 2880517131 an Maggie Princilla Chandra%0AMANDIRI 1650003428944 an Maggie Princilla Chandra%0A%0A(Harap cantumkan nomor invoice pada berita transfer)%0A%0ATerima kasih.%0A%0AHormat kami,%0AFinance";
         $this->urlBase = "https://intipersada.id/generate-pdf-all/";
         }
@@ -225,6 +226,7 @@ class DashboardController extends Controller
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
+                    $text = str_replace("#NO_PO#", $value->po_id, $text);
                     
 
                     $link = $this->textWA;
@@ -275,6 +277,7 @@ class DashboardController extends Controller
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
+                    $text = str_replace("#NO_PO#", $value->po_id, $text);
                     $temp['text'] = $text;
 
                     $link = $this->textWA;
@@ -941,6 +944,7 @@ class DashboardController extends Controller
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
+                    $text = str_replace("#NO_PO#", $value->po_id, $text);
 
                     $link = $this->textWA;
                     $link = str_replace("#NAMA_DOKTER#", $value->doctor_name, $link);
@@ -989,6 +993,7 @@ class DashboardController extends Controller
                     $text = $this->textDashboard;
                     $text = str_replace("#NAMA_DOKTER#", $value->doctor_name, $text);
                     $text = str_replace("#DUE_DATE#", $reminder, $text);
+                    $text = str_replace("#NO_PO#", $value->po_id, $text);
                     $temp['text'] = $text;
 
                     $link = $this->textWA;

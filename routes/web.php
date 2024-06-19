@@ -4,8 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 
-Auth::routes();
-
+Auth::routes(['login' => false]);
 
 Route::resource('users', \App\Http\Controllers\UserController::class)->middleware('auth');
 
@@ -75,13 +74,18 @@ Route::post('/addPO', [App\Http\Controllers\CartController::class, 'addPO'])->mi
 Route::get('/listPO', [App\Http\Controllers\ListPOController::class, 'index'])->middleware('auth')->name('listPO');
 Route::post('/getAllPO', [App\Http\Controllers\ListPOController::class, 'getAll'])->middleware('auth');
 Route::post('/getAllTransaction', [App\Http\Controllers\ListPOController::class, 'getAllTransaction'])->middleware('auth');
+Route::post('/getAllTransactionPT', [App\Http\Controllers\ListPOController::class, 'getAllTransactionPT'])->middleware('auth');
 Route::post('/getCart', [App\Http\Controllers\ListPOController::class, 'getListAllCart'])->middleware('auth');
 Route::get('/detailPO/{id}/{start_date}/{end_date}/{status}', [App\Http\Controllers\ListPOController::class, 'detailPOIndex'])->middleware('auth')->name('detail.po');
 Route::get('/detailTransaction/{id}', [App\Http\Controllers\ListPOController::class, 'detailTransaksiIndex'])->middleware('auth');
+Route::get('/detailTransactionPT/{id_enc}', [App\Http\Controllers\ListPOController::class, 'detailTransaksiIndexPT'])->middleware('auth');
 Route::post('/canceledPO', [App\Http\Controllers\ListPOController::class, 'canceledOrder'])->middleware('auth');
 Route::post('/packingPO', [App\Http\Controllers\ListPOController::class, 'packingOrder'])->middleware('auth');
 Route::post('/sentPO', [App\Http\Controllers\ListPOController::class, 'sentOrder'])->middleware('auth');
 Route::post('/updateStatus', [App\Http\Controllers\ListPOController::class, 'updateStatus'])->middleware('auth');
+
+Route::post('/changeToPT', [App\Http\Controllers\ListPOController::class, 'changeToPT'])->middleware('auth');
+
 Route::post('/paymentOrder', [App\Http\Controllers\ListPOController::class, 'paymentOrder'])->middleware('auth');
 Route::post('/stepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'stepPaymentOrder'])->middleware('auth');
 Route::post('/editStepPaymentOrder', [App\Http\Controllers\ListPOController::class, 'editStepPaymentOrder'])->middleware('auth');
@@ -91,6 +95,8 @@ Route::post('/editProduct', [App\Http\Controllers\ListPOController::class, 'edit
 Route::get('/generate-pdf', [App\Http\Controllers\PDFController::class, 'generatePDF']);
 
 Route::get('/generate-pdf-one-encrypt/{ids}', [App\Http\Controllers\PDFController::class, 'generatePDFOneTransactionEncrypt'])->name('generate.pdf.one.encrypt')->middleware('auth');
+
+Route::get('/generate-pdf-one-encrypt/{ids}/{inv_no}', [App\Http\Controllers\PDFController::class, 'generatePDFOneTransactionEncryptPT'])->name('generate.pdf.one.encrypt.pt')->middleware('auth');
 
 // Route::get('/generate-pdf-all/{id}', [App\Http\Controllers\PDFController::class, 'generatePDFAllTransaction'])->name('generate.pdf.all')->middleware('auth');
 // Route::get('/generate-pdf-all-dokter/{id}/{start_date}/{end_date}/{status}', [App\Http\Controllers\PDFController::class, 'generatePDFAllTransaction'])->name('generate.pdf.all.dokter')->middleware('auth');

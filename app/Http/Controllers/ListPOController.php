@@ -9,6 +9,7 @@ use App\Models\ItemModel;
 use App\Models\EkspedisiModel;
 use App\Models\ExtraChargeModel;
 use App\Models\PackageModel;
+use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -162,6 +163,75 @@ class ListPOController extends Controller
         }
       }
 
+      return $dataTransaction;
+    }
+
+    public function getAllTransactionPT(Request $request)
+    {
+      $input = $request->all();
+      $user = auth()->user();
+      $items = $this->model->getAll();
+      $bundles = $this->bundle->getAll();
+      Log::info("input", $input);
+      $dateParts = explode('/', str_replace('-', '/', $input["startDate"]));
+
+      // Rearrange the parts to form the desired format
+      $formattedDateStart = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+  
+      $dateParts = explode('/', str_replace('-', '/', $input["endDate"]));
+  
+      // Rearrange the parts to form the desired format
+      $formattedDateEnd = $dateParts[2] . '-' . $dateParts[1] . '-' . $dateParts[0];
+
+      $dataTransaction = [];
+      $dataTransaction = $this->cart->GetListJoinDoctorAndDateAndStatusPT($formattedDateStart, $formattedDateEnd, $input['status'], $user['role'], $user['email']);
+      $extraChargeAll = $this->extra_charge->GetListAll();
+
+      // Log::info("array transaction", ['transaction' => $dataTransaction]);
+      $inv_no=0;
+      foreach ($dataTransaction as $key => $valueTransaction) {
+        $totalan = 0;
+        $createdAt = explode(' ',$valueTransaction['created_at']);
+        $valueTransaction['created_at'] = $createdAt[0];
+        $dueDate = explode(' ',$valueTransaction['due_date']);
+        $valueTransaction['due_date'] = $dueDate[0];
+
+        $inv_no++;
+        $datetime = new DateTime($valueTransaction['created_at']);
+        $no = "INV/PT/".$datetime->format('m')."/".str_pad($inv_no, 5, "0", STR_PAD_LEFT);
+        $noEcy = "INV_PT_".$datetime->format('m')."_".str_pad($inv_no, 5, "0", STR_PAD_LEFT);
+
+        $dataTransaction[$key]['inv_no'] = $no;
+        $dataTransaction[$key]['inv_no_ency'] = $this->encryptUrl($dataTransaction[$key]['id']."-".$noEcy);
+
+        if (strlen($valueTransaction['cart'])!=0) {
+          $carts = explode(",", $valueTransaction['cart']);
+
+          foreach ($carts as $valueCart) {
+            $temp = explode("|", $valueCart);
+
+            $price_product = $temp[4];
+            $price = $price_product*$temp[2];
+            $disc = $price*($temp[3]/100);
+            $totalan += $price-$disc;
+          }
+        }
+
+        foreach ($extraChargeAll as $valueExtra) {
+          if ($valueTransaction['id'] == $valueExtra['transaction_id']) {
+            $totalan += $valueExtra['price'];
+          }
+        } 
+
+        
+        if($valueTransaction['status'] == 5) {
+          $sum = array_sum(explode("|", $valueTransaction['nominal']));
+          $paid_num = $totalan - $sum;
+          if($paid_num == 0) {
+            $valueTransaction['total_paid'] = true;
+          }
+        }
+      }
       return $dataTransaction;
     }
 
@@ -489,7 +559,6 @@ class ListPOController extends Controller
            
            $dataCartDokter[0]['id_encrypt'] = $temp;
            
-           
           return view('master.detailTransaction')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
           // return $dataCart;
       }catch(\Throwable $th) {
@@ -498,6 +567,170 @@ class ListPOController extends Controller
       }
           // return view('master.detailPO');
   }
+
+  public function detailTransaksiIndexPT(string $id_enc) {
+    try {
+        $value = Crypt::decryptString($id_enc);
+        $val = explode("-", $value);
+        $id= $val[0];
+        $inv_no=$val[1];
+        $dataCartDokter = $this->cart->GetListJoinDoctorWithCartId($id);
+        if($dataCartDokter[0]['is_pt']!=1){
+          return redirect()->route('listPO');
+        }
+
+        $dokter = $this->doctorModel->SingleItem($dataCartDokter[0]['doctor_id']);
+        $items = $this->model->getAll();
+        $bundles = $this->bundle->getAll();
+        $dataEkspedisi = $this->ekspedisi->GetList();
+        $extraChargeAll = $this->extra_charge->GetListAll();
+        $user = auth()->user();
+
+        foreach ($dataCartDokter as $data) {
+          if(Auth::user()->role == "marketing" && ($data->created_by != Auth::user()->email || $data->management_order==1)) {
+            return redirect()->route('listPO');
+          }
+          $totalan = 0;
+          $products = [];
+          $totalPaid = 0;
+          $extraChargeOne = [];
+          $stepPayment = [];
+
+          if (strlen($data->cart)!=0){
+
+            $carts = explode(",", $data->cart);
+            // array product
+            foreach ($carts as $valueCart) {
+              $temp = explode("|", $valueCart);
+
+              if($temp[1]=="product"){
+                foreach ($items as $item) {
+                  if($temp[0]==$item["id"]){
+                    $product["name_product"]=$item["name"];
+                    break;
+                  }                      
+                }
+              }else if($temp[1]=="paket"){
+                foreach ($bundles as $bundle) {
+                  if($temp[0]==$bundle["id"]){
+                    $product["name_product"]=$bundle["name"];
+                    break;
+                  }                      
+                }
+              }
+
+              $product['price_product'] = $temp[4];
+              $product["type"] = $temp[1];
+              $product["id"] = $temp[0];
+              $product["qty"]=$temp[2];
+              $product["disc"]=$temp[3];
+              $price = $product["price_product"]*$temp[2];
+              $disc = $price*($temp[3]/100);
+              $product["price"]=$price;
+              $product["disc_price"]=$disc;
+              $product["total_price"]=$price-$disc;
+              $totalan+=$product["total_price"];
+              $product["total_price"] = number_format($product["total_price"],0,',','.');
+              $product["disc_price"] = number_format($product["disc_price"],0,',','.');
+              $product["price"] = number_format($product["price"],0,',','.');
+              $product["price_product_real"] = $product["price_product"];
+              $product["price_product"] = number_format($product["price_product"],0,',','.'); 
+              array_push($products, $product);
+            }
+
+            $data['products'] = $products;
+            
+            foreach ($extraChargeAll as $valueExtra) {
+              if ($data['id'] == $valueExtra['transaction_id']) {
+                $totalan += $valueExtra['price'];
+                $valueExtra['real_price'] = $valueExtra['price'];
+                $valueExtra['price'] = number_format($valueExtra["price"],0,',','.');
+                array_push($extraChargeOne, $valueExtra);
+              }
+            }
+            $totalan = ceil($totalan);
+            $data['total_price'] = $totalan;
+            $data['total'] = number_format($totalan,0,',','.');
+            $data['shipping_cost_number'] = $data['shipping_cost'];
+            $data['shipping_cost'] = number_format($data['shipping_cost'],0,',','.');
+            $data['nominal_number'] = $data['nominal'];
+            // $data['nominal'] = number_format($data['nominal'],0,',','.');
+            $data['extra_charge'] = $extraChargeOne;
+
+            // step payment
+            if($data['status'] == 5) {
+              $dataPaidBy = explode("|", $data['paid_by']);
+              $dataPaidAt = explode("|", $data['paid_at']);
+              $dataPaidBankName = explode("|", $data['paid_bank_name']);
+              $dataPaidAccountBankName = explode("|", $data['paid_account_bank_name']);
+              $dataNominal = explode("|", $data['nominal']);
+              $sum = array_sum(explode("|", $data['nominal']));
+              foreach ($dataPaidBy as $key => $value) {
+                if($value != "") {
+                  $dataStepPayment['paid_by'] = $value;
+                  $dataStepPayment['paid_at'] = $dataPaidAt[$key];
+                  $dataStepPayment['paid_bank_name'] = $dataPaidBankName[$key];
+                  $dataStepPayment['paid_account_bank_name'] = $dataPaidAccountBankName[$key];
+                  $dataStepPayment['nominal'] = $dataNominal[$key];
+                  // $totalPaid += $dataStepPayment['nominal'];
+                  array_push($stepPayment, $dataStepPayment);
+                }
+              }
+
+              $data['total_num_paid'] = $sum;
+              $data['total_paid'] = number_format($sum,0,',','.');
+              $data['total_num_paid_sum'] = $data['total_price'] - $sum;
+              $data['total_paid_sum'] = number_format($data['total_price'] - $sum,0,',','.');
+              $data['step_payment'] = $stepPayment;
+            } else if($data['status'] == 3) {
+              $data['total_num_paid'] = $data['total_price'];
+              $data['total_paid'] = number_format($data['total_price'],0,',','.');
+              $data['total_num_paid_sum'] = $data['total_price'] - $data['total_num_paid'];
+              $data['total_paid_sum'] = number_format($data['total_num_paid_sum'],0,',','.');
+            } else {
+              $sum = 0;
+              $data['total_num_paid'] = $sum;
+              $data['total_paid'] = number_format($sum,0,',','.');
+              $data['total_num_paid_sum'] = $data['total_price'];
+              $data['total_paid_sum'] = number_format($data['total_price'],0,',','.');
+            }
+          } 
+
+          $newDate = date('Y-m-d H:i:s');
+            // $dueDate = explode(" ", $data['due_date']);
+            Log::info("comparing date", [
+              'boolean' => strtotime($data['due_date']) <= strtotime($newDate),
+              'due_date' => $data['due_date'],
+              'new_date' => $newDate
+            ]);
+            if(strtotime($data['due_date']) <= strtotime($newDate)) {
+              //kena due date
+              $data['status_due_date'] = true;
+            } else {
+              $data['status_due_date'] = false;
+            }
+            
+            $data['status_due_date'] = false;
+        }
+         $temp = $this->encryptUrl($dataCartDokter[0]['id'].'/'.'1');
+        
+         
+         
+         $dataCartDokter[0]['id_encrypt'] = $temp;
+         $temp = $this->encryptUrl($inv_no);
+
+         $dataCartDokter[0]['inv_no_ency'] = $temp;
+         $inv_no = str_ireplace("_", "/", $inv_no);
+         $dataCartDokter[0]['inv_no'] = $inv_no;
+         
+        return view('master.detailPT')->with('dokter', $dokter)->with('user', $user)->with('dataEkspedisi', $dataEkspedisi)->with('dataCartDokter', $dataCartDokter)->with('extraChargeAll', $extraChargeAll);
+        // return $dataCart;
+    }catch(\Throwable $th) {
+        Log::error("error di throwable");
+        Log::error($th);
+    }
+        // return view('master.detailPO');
+}
 
     public function addPO(Request $request){
         $input = $request->all();
@@ -647,6 +880,22 @@ class ListPOController extends Controller
             return $data;
         }
     }
+
+    public function changeToPT(Request $request) {
+      try {
+          $input = $request->all();
+          $input['updt']['is_pt']=$input['data']['status'];
+          $this->cart->UpdateItem($input['data']['id'], $input['updt']);
+          $data = "sukses";
+          return $data;
+      }catch(\Throwable $th) {
+          Log::error("error di throwable");
+          Log::error($th);
+          dd($th);
+          $data = "gagal";
+          return $data;
+      }
+  }
 
     public function paymentOrder(Request $request) {
       try {
